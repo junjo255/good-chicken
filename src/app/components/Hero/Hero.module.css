@@ -1,0 +1,71 @@
+.hero {
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+    isolation: isolate;
+    padding-bottom: 1rem;
+
+    margin-top: calc(var(--header-h, 172px) * -1);
+    padding-top: calc(56px + var(--header-h, 96px));
+    min-height:125vh;
+}
+
+.hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: url("https://goodchickenusa.com/wp-content/uploads/2021/05/close-up-fried-chicken-wings-tray-with-green-onions.jpg");
+    background-size: cover;
+    filter: brightness(30%);
+    z-index: 0;
+    background-position: center calc(50% + (var(--scroll, 10px) * 0.25px));
+    transition: background-position 60ms linear;
+}
+
+.inner {
+    position: relative;
+    text-align: center;
+    z-index: 1;
+    padding: 56px 16px;
+    transform: translateY(calc(var(--scroll, 0) * 0.02px));
+    transition: transform 60ms linear;
+}
+
+.tagline {
+    font-family: "GothamRnd-Medium", system-ui, sans-serif;
+    font-size: clamp(1.25rem, 2.5vw, 2rem);
+    margin: 0 0 1rem;
+}
+
+.titleTop {
+    font-family: "Fontania", serif;
+    font-size: clamp(4rem, 4.5vw, 6rem);
+    margin: 0 0 14px;
+}
+
+.titleMain {
+    font-family: "Fontania", serif;
+    font-size: clamp(4rem, 4.5vw, 7rem);
+    margin: 0 0 14px;
+    color: #fff;
+}
+
+
+.actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .hero::before,
+    .inner {
+        transition: none !important;
+        transform: none !important;
+        background-position: center !important;
+    }
+}

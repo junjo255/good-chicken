@@ -1,0 +1,40 @@
+[
+  {
+    "id": "margherita",
+    "name": "Margherita Pizza",
+    "description": "Tomato, fresh mozzarella, basil",
+    "priceCents": 1400,
+    "imageUrl": "/margherita.jpg",
+    "category": "Pizzas",
+    "modifiers": [
+      {
+        "id": "size",
+        "name": "Size",
+        "min": 1,
+        "max": 1,
+        "choices": [
+          { "id": "12", "name": "12\"", "priceCents": 0 },
+          { "id": "16", "name": "16\"", "priceCents": 400 }
+        ]
+      },
+      {
+        "id": "extras",
+        "name": "Extras",
+        "min": 0,
+        "max": 3,
+        "choices": [
+          { "id": "pepperoni", "name": "Pepperoni", "priceCents": 200 },
+          { "id": "mushrooms", "name": "Mushrooms", "priceCents": 150 },
+          { "id": "olives", "name": "Olives", "priceCents": 150 }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "caesar",
+    "name": "Caesar Salad",
+    "priceCents": 900,
+    "category": "Salads",
+    "description": "Romaine, parmesan, croutons"
+  }
+]
