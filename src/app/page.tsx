@@ -36,7 +36,7 @@ export default async function Home() {
             <ContactUs/>
             <Marquee
                 speed={160}
-                style={{fontFamily: "Poppins", fontSize: "100px", color: "#F4BB1C", fontWeight: 900}}
+                style={{ fontSize: "100px", color: "#F4BB1C", fontWeight: 900}}
             >
 
 
