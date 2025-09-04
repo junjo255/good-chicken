@@ -1,14 +1,14 @@
 'use client';
-import { useState, useEffect, useRef } from 'react';
+import {useState, useEffect, useRef} from 'react';
 import styles from './Header.module.css';
 
 const navItems = [
-    { label: 'ORDER NOW', href: 'https://goodchickenusa.com/', emphasize: true },
-    { label: 'LOCATIONS', href: 'https://goodchickenusa.com/' },
-    { label: 'MENU', href: 'https://goodchickenusa.com/menu-2/' },
-    { label: 'CATERING', href: 'https://goodchickenusa.com/' },
-    { label: 'FRANCHISING', href: 'https://goodchickenusa.com/' },
-    { label: 'CONTACT US', href: 'https://goodchickenusa.com/menu-2/' },
+    {label: 'ORDER NOW', href: 'https://goodchickenusa.com/', emphasize: true},
+    {label: 'LOCATIONS', href: 'https://goodchickenusa.com/'},
+    {label: 'MENU', href: 'https://goodchickenusa.com/menu-2/'},
+    {label: 'CATERING', href: 'https://goodchickenusa.com/'},
+    {label: 'FRANCHISING', href: 'https://goodchickenusa.com/'},
+    {label: 'CONTACT US', href: 'https://goodchickenusa.com/menu-2/'},
 ];
 
 export default function Header() {
@@ -59,7 +59,11 @@ export default function Header() {
             <div className={styles.inner}>
                 <div className={styles.brandRow}>
                     <a href="#" className={styles.brand} aria-label="BBQ Chicken home">
-                        <img width="85" height="85" src="/Good-Chicken-logo.png" alt="Good Chicken" />
+                        <img
+                            width="85" height="85"
+                            src={`${scrolled ? "/Good-Chicken-logo.png" : "/Good-Chicken-white-logo.png"}`}
+                            alt="Good Chicken"
+                        />
                     </a>
 
                     <button
@@ -75,11 +79,13 @@ export default function Header() {
                     >
                         {!open ? (
                             <svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true">
-                                <path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                                <path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" strokeWidth="2"
+                                      strokeLinecap="round"/>
                             </svg>
                         ) : (
                             <svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true">
-                                <path d="M6 6l12 12M18 6l-12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                                <path d="M6 6l12 12M18 6l-12 12" stroke="currentColor" strokeWidth="2"
+                                      strokeLinecap="round"/>
                             </svg>
                         )}
                     </button>
@@ -87,7 +93,7 @@ export default function Header() {
 
                 <nav className={`${styles.nav} ${styles.navCluster}`} aria-label="Primary">
                     <ul id="primary-navigation-left" className={`${styles.navList} ${styles.leftList}`}>
-                        {leftItems.map(({ label, href, emphasize }) => (
+                        {leftItems.map(({label, href, emphasize}) => (
                             <li key={`l-${label}`} className={styles.navItem}>
                                 <a href={href} className={`${styles.link} ${emphasize ? styles.emphasize : ''}`}>
                                     {label}
@@ -102,7 +108,7 @@ export default function Header() {
                     </a>
 
                     <ul id="primary-navigation-right" className={`${styles.navList} ${styles.rightList}`}>
-                        {rightItems.map(({ label, href, emphasize }) => (
+                        {rightItems.map(({label, href, emphasize}) => (
                             <li key={`r-${label}`} className={styles.navItem}>
                                 <a href={href} className={`${styles.link} ${emphasize ? styles.emphasize : ''}`}>
                                     {label}
@@ -121,7 +127,7 @@ export default function Header() {
                     aria-label="Mobile navigation"
                 >
                     <ul className={styles.mobileNavList}>
-                        {navItems.map(({ label, href, emphasize }) => (
+                        {navItems.map(({label, href, emphasize}) => (
                             <li key={`m-${label}`} className={styles.mobileNavItem}>
                                 <a
                                     href={href}
