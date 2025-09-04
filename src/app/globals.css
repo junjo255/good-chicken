@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Mulish:ital,wght@0,200..1000;1,200..1000&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Didact+Gothic&family=Mulish:ital,wght@0,200..1000;1,200..1000&display=swap');
 @import "tailwindcss";
 
 @font-face {
@@ -10,32 +10,7 @@
 }
 
 @font-face {
-    font-family: 'FontaniaSwash';
-    src: url('../../public/FontaniaSwash.otf') format('opentype');
-    font-weight: 400;
-    font-style: normal;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: 'Himsomnia';
-    src: url('../../public/Himsomnia.otf') format('opentype');
-    font-weight: 400;
-    font-style: normal;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: 'Domillion';
-    src: url('../../public/Domillion.otf') format('opentype');
-    font-weight: 400;
-    font-style: normal;
-    font-display: swap;
-}
-
-
-@font-face {
-    font-family: 'GothamRnd-Medium';
+    font-family: 'GothamRnd-Light';
     src: url('../../public/GothamRnd-Light.otf') format('opentype');
     font-weight: 400;
     font-style: normal;
@@ -43,22 +18,21 @@
 }
 
 @font-face {
-    font-family: 'GardenaQuanto';
-    src: url('../../public/GardenaQuanto-Regular.ttf') format('opentype');
-    font-weight: 600;
+    font-family: 'GothamSSM-Medium';
+    src: url('../../public/GothamSSm-Book.otf') format('opentype');
+    font-weight: 400;
     font-style: normal;
     font-display: swap;
 }
 
-
 :root {
     --bg: #ffffff;
     /*--text: #212427;*/
-    --text: #423023;
+    --text: #3F3126;
     --muted: #6b7280;
-    --brand: #C02A2E;
+    --brand: #AF3935;
     --brand-li: rgba(192, 42, 46, 0.25);
-    --brand-sub: #F4BB1C;
+    --brand-sub: #E9BC46;
     /*--brand-600: rgba(192, 42, 46, 0.42);*/
     --card: #f9fafb;
     --ring: rgba(185, 28, 28, .25);

@@ -46,7 +46,7 @@ function LocationPanel({location}: { location: Location }) {
                     <h3 className="text-2xl md:text-3xl font-semibold text-[#423023] mt-1">
                         {location.title}
                     </h3>
-                    <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight text-[#C02A2E]">
+                    <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight text-[#AF3935]">
                         {location.brand}
                     </h2>
                 </div>

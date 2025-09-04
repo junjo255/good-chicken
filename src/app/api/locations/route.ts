@@ -19,7 +19,7 @@ export async function GET() {
         {
             id: 'montclair',
             name: 'Montclair',
-            address: '114 Bloomfield Ave. Montclair',
+            address: '114 Bloomfield Ave. Montclair, NJ 07042',
             lat: 40.8136,
             lng: -74.214,
             orderUrl: 'https://goodchickenusa.com/',
@@ -30,7 +30,7 @@ export async function GET() {
         {
             id: 'jerseyCity',
             name: 'Jersey City',
-            address: '114 Bloomfield Ave. Montclair',
+            address: '414 Gand St Jersey City, NJ',
             lat: 40.8136,
             lng: -74.214,
             orderUrl: 'https://goodchickenusa.com/',

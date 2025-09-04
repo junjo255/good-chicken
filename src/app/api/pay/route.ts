@@ -1,13 +1,13 @@
-// import { NextRequest } from 'next/server';
+import { NextRequest } from 'next/server';
 // import { z } from 'zod';
 // import { captureWithOpaque } from '@/lib/authnet';
 // import { addLineItems, createOrder, ensureTenderId, printToKitchen, recordExternalPayment } from '@/lib/clover';
-//
-//
-// export const runtime = 'nodejs';
-// export const dynamic = 'force-dynamic';
-//
-//
+
+
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
+
+
 // const ItemSchema = z.object({ name: z.string(), priceCents: z.number().int().nonnegative(), quantity: z.number().int().positive() });
 // const BodySchema = z.object({
 //     items: z.array(ItemSchema),
@@ -20,8 +20,8 @@
 //     opaqueData: z.object({ dataDescriptor: z.string(), dataValue: z.string() })
 // });
 //
-//
-// export async function POST(req: NextRequest) {
+
+export async function POST(req: NextRequest) {
 //     try {
 //         const body = BodySchema.parse(await req.json());
 //         const amountCents = body.subtotalCents + body.taxCents + body.tipCents + body.serviceFeeCents;
@@ -57,4 +57,4 @@
 //     } catch (e: any) {
 //         return new Response(JSON.stringify({ ok: false, error: e.message || 'Payment failed' }), { status: 400 });
 //     }
-// }
+}

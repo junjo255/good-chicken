@@ -38,10 +38,8 @@ export default async function Home() {
                 speed={160}
                 style={{ fontSize: "100px", color: "#F4BB1C", fontWeight: 900}}
             >
-
-
-                YOUR NEW FAVORITE <span style={{color: "#C02A2E"}}> KOREAN FRIED CHICKEN</span> STARTS HERE!
-                YOUR NEW FAVORITE <span style={{color: "#C02A2E"}}> KOREAN FRIED CHICKEN</span> STARTS HERE!
+                {` YOUR NEW FAVORITE `}<span style={{color: "#AF3935"}}> KOREAN FRIED CHICKEN</span> STARTS HERE!
+                {` YOUR NEW FAVORITE `}<span style={{color: "#AF3935"}}> KOREAN FRIED CHICKEN</span> STARTS HERE!
 
 
             </Marquee>

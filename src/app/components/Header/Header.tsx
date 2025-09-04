@@ -16,7 +16,6 @@ export default function Header() {
     const menuRef = useRef<HTMLDivElement | null>(null);
     const [scrolled, setScrolled] = useState(false);
 
-    // Split nav items: first half on the left, remainder on the right
     const mid = Math.ceil(navItems.length / 2);
     const leftItems = navItems.slice(0, mid);
     const rightItems = navItems.slice(mid);
@@ -59,7 +58,7 @@ export default function Header() {
         >
             <div className={styles.inner}>
                 <div className={styles.brandRow}>
-                    <a href="#top" className={styles.brand} aria-label="BBQ Chicken home">
+                    <a href="#" className={styles.brand} aria-label="BBQ Chicken home">
                         <img width="85" height="85" src="/Good-Chicken-logo.png" alt="Good Chicken" />
                     </a>
 
@@ -96,9 +95,10 @@ export default function Header() {
                             </li>
                         ))}
                     </ul>
-
-                    <a href="#top" className={`${styles.brand} ${styles.centerBrand}`} aria-label="BBQ Chicken home">
-                        <img width="85" height="85" src="/Good-Chicken-logo.png" alt="Good Chicken" />
+                    <a href="#" className={`${styles.brand} ${styles.centerBrand}`} aria-label="BBQ Chicken home">
+                        <img width="85" height="85"
+                             src={`${scrolled ? "/Good-Chicken-logo.png" : "/Good-Chicken-white-logo.png"}`}
+                             alt="Good Chicken"/>
                     </a>
 
                     <ul id="primary-navigation-right" className={`${styles.navList} ${styles.rightList}`}>

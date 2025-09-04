@@ -46,7 +46,7 @@ export default function MenuCarousel({
                 <h2
                     className="section-title"
                 >
-                    Your New Favorite <span style={{color: "#C02A2E"}}>Korean Fried Chicken</span> Starts Here!
+                    Your New Favorite <span style={{color: "#AF3935"}}>Korean Fried Chicken</span> Starts Here!
                 </h2>
 
             </div>
@@ -70,10 +70,10 @@ export default function MenuCarousel({
                                         setIndex(1);
                                     }}
                                     className={
-                                        "inline-flex items-center gap-2 rounded-full border border-[#C02A2E6B]  pb-4 px-5 py-3 text-sm font-semibold tracking-wider transition-all " +
+                                        "inline-flex items-center gap-2 rounded-full border border-[#AF39356B]  pb-4 px-5 py-3 text-sm font-semibold tracking-wider transition-all " +
                                         (isActive
-                                            ? "bg-[#C02A2E] text-white cursor-pointer"
-                                            : "bg-white text-[#C02A2E] hover:bg-[#C02A2E6B] hover:text-white hover:border-white cursor-pointer ")
+                                            ? "bg-[#AF3935] text-white cursor-pointer"
+                                            : "bg-white text-[#AF3935] hover:bg-[#AF3935] hover:text-white hover:border-white cursor-pointer ")
                                     }
                                 >
                                     {c.icon && <span className="grid place-items-center">{c.icon}</span>}
@@ -102,9 +102,9 @@ export default function MenuCarousel({
                             <button
                                 aria-label="Previous"
                                 onClick={() => go(-1)}
-                                className="absolute z-30 -left-6 top-1/2 -translate-y-1/2 rounded-full border border-[#C02A2E] bg-white p-1 cursor-pointer  hover:scale-105 focus:outline-none aos-init aos-animate"
+                                className="absolute z-30 -left-6 top-1/2 -translate-y-1/2 rounded-full border border-[#AF3935] bg-white p-1 cursor-pointer  hover:scale-105 focus:outline-none aos-init aos-animate"
                             >
-                                <ChevronLeft color="#C02A2E" size={40}/>
+                                <ChevronLeft color="#AF3935" size={40}/>
                             </button>
                         </div>
 
@@ -159,12 +159,12 @@ export default function MenuCarousel({
                         <button
                             aria-label="Next"
                             onClick={() => go(1)}
-                            className="absolute -right-6 top-1/2 -translate-y-1/2 rounded-full border border-[#C02A2E] bg-white p-1 hover:scale-105 focus:outline-none cursor-pointer aos-init aos-animate"
+                            className="absolute -right-6 top-1/2 -translate-y-1/2 rounded-full border border-[#AF3935] bg-white p-1 hover:scale-105 focus:outline-none cursor-pointer aos-init aos-animate"
                             data-aos="zoom-in"
                             data-aos-delay="350"
                             data-aos-duration="500"
                         >
-                            <ChevronRight color="#C02A2E" size={40}/>
+                            <ChevronRight color="#AF3935" size={40}/>
                         </button>
                     </div>
                 )}

@@ -48,7 +48,7 @@
 
 .titleMain {
     font-family: "Fontania", serif;
-    font-size: clamp(4rem, 4.5vw, 7rem);
+    font-size: clamp(6rem, 4.5vw, 7rem);
     margin: 0 0 14px;
     color: #fff;
 }

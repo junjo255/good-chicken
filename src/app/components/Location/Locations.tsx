@@ -28,17 +28,18 @@ const LOCATIONS: Location[] = [
         id: "jersey-city",
         brand: "Good Chicken",
         title: "Jersey City",
-        address: "114 Bloomfield Ave, Montclair, NJ 07042",
+        address: "414 Grand St Jersey City, NJ 07302",
         phone: "+1 (973) 337-5075",
         hours: "10am ~ 10pm",
         services: ["Dine-in", "Take out"],
-        mapsEmbedUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d6039.864532511089!2d-74.2105586!3d40.807482199999995!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c2556860800fd9%3A0x7c8e4fce5d9aa643!2sGood%20Chicken!5e0!3m2!1sen!2sus!4v1756665637991!5m2!1sen!2sus"
+        mapsEmbedUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d6048.040092383556!2d-74.05243399999999!3d40.7175752!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c250b7cecdfd47%3A0x3fbde0a2129e6c01!2s414%20Grand%20St%2C%20Jersey%20City%2C%20NJ%2007302!5e0!3m2!1sen!2sus!4v1756992079385!5m2!1sen!2sus"
     },
 ];
 
 function LocationPanel({location}: { location: Location }) {
     return (
-        <section className="grid grid-cols-1 md:grid-cols-2 gap-0 bg-[#423023] px-6 md:px-10 py-8 rounded-xl border border-neutral-400 shadow-sm" data-aos="zoom-in-up">
+        <section
+            className="grid grid-cols-1 md:grid-cols-2 gap-0 bg-[#423023] px-6 md:px-10 py-8 rounded-xl border border-neutral-400 shadow-sm" data-aos="zoom-in-up">
 
             <div
                 className="bg-white md:ml-8 mt-6 md:mt-0 rounded-md border border-neutral-300 p-8 flex flex-col justify-start">
@@ -46,7 +47,7 @@ function LocationPanel({location}: { location: Location }) {
                     <h3 className="text-2xl md:text-3xl font-semibold text-[#423023] mt-1">
                         {location.title}
                     </h3>
-                    <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight text-[#C02A2E]">
+                    <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight text-[#AF3935]">
                         {location.brand}
                     </h2>
                 </div>

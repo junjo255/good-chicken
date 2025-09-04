@@ -56,15 +56,15 @@ type Props = {
 };
 
 export default function AboutUs({
-                                      leftImage = "https://media.istockphoto.com/id/2150279684/photo/delicious-juicy-chicken-wings-baked-on-the-grill-with-salt-spices-and-herbs.jpg?s=2048x2048&w=is&k=20&c=2xKsnybN7ukPS4--ACdgYgB_EAqk-McayXxLWTnTnVI=",
-                                      centerImage = "https://media.istockphoto.com/id/2155391736/photo/american-style-fried-chicken-wings-on-a-plate.jpg?s=2048x2048&w=is&k=20&c=RciGI-LPIPfOp-w3a3p__6pW_KU21JqY-eFqNkoAJPw=",
-                                      rightImage = "https://images.unsplash.com/photo-1528605248644-14dd04022da1?q=80&w=1600&auto=format&fit=crop",
-                                  }: Props) {
+                                    leftImage = "https://media.istockphoto.com/id/2150279684/photo/delicious-juicy-chicken-wings-baked-on-the-grill-with-salt-spices-and-herbs.jpg?s=2048x2048&w=is&k=20&c=2xKsnybN7ukPS4--ACdgYgB_EAqk-McayXxLWTnTnVI=",
+                                    centerImage = "https://media.istockphoto.com/id/2155391736/photo/american-style-fried-chicken-wings-on-a-plate.jpg?s=2048x2048&w=is&k=20&c=RciGI-LPIPfOp-w3a3p__6pW_KU21JqY-eFqNkoAJPw=",
+                                    rightImage = "https://images.unsplash.com/photo-1528605248644-14dd04022da1?q=80&w=1600&auto=format&fit=crop",
+                                }: Props) {
     return (
         <section
             className="w-full"
             style={{
-                backgroundColor: "#C02A2E",
+                backgroundColor: "#AF3935",
             }}
         >
             <div className="max-w-[1200px] mx-auto px-6 md:px-10 pt-14 pb-16 relative">
@@ -87,21 +87,33 @@ export default function AboutUs({
 
                     {/* Copy + CTA */}
                     <div className="lg:col-span-6 lg:pl-8">
-                        <p className="text-white/95 text-base md:text-lg leading-relaxed max-w-[560px]">
-                            Welcome to Good Chicken! Motivated to prepare and provide the most delicious and healthiest
+                        <p className="text-white/95 text-base md:text-lg leading-relaxed max-w-[560px]"
+                           style={{fontFamily: "GothamRnd-Light "}}>
+                           <span
+                               style={{
+                                   color: "#E9BC46",
+                                   fontSize: "1.7rem",
+                                   fontWeight: 500,
+                                   fontFamily: "GothamSSM-Medium"
+                               }}
+                           >
+                               Welcome to Good Chicken!
+                           </span>
+                            <br/>
+                            Motivated to prepare and provide the most delicious and healthiest
                             premium high quality fried chicken!
+                            <br/>
                             We are thirsty to satisfy your family and friends’ cravings for some
-                            GOOD CHICKEN.
+                            <span
+                                style={{
+                                    color: "#E9BC46",
+                                    fontWeight: 500,
+                                    fontFamily: "GothamSSM-Medium"
+                                }}
+                                >
+                                {` GOOD CHICKEN.`}
+                            </span>
                         </p>
-                        <div className="mt-6">
-                            <a
-                                href="#"
-                                className="inline-flex items-center justify-center rounded-full bg-white text-black font-semibold px-6 py-3 text-sm shadow-sm hover:shadow transition"
-                                style={{ borderRadius: 9999 }}
-                            >
-                                Our Story
-                            </a>
-                        </div>
                     </div>
                 </div>
 
@@ -113,7 +125,7 @@ export default function AboutUs({
                     {/*>*/}
                     <div className="lg:col-span-5">
                         <div className="overflow-hidden rounded-[24px] shadow-sm">
-                            <img src={leftImage} alt="Interior" className="w-full h-auto object-cover" />
+                            <img src={leftImage} alt="Interior" className="w-full h-auto object-cover"/>
                         </div>
                     </div>
 
@@ -129,14 +141,14 @@ export default function AboutUs({
                                 src={centerImage}
                                 alt="Product"
                                 className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[84%] h-auto object-contain"
-                                style={{ filter: "drop-shadow(0 6px 12px rgba(0,0,0,0.25))" }}
+                                style={{filter: "drop-shadow(0 6px 12px rgba(0,0,0,0.25))"}}
                             />
                         </div>
                     </div>
 
                     <div className="lg:col-span-3">
                         <div className="overflow-hidden rounded-[24px] shadow-sm">
-                            <img src={rightImage} alt="Storefront" className="w-full h-auto object-cover" />
+                            <img src={rightImage} alt="Storefront" className="w-full h-auto object-cover"/>
                         </div>
                     </div>
                     {/*</Marquee>*/}
