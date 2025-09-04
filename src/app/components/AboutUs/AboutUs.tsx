@@ -72,12 +72,15 @@ export default function AboutUs({
                     {/* Headline */}
                     <div className="lg:col-span-6">
                         <h1
-                            className="font-extrabold leading-[0.95] tracking-tight"
+                            className="font-extrabold leading-[0.95] tracking-tight aboutaos-init aos-animate"
                             style={{
                                 fontSize: "clamp(44px, 9vw, 96px)",
                                 color: "#F4BB1C",
                                 textTransform: "uppercase",
                             }}
+                            data-aos="flip-left"
+                            data-aos-delay="350"
+                            data-aos-duration="500"
                         >
                             <span className="block">Crisp,</span>
                             <span className="block">Golden,</span>
@@ -87,8 +90,12 @@ export default function AboutUs({
 
                     {/* Copy + CTA */}
                     <div className="lg:col-span-6 lg:pl-8">
-                        <p className="text-white/95 text-base md:text-lg leading-relaxed max-w-[560px]"
-                           style={{fontFamily: "GothamRnd-Light "}}>
+                        <p className="text-white/95 text-base md:text-lg leading-relaxed max-w-[560px] aboutaos-init aos-animate"
+                           style={{fontFamily: "GothamRnd-Light "}}
+                           data-aos="zoom-in"
+                           data-aos-delay="350"
+                           data-aos-duration="500"
+                        >
                            <span
                                style={{
                                    color: "#E9BC46",
