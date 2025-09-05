@@ -1,5 +1,4 @@
 import type {Metadata} from "next";
-import {Geist, Geist_Mono} from "next/font/google";
 import "./globals.css";
 import React from "react";
 import Header from "@/app/components/Header/Header";
@@ -37,10 +36,12 @@ export default async function RootLayout({
         <head>
             <script async src="//www.instagram.com/embed.js"></script>
         </head>
-        <body>
-            <Header/>
+        <body className="min-h-screen flex flex-col">
+        <Header/>
+        <main className="flex-1">
             {children}
-            <Footer locations={footerLocations}/>
+        </main>
+        <Footer locations={footerLocations}/>
         </body>
         </html>
     );

@@ -17,6 +17,12 @@
     }
 }
 
+.headerNoScroll {
+    .inner {
+        color: #3F3126;
+    }
+}
+
 .link {
     font-size: 14px;
     font-weight: 700;

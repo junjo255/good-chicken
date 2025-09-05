@@ -91,7 +91,7 @@ export default function ChosenLocation() {
                 </div>
 
                 {/* Address */}
-                <div className="mt-1 text-sm text-neutral-700">828 N State Rt 17, Paramus, NJ 07652</div>
+                <div className="mt-1 text-sm text-neutral-700">414 Grand St Jersey City, NJ 07302</div>
 
                 {/* Description */}
                 <p className="mt-3 max-w-3xl text-sm leading-relaxed text-neutral-800">
@@ -166,7 +166,7 @@ export default function ChosenLocation() {
                     </div>
 
                     {/* Open / hours */}
-                    <div className="border border-[#212427]-t p-4">
+                    <div className="border p-4">
                         <div className="flex items-center gap-2">
                             <span className="inline-flex h-2 w-2 rounded-full bg-green-500" aria-hidden="true"/>
                             <span className="text-sm font-medium">Open</span>

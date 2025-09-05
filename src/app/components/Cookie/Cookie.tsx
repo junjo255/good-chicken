@@ -1,0 +1,3 @@
+// Dominos' Menu - Order Pizza, Pasta, Wings & More Online!
+// We value your privacy.​
+// We and third parties we work with use cookies and other technologies to collect and disclose information about you for the purposes described in our Privacy Policy. Click “Reject All” to disable non-essential technologies and opt-out of sales, shares, and targeted advertising on this site. You can also use a recognized preference signal like Global Privacy Control. These choices apply only to this browser and reset if you clear cookies. To opt-out for our mobile app, configure “Do Not Sell” within the app. To opt-out for information we have about you in our systems (like your email address), submit a separate request through this link.

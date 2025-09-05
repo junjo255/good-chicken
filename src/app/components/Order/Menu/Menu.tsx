@@ -16,6 +16,7 @@ import Water from "@/app/components/Order/Menu/products/water";
 import Soda from "@/app/components/Order/Menu/products/soda";
 import IcedTea from "@/app/components/Order/Menu/products/icedTea";
 import {CardItem, Category} from "@/app/lib/types";
+import {useCart} from "@/app/lib/cart";
 
 export const CATEGORIES: Category[] = [
     {id: 'all', label: 'ALL', icon: <MenuIcon className="h-4 w-4"/>},
@@ -151,6 +152,7 @@ export default function OrderingMenu() {
     const [open, setOpen] = useState(false);
     const [current, setCurrent] = useState<ConfigProduct | null>(null);
     const [sel, setSel] = useState<Partial<{ heat: string; part: string; size: string }>>({});
+    const {addItem} = useCart();
 
     const filtered = useMemo(() => {
         if (active === 'all') return ITEMS;
@@ -164,10 +166,9 @@ export default function OrderingMenu() {
         setOpen(true);
     }
 
-    // TODO: wire to your cart hook
     function handleAdd({sku, name, priceCents}: { sku: string; name: string; priceCents: number }) {
-        console.log('ADD', {sku, name, priceCents});
-        // addItem(sku, name, priceCents, [])
+        addItem(sku, name, priceCents, []);
+        setOpen(false);
     }
 
     return (
