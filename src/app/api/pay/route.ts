@@ -1,4 +1,5 @@
 import {NextRequest, NextResponse} from 'next/server';
+import {saveOrder} from '@/app/lib/supabase';
 // import { z } from 'zod';
 // import { captureWithOpaque } from '@/lib/authnet';
 // import { addLineItems, createOrder, ensureTenderId, printToKitchen, recordExternalPayment } from '@/lib/clover';
@@ -22,8 +23,20 @@ export const dynamic = 'force-dynamic';
 //
 export async function POST(req: NextRequest) {
     const body = await req.json();
-    // ...your logic...
-    return NextResponse.json({ ok: true });
+    try {
+        const inserted = await saveOrder({
+            items: body.items,
+            subtotal_cents: body.subtotalCents,
+            tax_cents: body.taxCents,
+            tip_cents: body.tipCents,
+            service_fee_cents: body.serviceFeeCents,
+            order_type: body.orderType,
+            customer: body.customer,
+        });
+        return NextResponse.json({ ok: true, orderId: inserted?.[0]?.id });
+    } catch (e: any) {
+        return NextResponse.json({ ok: false, error: e.message }, { status: 500 });
+    }
 }
 
 // export async function POST(req: NextRequest) {

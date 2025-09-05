@@ -11,9 +11,19 @@ const LOCATIONS = [
 export default function OrderPage() {
     const router = useRouter();
 
-    function choose(id: string) {
+    async function choose(id: string) {
         try {
             localStorage.setItem('gc_location', id);
+            let userId = localStorage.getItem('gc_user_id');
+            if (!userId) {
+                userId = crypto.randomUUID();
+                localStorage.setItem('gc_user_id', userId);
+            }
+            await fetch('/api/preferences', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userId, key: 'location', value: id }),
+            });
         } catch {
         }
         router.push('/order/menu');
