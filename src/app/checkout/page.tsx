@@ -21,7 +21,7 @@ export default function CheckoutPage() {
   }
 
   return (
-    <main className="mx-auto max-w-2xl space-y-6">
+    <main className="mx-auto max-w-2xl space-y-6 mt-32">
       <section className="rounded-2xl border bg-white p-4 shadow-sm">
         <h2 className="text-lg font-semibold mb-3">Checkout</h2>
         <div className="space-y-2">

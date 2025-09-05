@@ -3,7 +3,7 @@ import {useState, useEffect, useRef} from 'react';
 import styles from './Header.module.css';
 
 const navItems = [
-    {label: 'ORDER NOW', href: 'https://goodchickenusa.com/', emphasize: true},
+    {label: 'ORDER NOW', href: '/order', emphasize: true},
     {label: 'LOCATIONS', href: '#FindUs'},
     {label: 'MENU', href: '#Menu'},
     {label: 'CATERING', href: '#Contact'},
@@ -15,6 +15,7 @@ export default function Header() {
     const [open, setOpen] = useState(false);
     const menuRef = useRef<HTMLDivElement | null>(null);
     const [scrolled, setScrolled] = useState(false);
+    const [noScroll, setNoScroll] = useState(false);
 
     const mid = Math.ceil(navItems.length / 2);
     const leftItems = navItems.slice(0, mid);
@@ -48,10 +49,32 @@ export default function Header() {
         return () => window.removeEventListener("scroll", onScroll);
     }, []);
 
+    useEffect(() => {
+        const update = () => {
+            const root = document.documentElement;
+            const body = document.body;
+            const scrollH = Math.max(root.scrollHeight, body.scrollHeight);
+            const clientH = root.clientHeight;
+            // tiny fudge factor for sub-pixel rounding
+            setNoScroll(scrollH <= clientH + 1);
+        };
+
+        update();                 // on mount
+        const ro = new ResizeObserver(update);
+        ro.observe(document.documentElement);
+        window.addEventListener("resize", update);
+
+        return () => {
+            ro.disconnect();
+            window.removeEventListener("resize", update);
+        };
+    }, []);
+
+    const darkAssets = scrolled || noScroll;
 
     return (
         <header
-            className={`${styles.header} ${scrolled ? styles.headerScrolled : ""}`}
+            className={`${styles.header} ${scrolled ? styles.headerScrolled : ""} ${!scrolled && noScroll ? styles.headerNoScroll : ""}`}
             id="top"
             data-aos="fade-down"
             data-aos-duration="400"
@@ -61,7 +84,7 @@ export default function Header() {
                     <a href="#" className={styles.brand} aria-label="BBQ Chicken home">
                         <img
                             width="85" height="85"
-                            src={`${scrolled ? "/Good-Chicken-logo.png" : "/Good-Chicken-white-logo.png"}`}
+                            src={darkAssets ? "/Good-Chicken-logo.png" : "/Good-Chicken-white-logo.png"}
                             alt="Good Chicken"
                         />
                     </a>
@@ -103,7 +126,7 @@ export default function Header() {
                     </ul>
                     <a href="#" className={`${styles.brand} ${styles.centerBrand}`} aria-label="BBQ Chicken home">
                         <img width="85" height="85"
-                             src={`${scrolled ? "/Good-Chicken-logo.png" : "/Good-Chicken-white-logo.png"}`}
+                             src={darkAssets ? "/Good-Chicken-logo.png" : "/Good-Chicken-white-logo.png"}
                              alt="Good Chicken"/>
                     </a>
 
