@@ -4,11 +4,11 @@ import styles from './Header.module.css';
 
 const navItems = [
     {label: 'ORDER NOW', href: 'https://goodchickenusa.com/', emphasize: true},
-    {label: 'LOCATIONS', href: 'https://goodchickenusa.com/'},
-    {label: 'MENU', href: 'https://goodchickenusa.com/menu-2/'},
-    {label: 'CATERING', href: 'https://goodchickenusa.com/'},
-    {label: 'FRANCHISING', href: 'https://goodchickenusa.com/'},
-    {label: 'CONTACT US', href: 'https://goodchickenusa.com/menu-2/'},
+    {label: 'LOCATIONS', href: '#FindUs'},
+    {label: 'MENU', href: '#Menu'},
+    {label: 'CATERING', href: '#Contact'},
+    {label: 'FRANCHISING', href: '#Contact'},
+    {label: 'CONTACT US', href: '#Contact'},
 ];
 
 export default function Header() {
@@ -41,7 +41,7 @@ export default function Header() {
 
     useEffect(() => {
         const onScroll = () => {
-            const heroHeight = document.querySelector("section[role='banner']")?.scrollHeight || 0;
+            const heroHeight = (document.querySelector("section[role='banner']")?.scrollHeight ?? 0) - 10;
             setScrolled(window.scrollY > heroHeight);
         };
         window.addEventListener("scroll", onScroll);

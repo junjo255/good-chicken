@@ -9,6 +9,7 @@ import Catering from "@/app/components/Catering/Catering";
 import ContactUs from "@/app/components/ContactUs/ContactUs";
 import AOSInit from "@/app/AOSInit";
 import Marquee from "react-fast-marquee";
+import InstagramFeed from "@/app/components/InstagramFeed/InstagramFeed";
 
 export default async function Home() {
     const h = await headers();
@@ -31,7 +32,7 @@ export default async function Home() {
             <Locations />
 
             {/*<TempInstagramFeed/>*/}
-            {/*<InstagramFeed/>*/}
+            <InstagramFeed/>
             <Catering/>
             <ContactUs/>
             <Marquee

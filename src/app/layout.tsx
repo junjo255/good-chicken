@@ -7,16 +7,6 @@ import Footer from "@/app/components/Footer/Footer";
 import {headers} from "next/headers";
 import 'mapbox-gl/dist/mapbox-gl.css';
 
-const geistSans = Geist({
-    variable: "--font-geist-sans",
-    subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-    variable: "--font-geist-mono",
-    subsets: ["latin"],
-});
-
 export const metadata: Metadata = {
     title:
         "Good Chicken",
@@ -47,7 +37,7 @@ export default async function RootLayout({
         <head>
             <script async src="//www.instagram.com/embed.js"></script>
         </head>
-        <body className={`${geistSans.variable} ${geistMono.variable}`}>
+        <body>
             <Header/>
             {children}
             <Footer locations={footerLocations}/>

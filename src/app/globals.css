@@ -33,6 +33,7 @@
     --brand: #AF3935;
     --brand-li: rgba(192, 42, 46, 0.25);
     --brand-sub: #E9BC46;
+    /*--brand-sub: #e7b122;*/
     /*--brand-600: rgba(192, 42, 46, 0.42);*/
     --card: #f9fafb;
     --ring: rgba(185, 28, 28, .25);
@@ -40,7 +41,10 @@
     --radius: 18px;
     --header-h: 96px;
 }
-html, body { overflow-x: hidden; }
+
+html, body {
+    overflow-x: hidden;
+}
 
 * {
     box-sizing: border-box;
@@ -48,6 +52,10 @@ html, body { overflow-x: hidden; }
 
 html {
     scroll-behavior: smooth;
+}
+
+selector {
+    scrollbar-color: var(--brand);
 }
 
 body {

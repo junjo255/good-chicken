@@ -33,7 +33,7 @@ export default function Hero() {
                      data-aos-delay="320"
                      data-aos-duration="650">
                     <Link href="/order" className="cta">Order Now</Link>
-                    <a href="#locations" className="cta ghost">Find a Location</a>
+                    <a href="#FindUs" className="cta ghost">Find a Location</a>
                 </div>
             </div>
         </section>

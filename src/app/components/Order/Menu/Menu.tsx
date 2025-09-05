@@ -2,7 +2,7 @@
 
 import React, {useMemo, useState} from 'react';
 import Link from 'next/link';
-import {Menu as MenuIcon, Sparkles, Drumstick, Package2, Utensils} from 'lucide-react';
+import {Menu as MenuIcon, Sparkles, Drumstick, Package2, Utensils, Plus} from 'lucide-react';
 import Crispy from '@/app/components/Order/Menu/products/crispy';
 import Popcorn from '@/app/components/Order/Menu/products/popcorn';
 import SoyGarlic from '@/app/components/Order/Menu/products/soyGarlic';
@@ -146,7 +146,7 @@ function NewBadge() {
     );
 }
 
-export default function Menu() {
+export default function OrderingMenu() {
     const [active, setActive] = useState<string>('all');
     const [open, setOpen] = useState(false);
     const [current, setCurrent] = useState<ConfigProduct | null>(null);
@@ -171,40 +171,51 @@ export default function Menu() {
     }
 
     return (
-        <main className="mx-auto max-w-6xl px-6 py-8">
+        <main className="mx-auto max-w-6xl px-6">
             {/* Title + note */}
-            <header className="mb-6">
-                <h1 className="text-[28px] font-bold leading-tight">Menu</h1>
-                <p className="mt-1 text-sm text-neutral-500">※ Prices may vary by store.</p>
-            </header>
-
-            {/* Category tabbar */}
-            <nav className="mb-8 overflow-x-auto">
-                <ul className="flex min-w-max items-stretch gap-2 rounded-lg bg-[#f2f2f2] p-2">
-                    {CATEGORIES.map((c) => {
-                        const on = c.id === active;
-                        return (
-                            <li key={c.id}>
+            {/*<header className="mb-6">*/}
+            {/*    <h1 className="text-[28px] font-bold leading-tight">Menu</h1>*/}
+            {/*    <p className="mt-1 text-sm text-neutral-500">※ Prices may vary by store.</p>*/}
+            {/*</header>*/}
+            <div
+                className="mx-auto max-w-6xl px-4 mb-8 aos-init aos-animate"
+                data-aos="zoom-in"
+                data-aos-delay="350"
+                data-aos-duration="500"
+            >
+                <div
+                    className="flex flex-wrap items-center justify-center gap-3"
+                >
+                    {CATEGORIES
+                        .map((c) => {
+                            const on = c.id === active;
+                            return (
+                                <>
                                 <button
+                                    key={c.id}
                                     onClick={() => setActive(c.id)}
-                                    className={[
-                                        'flex items-center gap-2 rounded-md px-4 py-2 text-sm',
-                                        on
-                                            ? 'bg-white font-semibold shadow-sm'
-                                            : 'text-neutral-600 hover:bg-white/70',
-                                    ].join(' ')}
+
+                                    className={
+                                        "inline-flex items-center text-yellow gap-2 pb-4 px-5 py-3 text-sm font-semibold tracking-wider transition-all " +
+
+                                        (on
+                                            ? "text-black cursor-pointer"
+                                            : "text-[#6b7280] hover:text-black hover:border-white cursor-pointer ")
+                                    }
                                 >
-                                    <span className="shrink-0">{c.icon}</span>
-                                    <span className="whitespace-nowrap">{c.label}</span>
+                                    {c.icon && <span className="grid place-items-center">{c.icon}</span>}
+                                    <span>{c.label}</span>
                                 </button>
-                            </li>
-                        );
-                    })}
-                </ul>
-            </nav>
+                                </>
+
+                            );
+                        })}
+                </div>
+            </div>
+
 
             {/* 3-column grid (same layout) */}
-            <section className="grid grid-cols-1 gap-x-10 gap-y-14 md:grid-cols-2 lg:grid-cols-3">
+            <section className="grid grid-cols-1 gap-x-10 gap-y-14 md:grid-cols-2 lg:grid-cols-3" style={{padding: 0}}>
                 {filtered.map(item => (
                     <article key={item.id} className="group">
                         <div className="relative overflow-hidden rounded-[14px] border border-neutral-200 bg-white">
@@ -229,20 +240,19 @@ export default function Menu() {
                                     {item.product ? (
                                         <button
                                             onClick={() => openPicker(item.product!)}
-                                            className="inline-flex items-center gap-1 rounded border border-[#e6d8bd] bg-[#fffaf0] px-3 py-[6px] text-[12px] text-neutral-700 transition-colors hover:bg-[#fff3d8]"
+                                            className="inline-flex items-center gap-1 rounded border rounded-full border-[#E9BC46] bg-[#E9BC46] px-3 py-[6px] text-[12px] text-neutral-700 transition-colors hover:bg-[#E7B122FF] hover:cursor-pointer "
                                         >
-                                            <span
-                                                className="inline-block h-[14px] w-[14px] rounded-[2px] border border-[#c7b795] bg-white"/>
-                                            See Details
+                                            <Plus color="#3F3126" />
+
                                         </button>
                                     ) : (
                                         <Link
                                             href="#"
-                                            className="inline-flex items-center gap-1 rounded border border-[#e6d8bd] bg-[#fffaf0] px-3 py-[6px] text-[12px] text-neutral-700 transition-colors hover:bg-[#fff3d8]"
+                                            className="inline-flex items-center gap-1 rounded border rounded-full border-[#E9BC46] bg-[#E9BC46] px-3 py-[6px] text-[12px] text-neutral-700 transition-colors hover:bg-[#E7B122FF] hover:cursor-pointer"
                                         >
                                             <span
                                                 className="inline-block h-[14px] w-[14px] rounded-[2px] border border-[#c7b795] bg-white"/>
-                                            See Details
+                                            <Plus color="#3F3126" />
                                         </Link>
                                     )}
                                 </div>

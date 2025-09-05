@@ -10,7 +10,7 @@
 
     margin-top: calc(var(--header-h, 172px) * -1);
     padding-top: calc(56px + var(--header-h, 96px));
-    min-height:125vh;
+    min-height: 125vh;
 }
 
 .hero::before {
@@ -21,7 +21,7 @@
     background-size: cover;
     filter: brightness(30%);
     z-index: 0;
-    background-position: center calc(50% + (var(--scroll, 10px) * 0.25px));
+    background-position: center;
     transition: background-position 60ms linear;
 }
 
@@ -30,7 +30,7 @@
     text-align: center;
     z-index: 1;
     padding: 56px 16px;
-    transform: translateY(calc(var(--scroll, 0) * 0.02px));
+    transform: translateY(-50px);
     transition: transform 60ms linear;
 }
 

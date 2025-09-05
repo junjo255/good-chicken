@@ -120,7 +120,7 @@ function LocationPanel({location}: { location: Location }) {
 
 export default function FindUsSection() {
     return (
-        <section className="mx-auto max-w-6xl px-4 md:px-6 py-10 md:py-14">
+        <section id="FindUs" className="mx-auto max-w-6xl px-4 md:px-6 py-10 md:py-14">
             <header className="text-center mb-10">
                 <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-[#423023]">
                     Find Us Near You

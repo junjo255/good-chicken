@@ -5,7 +5,7 @@ import styles from './ContactUs.module.css';
 export default function ContactUs() {
     return (
         <section
-            id="contact"
+            id="Contact"
             className="about"
             data-aos="fade-up"
         >
