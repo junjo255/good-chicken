@@ -9,11 +9,11 @@ function Money({cents}: {cents: number}) {
 }
 
 export default function CheckoutPage() {
-  const {items, tipCents, setTipCents, clear} = useCart();
+  const {items, clear} = useCart();
   const taxRate = Number(process.env.NEXT_PUBLIC_TAX_RATE || 0);
   const subtotal = cartSubtotalCents(items);
   const tax = taxCents(subtotal, taxRate);
-  const total = totalCents(subtotal, tax, tipCents);
+  const total = totalCents(subtotal, tax);
 
   function placeOrder() {
     alert('Order placed!');
@@ -39,8 +39,8 @@ export default function CheckoutPage() {
             <input
               type="number"
               className="ml-2 w-20 rounded border p-1"
-              value={(tipCents/100).toFixed(2)}
-              onChange={e=>setTipCents(Math.max(0, Math.round(Number(e.target.value)*100)))}
+              // value={(tipCents/100).toFixed(2)}
+              // onChange={e=>setTipCents(Math.max(0, Math.round(Number(e.target.value)*100)))}
             />
           </div>
           <div className="flex justify-between font-semibold"><span>Total</span><Money cents={total} /></div>

@@ -17,6 +17,6 @@ export function taxCents(subtotalCents: number, taxRateNumber: number) {
 }
 
 
-export function totalCents(subtotal: number, tax: number, tip: number, serviceFee = 0) {
-    return subtotal + tax + tip + serviceFee;
+export function totalCents(subtotal: number, tax: number) {
+    return subtotal + tax;
 }
