@@ -2,6 +2,7 @@
 
 import React from 'react';
 import {useRouter} from 'next/navigation';
+import StepperMain from "@/app/components/Order/Stepper/StepperMain";
 
 const LOCATIONS = [
     {id: 'montclair', name: 'Montclair'},
@@ -25,22 +26,16 @@ export default function OrderPage() {
                 body: JSON.stringify({ userId, key: 'location', value: id }),
             });
         } catch {
-        }
-        router.push('/order/menu');
+        }router.push('/order/menu');
     }
 
     return (
-        <section className="mx-auto max-w-md space-y-4 py-10 mt-[var(--header-h)]">
-            <h1 className="text-2xl font-bold mb-4 text-center">Choose Location</h1>
-            {LOCATIONS.map(loc => (
-                <button
-                    key={loc.id}
-                    onClick={() => choose(loc.id)}
-                    className="block w-full rounded-lg border px-4 py-3 text-left hover:bg-neutral-50"
-                >
-                    {loc.name}
-                </button>
-            ))}
+        <section
+            style={{maxWidth: "1200px"}}
+            className="mx-auto space-y-4 py-10 mt-[var(--header-h)]">
+
+            <StepperMain />
+
         </section>
     );
 }

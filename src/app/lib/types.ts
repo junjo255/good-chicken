@@ -88,3 +88,14 @@ export type CardItem = {
     startingPriceCents?: number;
 };
 
+export type StoreLocation = {
+    id: string;
+    brand: string;
+    city: string;
+    address: string;
+    phone?: string;
+    hours?: string;
+    open: boolean;
+    services?: string[];
+    mapsEmbedUrl: string;
+};

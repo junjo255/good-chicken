@@ -15,8 +15,9 @@ import Mojito from "@/app/components/Order/Menu/products/mojito";
 import Water from "@/app/components/Order/Menu/products/water";
 import Soda from "@/app/components/Order/Menu/products/soda";
 import IcedTea from "@/app/components/Order/Menu/products/icedTea";
-import {CardItem, Category} from "@/app/lib/types";
+import {CardItem, CartModifier, Category} from "@/app/lib/types";
 import {useCart} from "@/app/lib/cart";
+import {useRouter} from "next/navigation";
 
 export const CATEGORIES: Category[] = [
     {id: 'all', label: 'ALL', icon: <MenuIcon className="h-4 w-4"/>},
@@ -166,18 +167,54 @@ export default function OrderingMenu() {
         setOpen(true);
     }
 
-    function handleAdd({sku, name, priceCents}: { sku: string; name: string; priceCents: number }) {
-        addItem(sku, name, priceCents, []);
+    function handleAdd({
+                           sku,
+                           name,
+                           priceCents,
+                       }: {
+        sku: string;
+        name: string;
+        priceCents: number;
+    }) {
+        // Construct modifiers based on selections
+        const modifiers: CartModifier[] = [];
+
+        if (sel.part) {
+            modifiers.push({
+                id: "part",
+                name: sel.part,
+                priceCents: 0,
+            });
+        }
+
+        if (sel.heat) {
+            modifiers.push({
+                id: "heat",
+                name: sel.heat,
+                priceCents: 0,
+            });
+        }
+
+        // Static example modifiers to replicate screenshot
+        modifiers.push(
+            {
+                id: "included",
+                name: "Included sides",
+                priceCents: 0,
+            },
+            {
+                id: "salsa",
+                name: "Fresh Tomato Salsa",
+                priceCents: 0,
+            }
+        );
+
+        addItem(sku, name, priceCents, modifiers);
         setOpen(false);
     }
 
     return (
         <main className="mx-auto max-w-6xl px-6">
-            {/* Title + note */}
-            {/*<header className="mb-6">*/}
-            {/*    <h1 className="text-[28px] font-bold leading-tight">Menu</h1>*/}
-            {/*    <p className="mt-1 text-sm text-neutral-500">※ Prices may vary by store.</p>*/}
-            {/*</header>*/}
             <div
                 className="mx-auto max-w-6xl px-4 mb-8 aos-init aos-animate"
                 data-aos="zoom-in"
@@ -214,8 +251,6 @@ export default function OrderingMenu() {
                 </div>
             </div>
 
-
-            {/* 3-column grid (same layout) */}
             <section className="grid grid-cols-1 gap-x-10 gap-y-14 md:grid-cols-2 lg:grid-cols-3" style={{padding: 0}}>
                 {filtered.map(item => (
                     <article key={item.id} className="group">

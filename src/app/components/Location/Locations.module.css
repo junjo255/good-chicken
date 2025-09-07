@@ -1,0 +1,9 @@
+
+.locationPadding {
+    padding: 80px 40px;
+}
+
+.stepperPadding {
+    padding: 0 !important;
+    background-color: transparent;
+}

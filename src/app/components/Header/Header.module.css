@@ -11,16 +11,21 @@
 
 .headerScrolled {
     background: #fff;
+    -webkit-box-shadow: 0 8px 10px -6px rgba(38, 38, 38, 0.16);
+    -moz-box-shadow: 0 8px 10px -6px rgba(38, 38, 38, 0.16);
+    box-shadow: 0 8px 10px -6px rgba(38, 38, 38, 0.16);
 
-    .inner{
+    .inner {
         color: var(--text);
     }
 }
 
 .headerNoScroll {
+
     .inner {
         color: #3F3126;
     }
+
 }
 
 .link {

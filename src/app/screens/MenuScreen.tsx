@@ -2,7 +2,6 @@
 
 import React from 'react';
 import OrderingMenu from '@/app/components/Order/Menu/Menu';
-import CartDrawer from '@/app/components/CartDrawer/CartDrawer';
 import ChosenLocation from "@/app/components/Order/Location/ChosenLocation";
 
 export default function MenuScreen() {
@@ -12,7 +11,6 @@ export default function MenuScreen() {
             <div className="lg:col-span-2">
             <OrderingMenu/>
             </div>
-            <CartDrawer/>
         </section>
     );
 }

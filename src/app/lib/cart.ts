@@ -1,53 +1,83 @@
+// /app/lib/cart.ts
 'use client';
-import { useEffect, useState } from 'react';
-import type { CartItem, CartModifier } from './types';
 
+import { create } from 'zustand';
+import { persist, createJSONStorage } from 'zustand/middleware';
 
-const KEY = 'restaurant_cart_v1';
+export type CartModifier = { id: string; name: string; priceCents: number };
+export type CartLine = {
+    id: string;
+    sku: string;
+    name: string;
+    basePriceCents: number;
+    quantity: number;
+    modifiers: CartModifier[];
+};
 
+type CartStore = {
+    items: CartLine[];
+    addItem: (sku: string, name: string, basePriceCents: number, modifiers?: CartModifier[]) => void;
+    increaseQty: (id: string) => void;
+    decreaseQty: (id: string) => void;
+    removeItem: (id: string) => void;
+    clear: () => void;
+};
 
-export function useCart() {
-    const [items, setItems] = useState<CartItem[]>([]);
-    const [tipCents, setTipCents] = useState(0);
+const sameMods = (a: CartModifier[] = [], b: CartModifier[] = []) => {
+    if (a.length !== b.length) return false;
+    const norm = (arr: CartModifier[]) =>
+        arr
+            .slice()
+            .map((m) => `${m.id}:${m.name}:${m.priceCents}`)
+            .sort()
+            .join('|');
+    return norm(a) === norm(b);
+};
 
-
-    useEffect(() => {
-        try {
-            const raw = localStorage.getItem(KEY);
-            if (raw) {
-                const parsed = JSON.parse(raw);
-                setItems(parsed.items || []);
-                setTipCents(parsed.tipCents || 0);
-            }
-        } catch {}
-    }, []);
-
-
-    useEffect(() => {
-        localStorage.setItem(KEY, JSON.stringify({ items, tipCents }));
-    }, [items, tipCents]);
-
-
-    function addItem(id: string, name: string, basePriceCents: number, modifiers: CartModifier[] = []) {
-        setItems(prev => [...prev, { id, name, basePriceCents, quantity: 1, modifiers }]);
-    }
-
-
-    function updateItem(index: number, next: Partial<CartItem>) {
-        setItems(prev => prev.map((it, i) => (i === index ? { ...it, ...next } : it)));
-    }
-
-
-    function removeItem(index: number) {
-        setItems(prev => prev.filter((_, i) => i !== index));
-    }
-
-
-    function clear() {
-        setItems([]);
-        setTipCents(0);
-    }
-
-
-    return { items, tipCents, setTipCents, addItem, updateItem, removeItem, clear };
-}
+export const useCart = create<CartStore>()(
+    persist(
+        (set, get) => ({
+            items: [],
+            addItem: (sku, name, basePriceCents, modifiers = []) => {
+                set((state) => {
+                    // merge with an existing line that has the same sku+modifiers
+                    const idx = state.items.findIndex(
+                        (i) => i.sku === sku && sameMods(i.modifiers, modifiers)
+                    );
+                    if (idx >= 0) {
+                        const next = state.items.slice();
+                        next[idx] = { ...next[idx], quantity: next[idx].quantity + 1 };
+                        return { items: next };
+                    }
+                    const id = `${sku}-${Math.random().toString(36).slice(2, 9)}`;
+                    const line: CartLine = { id, sku, name, basePriceCents, quantity: 1, modifiers };
+                    return { items: [...state.items, line] };
+                });
+            },
+            increaseQty: (id) =>
+                set((state) => ({
+                    items: state.items.map((i) => (i.id === id ? { ...i, quantity: i.quantity + 1 } : i)),
+                })),
+            decreaseQty: (id) =>
+                set((state) => {
+                    const it = state.items.find((i) => i.id === id);
+                    if (!it) return {};
+                    if (it.quantity > 1) {
+                        return {
+                            items: state.items.map((i) =>
+                                i.id === id ? { ...i, quantity: i.quantity - 1 } : i
+                            ),
+                        };
+                    }
+                    return { items: state.items.filter((i) => i.id !== id) };
+                }),
+            removeItem: (id) => set((state) => ({ items: state.items.filter((i) => i.id !== id) })),
+            clear: () => set({ items: [] }),
+        }),
+        {
+            name: 'gc-cart',
+            storage:
+                typeof window !== 'undefined' ? createJSONStorage(() => localStorage) : undefined,
+        }
+    )
+);

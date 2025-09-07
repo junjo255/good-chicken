@@ -12,17 +12,17 @@ import Marquee from "react-fast-marquee";
 import InstagramFeed from "@/app/components/InstagramFeed/InstagramFeed";
 
 export default async function Home() {
-    const h = await headers();
-    const proto = h.get("x-forwarded-proto") ?? "http";
-    const host = h.get("host") ?? "localhost:3000";
-    const base = `${proto}://${host}`;
-
-    const res = await fetch(`${base}/api/locations`, {cache: "no-store"});
-    const {locations} = await res.json();
+    // const h = await headers();
+    // const proto = h.get("x-forwarded-proto") ?? "http";
+    // const host = h.get("host") ?? "localhost:3000";
+    // const base = `${proto}://${host}`;
+    //
+    // const res = await fetch(`${base}/api/locations`, {cache: "no-store"});
+    // const {locations} = await res.json();
 
     return (
         <>
-            <AOSInit />
+            {/*<AOSInit />*/}
             <Hero/>
 
             <Menu/>

@@ -30,7 +30,7 @@ export async function GET() {
         {
             id: 'jerseyCity',
             name: 'Jersey City',
-            address: '414 Gand St Jersey City, NJ',
+            address: '414 Grand St Jersey City, NJ',
             lat: 40.8136,
             lng: -74.214,
             orderUrl: 'https://goodchickenusa.com/',

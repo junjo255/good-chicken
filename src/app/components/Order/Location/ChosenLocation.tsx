@@ -67,27 +67,27 @@ export default function ChosenLocation() {
 
                 {/* Meta row */}
                 <div className="mt-2 flex flex-wrap items-center gap-2 text-sm text-neutral-700">
-                    <span className="font-semibold">4.6</span>
-                    <span>★</span>
-                    <span>(3,000+)</span>
-                    <span>·</span>
-                    <span className="inline-flex items-center gap-1">
-                      <span className="rounded-full border border-[#212427] px-2 py-0.5 text-xs">Uber One</span>
-                    </span>
-                    <span>·</span>
-                    <span>American</span>
-                    <span>·</span>
-                    <span>Burgers</span>
-                    <span>·</span>
-                    <span>Fast Food</span>
-                    <span>·</span>
-                    <span>Group Friendly</span>
-                    <span>·</span>
-                    <span>$</span>
-                    <span>·</span>
-                    <Link href="#" className="underline">
-                        Info
-                    </Link>
+                    {/*<span className="font-semibold">4.6</span>*/}
+                    {/*<span>★</span>*/}
+                    {/*<span>(3,000+)</span>*/}
+                    {/*<span>·</span>*/}
+                    {/*<span className="inline-flex items-center gap-1">*/}
+                    {/*  <span className="rounded-full border border-[#212427] px-2 py-0.5 text-xs">Uber One</span>*/}
+                    {/*</span>*/}
+                    {/*<span>·</span>*/}
+                    {/*<span>American</span>*/}
+                    {/*<span>·</span>*/}
+                    {/*<span>Burgers</span>*/}
+                    {/*<span>·</span>*/}
+                    {/*<span>Fast Food</span>*/}
+                    {/*<span>·</span>*/}
+                    {/*<span>Group Friendly</span>*/}
+                    {/*<span>·</span>*/}
+                    {/*<span>$</span>*/}
+                    {/*<span>·</span>*/}
+                    {/*<Link href="#" className="underline">*/}
+                    {/*    Info*/}
+                    {/*</Link>*/}
                 </div>
 
                 {/* Address */}
@@ -95,10 +95,7 @@ export default function ChosenLocation() {
 
                 {/* Description */}
                 <p className="mt-3 max-w-3xl text-sm leading-relaxed text-neutral-800">
-                    Good Chicken, Jersey City in Jersey City is a highly-rated fast food chain that offers
-                    budget-friendly options.
-                    The restaurant is most popular in the evening, and customers often order the Big Mac Meal, Medium
-                    Frenc…
+                    Good Chicken, Jersey City in Jersey City ....
                     <Link href="#" className="ml-1 underline">
                         More
                     </Link>
@@ -107,27 +104,30 @@ export default function ChosenLocation() {
             <aside className="lg:col-span-1">
                 {/* Tabs */}
                 <div className="flex items-center gap-2">
-                    <button className="rounded-full border border-[#212427] px-4 py-2 text-sm font-medium shadow-sm">Delivery
-                    </button>
+
                     <button className="rounded-full border px-4 py-2 text-sm text-neutral-400">Pickup</button>
-                    <button className="ml-auto rounded-full border border-[#212427] px-4 py-2 text-sm">Group order</button>
+                    {/*<button*/}
+                    {/*    className="rounded-full border border-[#212427] px-4 py-2 text-sm font-medium shadow-sm">Delivery*/}
+                    {/*</button>*/}
+                    {/*<button className="ml-auto rounded-full border border-[#212427] px-4 py-2 text-sm">Group order*/}
+                    {/*</button>*/}
                 </div>
 
-                {/* Availability / ETA card */}
-                <div className="mt-3 grid grid-cols-2 gap-3 rounded-xl border border-[#212427] bg-white p-4">
-                    <div>
-                        <div className="text-sm font-semibold">Unavailable</div>
-                        <div className="mt-1 flex items-center gap-1 text-xs text-neutral-600">
-                            <span>Other fees</span> <Info/>
-                        </div>
-                    </div>
-                    <div>
-                        <div className="text-sm font-semibold">17 min</div>
-                        <div className="mt-1 flex items-center gap-1 text-xs text-neutral-600">
-                            <span>Earliest arrival</span> <Info/>
-                        </div>
-                    </div>
-                </div>
+                {/*/!* Availability / ETA card *!/*/}
+                {/*<div className="mt-3 grid grid-cols-2 gap-3 rounded-xl border border-[#212427] bg-white p-4">*/}
+                {/*    <div>*/}
+                {/*        <div className="text-sm font-semibold">Unavailable</div>*/}
+                {/*        <div className="mt-1 flex items-center gap-1 text-xs text-neutral-600">*/}
+                {/*            <span>Other fees</span> <Info/>*/}
+                {/*        </div>*/}
+                {/*    </div>*/}
+                {/*    <div>*/}
+                {/*        <div className="text-sm font-semibold">17 min</div>*/}
+                {/*        <div className="mt-1 flex items-center gap-1 text-xs text-neutral-600">*/}
+                {/*            <span>Earliest arrival</span> <Info/>*/}
+                {/*        </div>*/}
+                {/*    </div>*/}
+                {/*</div>*/}
 
                 {/* Map card */}
                 <div className="mt-3 overflow-hidden rounded-xl border border-[#212427] bg-white">
@@ -156,8 +156,8 @@ export default function ChosenLocation() {
                     {/* Address & copy */}
                     <div className="flex items-start justify-between gap-3 p-4">
                         <div className="text-sm">
-                            <div className="font-medium">828 N State Rt 17</div>
-                            <div className="text-neutral-600">Paramus, NJ</div>
+                            <div className="font-medium">414 Grand St</div>
+                            <div className="text-neutral-600">Jersey City, NJ 07302</div>
                         </div>
                         <button className="inline-flex items-center gap-1 rounded-md border border-[#212427] px-2 py-1 text-xs">
                             <Copy/>
