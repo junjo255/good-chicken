@@ -36,7 +36,10 @@ export default function MenuCarousel({
     };
 
     return (
-        <section id="Menu" className="w-full text-[#423023]">
+        <section
+            id="Menu"
+            className="w-full text-[#423023] pt-20"
+        >
             <div
                 className="aos-init aos-animate"
                 data-aos="zoom-in"

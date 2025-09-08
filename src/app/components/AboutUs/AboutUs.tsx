@@ -50,9 +50,9 @@ import Marquee from "react-fast-marquee";
  */
 
 type Props = {
-    leftImage?: string;   // interior/store image
-    centerImage?: string; // product image (on beige oval)
-    rightImage?: string;  // storefront image at night
+    leftImage?: string;
+    centerImage?: string;
+    rightImage?: string;
 };
 
 export default function AboutUs({
@@ -62,7 +62,7 @@ export default function AboutUs({
                                 }: Props) {
     return (
         <section
-            className="w-full"
+            className="w-full mt-20"
             style={{
                 backgroundColor: "#AF3935",
             }}

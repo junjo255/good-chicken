@@ -4,7 +4,7 @@ export default function Catering() {
     return (
         <section
             id="catering"
-            className="about"
+            className="about pt-20"
             data-aos="fade-up"
         >
             <div className="container">

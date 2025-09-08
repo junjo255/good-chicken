@@ -51,7 +51,8 @@ export default function InstagramFeed({endpoint = '/api/instagram'}: { endpoint?
     const displayName = useMemo(() => profile?.name || profile?.username || 'Instagram', [profile]);
 
     return (
-        <section className={styles.wrap}>
+        <section
+            className={`${styles.wrap} "pt-20"`}>
             <div className={styles.header}>
                 <div className={styles.headerLeft}>
                     <img

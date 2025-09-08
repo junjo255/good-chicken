@@ -8,16 +8,23 @@ export default function OrderNow() {
     return (
         <section
             id="order"
-            className="aboutaos-init aos-animate"
+            className="aboutaos-init aos-animate pt-25 pb-25"
             data-aos="zoom-in"
             data-aos-delay="350"
             data-aos-duration="500"
         >
             <div className="container center">
-                <h2 className="section-title">Order Now</h2>
-                <p className="muted" style={{marginBottom: 18}}>
-                    Craving that juicy goodness? We’ve got you.
-                </p>
+                {/*<h2 className="section-title">Order Now</h2>*/}
+                <h3 className="order-pt"
+                    style={{
+                        marginBottom: 18,
+                        fontFamily: "Fontania, sans-serif",
+                        color: "#AF3935",
+                        fontSize: "70px"
+                    }}
+                >
+                    Craving that juicy goodness? <br/> <span style={{color: "#E9BC46", fontSize: "80px"}}>We’ve got you.</span>
+                </h3>
                 <div
                     className={styles.actions}
                     data-aos="fade-up"

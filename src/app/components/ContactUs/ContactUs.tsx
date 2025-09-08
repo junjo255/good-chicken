@@ -6,7 +6,7 @@ export default function ContactUs() {
     return (
         <section
             id="Contact"
-            className="about"
+            className="about pt-20"
             data-aos="fade-up"
         >
             <div className={styles.container}>
