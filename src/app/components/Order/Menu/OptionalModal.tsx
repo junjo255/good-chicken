@@ -45,8 +45,8 @@ function Pill({ children, on, disabled, onClick }:{
             disabled={disabled}
             onClick={onClick}
             className={[
-                'rounded-full border px-3 py-1 text-sm',
-                on ? 'bg-black text-white' : 'bg-white hover:bg-neutral-100',
+                'rounded-full border px-3 py-1 text-sm cursor-pointer',
+                on ? 'bg-[#3F3126] text-white' : 'bg-white hover:bg-neutral-100',
                 disabled ? 'opacity-40 cursor-not-allowed' : ''
             ].join(' ')}
         >
@@ -114,11 +114,11 @@ export default function OptionModal({
                     <div className="min-w-0">
                         <div className="flex items-center gap-2">
                             <h3 className="truncate text-lg font-semibold">{product.title}</h3>
-                            {product.ribbon && <span className="rounded-full bg-red-600 px-2 py-[2px] text-[11px] font-bold text-white">{product.ribbon}</span>}
+                            {product.ribbon && <span className="rounded-full bg-[#AF3935] px-2 py-[2px] text-[11px] font-bold text-white">{product.ribbon}</span>}
                         </div>
-                        <div className="mt-1 text-sm text-neutral-600">Choose Options</div>
+                        <div className="mt-1 text-sm text-[#262626]">Choose Options</div>
                     </div>
-                    <button onClick={onClose} className="ml-auto rounded-lg border px-2 py-1 text-sm">Close</button>
+                    <button onClick={onClose} className="ml-auto rounded-lg border px-2 py-1 text-sm  cursor-pointer">Close</button>
                 </div>
 
                 <div className="border-t p-4">
@@ -127,9 +127,9 @@ export default function OptionModal({
                         const all = a.values;
                         return (
                             <div key={a.id} className="mb-3">
-                                <div className="mb-1 text-xs font-semibold text-neutral-600">{a.name}</div>
-                                <div className="flex flex-wrap gap-2">
-                                    {all.map(v => (
+                                <div className="mb-1 text-xs font-semibold text-[#262626]">{a.name}</div>
+                                <div className="flex flex-wrap gap-2  cursor-pointer">
+                                    {all.filter(a => avail.includes(a)).map(v => (
                                         <Pill
                                             key={v}
                                             on={sel[a.id] === v}
@@ -150,7 +150,7 @@ export default function OptionModal({
                         ${(chosen?.priceCents ?? 0).toLocaleString('usd')}
                     </div>
                     <button
-                        className="rounded-xl bg-black px-4 py-2 text-white disabled:opacity-50"
+                        className="rounded-xl bg-[#AF3935] px-4 py-2 text-white disabled:opacity-50  cursor-pointer"
                         disabled={!chosen}
                         onClick={() => {
                             if (!chosen) return;

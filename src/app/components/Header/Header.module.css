@@ -47,6 +47,32 @@
     gap: 1rem;
     padding: 10px;
     color: white;
+
+    .mobileMenuOpen {
+        background-color: white !important;
+        box-shadow: 0 8px 10px -6px rgba(38, 38, 38, 0.16);
+    }
+}
+
+.cartButton {
+    display: none;
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    border: 0;
+    background: transparent;
+    padding: 6px;
+    line-height: 0;
+    cursor: pointer;
+}
+
+@media (max-width: 1024px) {
+    .cartButton {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
 }
 
 .brandRow {
@@ -68,7 +94,7 @@
 .menuButton {
     display: none;
     position: absolute;
-    right: 10px;
+    left: 10px;
     top: 50%;
     transform: translateY(-50%);
     border: 0;
@@ -124,23 +150,23 @@
     font-size: 14px;
     font-weight: 700;
     text-decoration: none;
-}
 
-.link:hover {
-    color: #AF3935;
+    &:hover {
+        color: #AF3935;
+    }
 }
 
 .emphasize {
     border: 2px var(--brand) solid;
     padding: 6px 27px;
     color: var(--brand);
-}
 
-.emphasize:hover {
-    cursor: pointer;
-    background-color: var(--brand);
-    transition: background-color 0.7s ease, color 0.7s ease;
-    color: #fff;
+    &:hover {
+        cursor: pointer;
+        background-color: var(--brand);
+        transition: background-color 0.7s ease, color 0.7s ease;
+        color: #fff;
+    }
 }
 
 .mobileMenu {
@@ -155,7 +181,14 @@
 .mobileMenuOpen {
     display: block;
     max-height: 420px;
+    background: #fff;
+    color: #3F3126;
 }
+
+.mobileMenuOpen .mobileLink {
+    color: #3F3126;
+}
+
 
 .mobileNavList {
     display: flex;

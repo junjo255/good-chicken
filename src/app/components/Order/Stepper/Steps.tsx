@@ -61,7 +61,7 @@ export default function getSteps(ctx: Ctx): StepDef[] {
                                 >
                                     <LocationPanel
                                         location={s}
-                                        isStepper={true}
+                                        component={"stepper"}
                                         setSelectedStoreId={setSelectedStoreId}
                                         selectedStoreId={selectedStoreId}
                                     />
@@ -77,7 +77,7 @@ export default function getSteps(ctx: Ctx): StepDef[] {
         {
             id: "type",
             label: "Order Type",
-            icon: <Shuffle />,
+            icon: <Shuffle/>,
             isEnabled: ({selectedStoreId}) => !!selectedStoreId,
             canContinue: ({orderType}) => orderType === "pickup" || orderType === "delivery",
             ctaLabel: ({orderType}) =>
@@ -159,7 +159,7 @@ export default function getSteps(ctx: Ctx): StepDef[] {
         {
             id: "menu-partner",
             label: "Menu/Partner",
-            icon: <Truck />,
+            icon: <Truck/>,
             isEnabled: ({orderType}) => orderType !== null,
             canContinue: ({orderType, partner}) =>
                 orderType === "pickup" || (orderType === "delivery" && !!partner),
@@ -183,43 +183,31 @@ export default function getSteps(ctx: Ctx): StepDef[] {
                             title="Select a delivery partner"
                             subtitle="You’ll complete checkout on the partner site in a new tab."
                         >
-                            <div className="grid md:grid-cols-2 gap-4">
+                            <div className="grid md:grid-cols-2 gap-4 p-5">
                                 {/* Uber Eats  */}
                                 <button
                                     onClick={() => setPartner("uber")}
-                                    className={`text-left rounded-2xl  p-5 transition shadow-xl cursor-pointer hover:shadow-2xl focus:outline-none focus:ring-2 focus:ring-black ${
-                                        partner === "uber" ? "ring-2 ring-black" : ""
+                                    className={`text-left rounded-2xl  p-9 transition shadow-xl cursor-pointer hover:shadow-2xl focus:outline-none focus:ring-2 focus:ring-[#3F3126] ${
+                                        partner === "uber" ? "ring-2 ring-[#3F3126]" : ""
                                     }`}
                                     aria-label="Order delivery via Uber Eats"
                                 >
-                                    <div className="flex items-center justify-between">
-                                        <div className="flex items-center gap-3">
-                                            <UberLogo />
-                                            <span className="text-base font-semibold">Uber Eats</span>
-                                        </div>
+                                    <div className="flex items-center justify-center">
+                                        <UberLogo/>
                                     </div>
-                                    <p className="text-md text-neutral-600 mt-2">
-                                        Trusted delivery partner. Fees & ETA shown on Uber Eats.
-                                    </p>
                                 </button>
 
                                 {/* DoorDash  */}
                                 <button
                                     onClick={() => setPartner("doordash")}
-                                    className={`text-left rounded-2xl  p-5 transition shadow-xl cursor-pointer hover:shadow-2xl focus:outline-none focus:ring-2 focus:ring-black ${
-                                        partner === "doordash" ? "ring-2 ring-black" : ""
+                                    className={`text-left rounded-2xl  p-9 transition shadow-xl cursor-pointer hover:shadow-2xl focus:outline-none focus:ring-2 focus:ring-[#3F3126] ${
+                                        partner === "doordash" ? "ring-2 ring-[#" : ""
                                     }`}
                                     aria-label="Order delivery via DoorDash"
                                 >
-                                    <div className="flex items-center justify-between">
-                                        <div className="flex items-center gap-3">
-                                               <DoorDashLogo />
-                                            <span className="text-base font-semibold">DoorDash</span>
-                                        </div>
+                                    <div className="flex items-center justify-center">
+                                        <DoorDashLogo/>
                                     </div>
-                                    <p className="text-md text-neutral-600 mt-2">
-                                        Trusted delivery partner. Fees & ETA shown on DoorDash.
-                                    </p>
                                 </button>
                             </div>
                         </Section>

@@ -135,7 +135,7 @@ export default function MenuCarousel({
                                             />
                                             {item.isNew && (
                                                 <span
-                                                    className="absolute left-4 top-4 rounded-full bg-[#FF365E] px-3 py-1 text-xs font-bold uppercase tracking-wider text-white ">
+                                                    className="absolute left-4 top-4 rounded-full bg-[#AF3935] px-3 py-1 text-xs font-bold uppercase tracking-wider text-white ">
                                                   New
                                                 </span>
                                             )}

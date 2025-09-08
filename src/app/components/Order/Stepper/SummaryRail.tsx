@@ -23,7 +23,7 @@ function ChangeButton({
 }) {
     return (
         <button
-            className="text-sm md:text-base underline text-neutral-700 hover:text-neutral-900 disabled:text-neutral-300"
+            className="text-sm md:text-base underline text-[#6b7280] hover:text-[#262626] disabled:text-neutral-300 cursor-pointer"
             onClick={onClick}
             disabled={disabled}
         >
@@ -50,17 +50,17 @@ function InfoRow({
     return (
         <div className="flex items-start justify-between gap-4">
             <div>
-                <div className="text-neutral-600 text-sm md:text-base">{label}</div>
-                <div className={`font-semibold text-lg md:text-xl ${valueClass ?? ""}`}>
+                <div className="text-[#6b7280] text-sm md:text-base">{label}</div>
+                <div className={`font-semibold text-[#262626] text-lg md:text-xl ${valueClass ?? ""}`}>
                     {value}
                 </div>
                 {sub && (
-                    <div className="text-neutral-500 text-sm md:text-base">{sub}</div>
+                    <div className="text-[#262626] text-sm md:text-base">{sub}</div>
                 )}
             </div>
 
             {onChange && (
-                <ChangeButton onClick={onChange} disabled={changeDisabled} />
+                <ChangeButton onClick={onChange} disabled={changeDisabled}/>
             )}
         </div>
     );
@@ -134,26 +134,13 @@ export default function SummaryRail({
                         <InfoRow key={r.label} {...r} />
                     ))}
 
-                    <div className="pt-2" />
+                    <div className="pt-2"/>
 
-                    {/*/!* ETA *!/*/}
-                    {/*<div className="flex items-center justify-between text-md md:text-lg">*/}
-                    {/*    <span className="text-neutral-600">ETA</span>*/}
-                    {/*    <span className="font-semibold">{eta}</span>*/}
-                    {/*</div>*/}
-
-                    {/* CTA */}
                     <div className="mt-4 cursor-pointer">
                         <PrimaryButton disabled={!canContinue} onClick={handlePrimaryClick}>
                             {ctaLabel}
                         </PrimaryButton>
                     </div>
-
-                    {/*/!* Footnote *!/*/}
-                    {/*<p className="text-sm md:text-base text-neutral-500 mt-4">*/}
-                    {/*    Partners set their own fees & promos. You’ll finalize delivery on the partner*/}
-                    {/*    site.*/}
-                    {/*</p>*/}
                 </div>
             </section>
         </aside>

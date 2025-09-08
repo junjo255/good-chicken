@@ -42,7 +42,6 @@ export default async function Home() {
                 {` YOUR NEW FAVORITE `}<span style={{color: "#AF3935"}}> KOREAN FRIED CHICKEN</span> STARTS HERE!
                 {` YOUR NEW FAVORITE `}<span style={{color: "#AF3935"}}> KOREAN FRIED CHICKEN</span> STARTS HERE!
 
-
             </Marquee>
         </>
 );

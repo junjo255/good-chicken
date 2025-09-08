@@ -28,6 +28,26 @@ export default function Header() {
     const leftItems = navItems.slice(0, mid);
     const rightItems = navItems.slice(mid);
     const [cartOpen, setCartOpen] = useState(false);
+    const headerRef = useRef<HTMLElement | null>(null); // <-- add
+
+    useEffect(() => {
+        const el = headerRef.current;
+        if (!el) return;
+
+        const setH = () => {
+            document.documentElement.style.setProperty('--header-h', `${el.offsetHeight}px`);
+        };
+
+        setH();
+        const ro = new ResizeObserver(setH);
+        ro.observe(el);
+        window.addEventListener('resize', setH);
+
+        return () => {
+            ro.disconnect();
+            window.removeEventListener('resize', setH);
+        };
+    }, [open, scrolled, noScroll]);
 
     useEffect(() => {
         const onClick = (e: MouseEvent) => {
@@ -121,7 +141,10 @@ export default function Header() {
         };
     }, []);
 
-    const logoSrc = (scrolled || noScroll) ? "/Good-Chicken-logo.png" : "/Good-Chicken-white-logo.png";
+    const isMobile = typeof window !== "undefined" && window.innerWidth <= 1024;
+    const logoSrc = (scrolled || noScroll || (isMobile && open))
+        ? "/Good-Chicken-logo.png"
+        : "/Good-Chicken-white-logo.png";
     const isOrderPath = pathname.startsWith("/order")
     const cart = useCart();
 
@@ -131,21 +154,14 @@ export default function Header() {
 
     return (
         <header
+            ref={headerRef}
             className={`${styles.header} ${scrolled ? styles.headerScrolled : ""} ${!scrolled && noScroll ? styles.headerNoScroll : ""}`}
             id="top"
             data-aos="fade-down"
             data-aos-duration="400"
         >
-            <div className={styles.inner}>
+            <div className={`${styles.inner} ${isMobile && open ? styles.mobileMenuOpen : ""}`}>
                 <div className={styles.brandRow}>
-                    <Link href="/" className={styles.brand} aria-label="BBQ Chicken home">
-                        <img
-                            width="85" height="85"
-                            src={logoSrc}
-                            alt="Good Chicken"
-                        />
-                    </Link>
-
                     <button
                         type="button"
                         className={styles.menuButton}
@@ -164,11 +180,44 @@ export default function Header() {
                             </svg>
                         ) : (
                             <svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true">
-                                <path d="M6 6l12 12M18 6l-12 12" stroke="currentColor" strokeWidth="2"
+                                <path style={{color: "#3F3126"}} d="M6 6l12 12M18 6l-12 12" stroke="currentColor"
+                                      strokeWidth="2"
                                       strokeLinecap="round"/>
                             </svg>
                         )}
                     </button>
+                    <Link href="/" className={styles.brand} aria-label="BBQ Chicken home">
+                        <img
+                            width="85" height="85"
+                            src={logoSrc}
+                            alt="Good Chicken"
+                        />
+                    </Link>
+
+                    {isOrderPath ? (
+                        <>
+                            <div className={styles.cartButton}>
+                                <button
+                                    aria-label="Open cart"
+                                    ref={cartBtnRef}
+                                    onClick={() => setCartOpen(true)}
+                                    className="cursor-pointer"
+                                >
+                                    <CartIcon
+                                        className="h-6 w-6"
+                                        count={itemCount}
+                                        onAdd={() => setCartOpen(true)}
+                                    />
+                                </button>
+                            </div>
+
+                            <CartDrawer
+                                open={cartOpen}
+                                setOpen={setCartOpen}
+                                anchorRef={cartBtnRef}
+                            />
+                        </>
+                    ) : null}
                 </div>
 
                 <nav className={`${styles.nav} ${styles.navCluster}`} aria-label="Primary">
@@ -217,8 +266,7 @@ export default function Header() {
                                         setOpen={setCartOpen}
                                         anchorRef={cartBtnRef}
                                     />
-                                </>
-                                : null
+                                </> : null
                         }
                     </ul>
 

@@ -237,8 +237,8 @@ export default function OrderingMenu() {
                                         "inline-flex items-center text-yellow gap-2 pb-4 px-5 py-3 text-sm font-semibold tracking-wider transition-all " +
 
                                         (on
-                                            ? "text-black cursor-pointer"
-                                            : "text-[#6b7280] hover:text-black hover:border-white cursor-pointer ")
+                                            ? "text-[#AF3935] cursor-pointer"
+                                            : "text-[#6b7280] hover:text-[#AF3935] hover:border-white cursor-pointer ")
                                     }
                                 >
                                     {c.icon && <span className="grid place-items-center">{c.icon}</span>}
@@ -251,7 +251,7 @@ export default function OrderingMenu() {
                 </div>
             </div>
 
-            <section className="grid grid-cols-1 gap-x-10 gap-y-14 md:grid-cols-2 lg:grid-cols-3" style={{padding: 0}}>
+            <section className="grid grid-cols-1 gap-x-10 gap-y-14 md:grid-cols-2 lg:grid-cols-3" style={{padding: 0, margin: 0}}>
                 {filtered.map(item => (
                     <article key={item.id} className="group">
                         <div className="relative overflow-hidden rounded-[14px] border border-neutral-200 bg-white">
@@ -262,7 +262,7 @@ export default function OrderingMenu() {
 
                             <div className="px-3 pb-5 pt-4">
                                 <h3 className="mb-1 text-[18px] font-semibold leading-snug">{item.name}</h3>
-                                <p className="min-h-[40px] whitespace-pre-line text-[13px] leading-5 text-neutral-600">{item.desc}</p>
+                                <p className="min-h-[40px] whitespace-pre-line text-[15px] leading-5 text-[#262626]">{item.desc}</p>
 
                                 <div className="mt-3 flex items-center justify-between">
                                     <div className="text-[18px]">
@@ -276,19 +276,28 @@ export default function OrderingMenu() {
                                     {item.product ? (
                                         <button
                                             onClick={() => openPicker(item.product!)}
-                                            className="inline-flex items-center gap-1 rounded border rounded-full border-[#E9BC46] bg-[#E9BC46] px-3 py-[6px] text-[12px] text-neutral-700 transition-colors hover:bg-[#E7B122FF] hover:cursor-pointer "
+                                            className="inline-flex w-8 h-8 items-center justify-center p-0 rounded-full border border-[#262626] bg-white text-[12px] leading-none transition-colors hover:bg-[#AF3935] hover:border-[#AF3935] hover:cursor-pointer"
+                                            aria-label="Add"
                                         >
-                                            <Plus color="#3F3126" />
-
+                                            <Plus
+                                                size={17}
+                                                strokeWidth={3}
+                                                className="transition-colors text-[#3F3126] group-hover:text-[#fff] "
+                                                aria-hidden="true"
+                                            />
                                         </button>
                                     ) : (
                                         <Link
                                             href="#"
-                                            className="inline-flex items-center gap-1 rounded border rounded-full border-[#E9BC46] bg-[#E9BC46] px-3 py-[6px] text-[12px] text-neutral-700 transition-colors hover:bg-[#E7B122FF] hover:cursor-pointer"
+                                            className="inline-flex w-8 h-8 items-center justify-center p-0 rounded-full border border-[#AF3935] bg-[#3F3126] text-[12px] leading-none transition-colors hover:bg-[#AF3935] hover:border-[#AF3935] hover:cursor-pointer"
+                                            aria-label="Add"
                                         >
-                                            <span
-                                                className="inline-block h-[14px] w-[14px] rounded-[2px] border border-[#c7b795] bg-white"/>
-                                            <Plus color="#3F3126" />
+                                            <Plus
+                                                size={17}
+                                                strokeWidth={3}
+                                                className="transition-colors text-[#3F3126] group-hover:text-[#fff]"
+                                                aria-hidden="true"
+                                            />
                                         </Link>
                                     )}
                                 </div>

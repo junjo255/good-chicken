@@ -1,9 +1,18 @@
 
 .locationPadding {
-    padding: 80px 40px;
+    padding: 1.5rem;
+    margin: 1rem;
+
+    @media (min-width: 768px) {
+        .locationPadding {
+            padding: 80px 40px;
+            margin: 0;
+        }
+    }
 }
 
 .stepperPadding {
     padding: 0 !important;
+    margin: 0 !important;
     background-color: transparent;
 }

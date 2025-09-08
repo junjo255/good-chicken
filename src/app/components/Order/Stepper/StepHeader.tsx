@@ -54,7 +54,7 @@ export default function StepHeader({
                                 {idx < items.length - 1 && (
                                     <div
                                         className={[
-                                            "h-[2px] flex-1 mx-6",
+                                            "h-[2px] flex-1 mx-2 sm:mx-6",
                                             idx < activeIndex ? "bg-[#AF3935]" : "bg-neutral-200",
                                         ].join(" ")}
                                     />

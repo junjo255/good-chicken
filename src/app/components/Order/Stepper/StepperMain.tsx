@@ -6,6 +6,7 @@ import getSteps, {Ctx, OrderType, Partner} from "@/app/components/Order/Stepper/
 import StepHeader from "@/app/components/Order/Stepper/StepHeader";
 import SummaryRail from "@/app/components/Order/Stepper/SummaryRail";
 import {useRouter} from "next/navigation";
+import LocationPanel from "@/app/components/Location/LocationPanel";
 
 
 export default function StepperMain() {
@@ -23,6 +24,27 @@ export default function StepperMain() {
     const router = useRouter();
 
     function startMenu() {
+        if (!selectedStoreId) {
+            alert("Please choose a location first.");
+            return;
+        }
+
+        try {
+            localStorage.setItem("gc_location", selectedStoreId);
+            localStorage.setItem("gc_order_type", orderType ?? "");
+
+            let userId = localStorage.getItem("gc_user_id");
+            if (!userId) {
+                userId = crypto.randomUUID();
+                localStorage.setItem("gc_user_id", userId);
+            }
+            fetch("/api/preferences", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ userId, key: "location", value: selectedStoreId }),
+            });
+        } catch {}
+
         if (orderType === "pickup") {
             router.push("/order/menu");
         } else {
