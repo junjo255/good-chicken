@@ -5,20 +5,11 @@ import OrderNow from "@/app/components/OrderNow/OrderNow";
 import Menu from "@/app/components/Menu/Menu";
 import AboutUs from "@/app/components/AboutUs/AboutUs";
 import Locations from "@/app/components/Location/Locations";
-import Catering from "@/app/components/Catering/Catering";
 import ContactUs from "@/app/components/ContactUs/ContactUs";
-import AOSInit from "@/app/AOSInit";
 import Marquee from "react-fast-marquee";
 import InstagramFeed from "@/app/components/InstagramFeed/InstagramFeed";
 
 export default async function Home() {
-    // const h = await headers();
-    // const proto = h.get("x-forwarded-proto") ?? "http";
-    // const host = h.get("host") ?? "localhost:3000";
-    // const base = `${proto}://${host}`;
-    //
-    // const res = await fetch(`${base}/api/locations`, {cache: "no-store"});
-    // const {locations} = await res.json();
 
     return (
         <>
@@ -33,7 +24,7 @@ export default async function Home() {
 
             {/*<TempInstagramFeed/>*/}
             <InstagramFeed/>
-            <Catering/>
+            {/*<Catering/>*/}
             <ContactUs/>
             <Marquee
                 speed={160}

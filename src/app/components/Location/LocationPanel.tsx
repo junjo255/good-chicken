@@ -5,6 +5,7 @@ import React from "react";
 import Badge from "@/app/classUtils";
 import styles from './Locations.module.css';
 import {Clock, Copy, MapPin} from "lucide-react";
+import Link from "next/link";
 
 type LocationPanelProps = {
     location: StoreLocation;
@@ -38,19 +39,18 @@ export default function LocationPanel({
         <section
             className={`${isStepper || isMenu ? styles.stepperPadding : styles.locationPadding}
             ${isMenu ? "justify-evenly" : ""}
-            flex flex-col md:flex-row md:flex-nowrap md:gap-8 gap-4
-              bg-[#423023] md:px-10 py-8 rounded-xl ${isMenu ? "shadow-2xl" : ""}`}
+            ${!isStepper ? "shadow-2xl hover:shadow-3xl" : ""}
+            flex flex-col md:flex-row md:flex-nowrap md:gap-8 gap-4 md:px-10 py-8 rounded-xl `}
             data-aos="zoom-in-up"
         >
             {/* LEFT WRAPPER */}
             <div
                 className={`${isStepper ? "basis-full" : "md:basis-1/2"} w-full min-w-0 mt-6 md:mt-0`}
             >
-                <div className="bg-white rounded-md p-8 flex flex-col justify-start">
+                <div className="bg-white rounded-md p-4 sm:p-8 flex flex-col justify-start">
                     <div className="flex flex-row justify-between">
                         <div className="flex flex-col ">
-                            <h4 className="text-md font-semibold text-[#6b7280]">Picking up from</h4>
-
+                            {isMenu && <h4 className="text-md font-semibold text-[#6b7280]">Picking up from</h4>}
                             <h3 className="text-2xl md:text-3xl font-semibold text-[#423023] mt-1">
                                 <span>{location.city}</span>
                             </h3>
@@ -71,15 +71,7 @@ export default function LocationPanel({
                         <div>
                             <dt className="text-sm font-bold uppercase tracking-widest text-[#6b7280]">Address</dt>
                             <dd className="mt-1 text-[#262626]">
-                                <a
-                                    href={mapHref(location.address)}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="underline underline-offset-4 hover:no-underline"
-                                    aria-label={`Open map for ${location.address}`}
-                                >
-                                    {location.address}
-                                </a>
+                                {location.address}
                             </dd>
                         </div>
                         {location.phone && (
@@ -121,26 +113,26 @@ export default function LocationPanel({
                             {isStepper ? (
                                 <div className="shrink-0">
                                 <span
-                                    className="inline-flex items-center h-10 px-4 rounded-lg bg-[#3F3126] text-white font-semibold">
+                                    className="inline-flex items-center h-10 px-4 rounded-lg bg-[#AF3935] text-white font-semibold">
                                   {selected ? "Selected" : "Select"}
                                 </span>
                                 </div>
                             ) : (
-                                <a
-                                    href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(location.address)}`}
-                                    target="_blank"
+                                <Link
+                                    href="/order"
                                     rel="noopener noreferrer"
-                                    className="inline-flex items-center justify-center rounded-lg px-4 py-2 border border-neutral-300 hover:border-neutral-400 transition text-sm font-medium"
+                                    style={{color: "#fff"}}
+                                    className="inline-flex items-center justify-center rounded-lg px-4 py-2 hover:bg-[#C02A2E3F] bg-[#AF3935] transition font-bold"
                                 >
                                     Order Now
-                                </a>
+                                </Link>
                             )}
 
                             <a
                                 href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(location.address)}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="inline-flex items-center justify-center rounded-lg px-4 py-2 border border-neutral-300 hover:border-neutral-400 transition text-md font-medium"
+                                className="inline-flex items-center justify-center rounded-lg px-4 py-2 border border-[#3f3126]-300 hover:border-neutral-400 transition text-md font-bold"
                             >
                                 Get Directions
                             </a>
@@ -164,9 +156,11 @@ export default function LocationPanel({
                             />
 
                             {/* Open / hours */}
-                            <div className="rounded-md m-0 pt-3  items-center flex flex-row justify-start gap-40 md:p-3 sm:gap-20">
+                            <div
+                                className="rounded-md m-0 pt-3  items-center flex flex-row mb-4 justify-evenly sm:justify-start gap-15 md:p-3 sm:gap-20"
+                            >
                                 <div className="flex items-center gap-2">
-                                    <span className="inline-flex h-2 w-2  bg-green-500" aria-hidden="true"/>
+                                    <span className="inline-flex h-2 w-2  bg-green-500 rounded-full" aria-hidden="true"/>
                                     <span className="text-md font-medium text-[#262626]">Open</span>
                                 </div>
                                 <div className="flex items-center gap-2 text-md text-[#262626]">
@@ -180,7 +174,7 @@ export default function LocationPanel({
                 !isStepper && (
                     <div className="w-full md:basis-1/2 min-w-0 mt-6 md:mt-0">
                         <div
-                            className="aspect-[16/10] h-full w-full overflow-hidden rounded-md border border-neutral-300 bg-white">
+                            className="aspect-[16/10] h-full w-full overflow-hidden rounded-md  bg-white">
                             <iframe
                                 title={`${location.city} map`}
                                 src={location.mapsEmbedUrl}

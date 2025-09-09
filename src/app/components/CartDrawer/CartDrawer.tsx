@@ -10,6 +10,7 @@ import React, {
 import { X, Minus, Plus, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useCart } from '@/app/lib/cart';
 import QuantityDropdown from "@/app/components/CartDrawer/QuantityDropdown";
+import {StoreLocation} from "@/app/lib/types";
 
 type Modifier = { id: string; name: string; priceCents: number };
 type CartItem = {
@@ -20,14 +21,24 @@ type CartItem = {
     modifiers?: Modifier[];
 };
 
+type StoreLocationLike = {
+    name?: string;
+    address?: string;
+    city?: string;
+    state?: string;
+};
+
+
 type Props = {
     open: boolean;
     setOpen: (v: boolean) => void;
-    /** pass a ref to the cart button/icon element */
     anchorRef: React.RefObject<HTMLElement | null>;
+    loc: StoreLocation | null;
 };
 
-export default function CartDrawer({ open, setOpen, anchorRef }: Props) {
+export default function CartDrawer(props: Props) {
+    const { open, setOpen, anchorRef, loc } = props;
+
     const cart = useCart() as any;
     const rawItems: CartItem[] = cart.items ?? [];
     const uiItems = rawItems.map((i) => {
@@ -57,6 +68,21 @@ export default function CartDrawer({ open, setOpen, anchorRef }: Props) {
             }),
         [subtotalCents]
     );
+
+    const formatWithBreaks = (txt : string) => {
+        const parts = txt.split(/\s*[–—-]\s*/);
+
+        return (
+            <>
+                {parts.map((part, index) => (
+                    <React.Fragment key={index}>
+                        {part}
+                        {index < parts.length - 1 && <br />}
+                    </React.Fragment>
+                ))}
+            </>
+        );
+    }
 
     const inc = (id: string) => {
         if (cart.increaseQty) return cart.increaseQty(id);
@@ -92,34 +118,6 @@ export default function CartDrawer({ open, setOpen, anchorRef }: Props) {
         }
     };
 
-    useEffect(() => {
-        if (!open) return;
-
-        const onPointerDownCapture = (e: PointerEvent) => {
-            const t = e.target as Node;
-            const panel = panelRef.current;
-            const anchor = anchorRef?.current ?? null;
-
-            // If the event started inside the panel or on the anchor, do nothing
-            if (panel?.contains(t)) return;
-            if (anchor && anchor.contains(t)) return;
-
-            setOpen(false);
-        };
-
-        const onKey = (e: KeyboardEvent) => {
-            if (e.key === 'Escape') setOpen(false);
-        };
-
-        window.addEventListener('pointerdown', onPointerDownCapture, true);
-        document.addEventListener('keydown', onKey);
-
-        return () => {
-            window.removeEventListener('pointerdown', onPointerDownCapture, true);
-            document.removeEventListener('keydown', onKey);
-        };
-    }, [open, setOpen, anchorRef]);
-
     const [pos, setPos] = useState<{ top: number; left: number; width: number }>(
         { top: 0, left: 0, width: 0 }
     );
@@ -128,16 +126,36 @@ export default function CartDrawer({ open, setOpen, anchorRef }: Props) {
     const recompute = () => {
         const anchor = anchorRef?.current;
         if (!anchor) return;
+
         const rect = anchor.getBoundingClientRect();
         const margin = 8;
-        const maxWidth = Math.min(500, window.innerWidth - margin * 2);
-        const top = Math.round(rect.bottom + margin);
+
+        const vw = window.innerWidth;
+        const maxWidth = Math.min(500, vw - margin * 2);
+
+        // Base position next to the anchor
+        let top = Math.round(rect.bottom + margin);
         let left = Math.round(rect.right - maxWidth);
-        left = Math.max(margin, Math.min(left, window.innerWidth - maxWidth - margin));
+
+        // Breakpoints (match Tailwind: sm=640, lg=1024)
+        const isMobile = vw < 640;
+        const isDesktop = vw >= 1024;
+
+        // Mobile: push down 75px
+        if (isMobile) {
+            top += 75;
+        }
+
+        // Desktop: shift 20px to the right
+        if (isDesktop) {
+            left += 20;
+        }
+
+        left = Math.max(margin, Math.min(left, vw - maxWidth - margin));
+
         setPos({ top, left, width: maxWidth });
     };
 
-    // 83px
     useLayoutEffect(() => {
         if (!open) return;
         recompute();
@@ -155,22 +173,24 @@ export default function CartDrawer({ open, setOpen, anchorRef }: Props) {
 
     const restaurantTitle = 'Good Chicken, ';
     const restaurantAddress = '414 Grand St Jersey City, NJ';
-    const getHeaderH = () => {
-        const v = getComputedStyle(document.documentElement).getPropertyValue('--header-h');
-        const n = parseFloat(v);
-        return Number.isFinite(n) ? n : 96;
+
+    const resetCart = () => {
+        if (cart.clearCart) {
+            cart.clearCart();
+        } else if (cart.empty) {
+            cart.empty();
+        } else if (cart.removeAll) {
+            cart.removeAll();
+        } else {
+            uiItems.forEach((it) => remove(it.id));
+        }
     };
 
     return (
         <>
             <div
                 aria-hidden
-                className="fixed inset-0 z-[100] pointer-events-none"
-                style={{
-                    marginTop: 'var(--header-h, 96px)',
-                    scrollMarginTop: 'var(--header-h, 96px)',
-                    padding: "2rem"
-                }}
+                className="fixed inset-0 z-[100] pointer-events-none pb-10"
             />
 
             {/* Anchored panel */}
@@ -179,7 +199,12 @@ export default function CartDrawer({ open, setOpen, anchorRef }: Props) {
                 role="dialog"
                 aria-label="Shopping cart"
                 className="fixed z-[101] rounded-2xl border border-neutral-200 bg-white shadow-2xl flex flex-col"
-                style={{ top: pos.top, left: pos.left, width: pos.width }}
+                style={{
+                    top: pos.top,
+                    left: pos.left,
+                    width: pos.width,
+                    padding: "1rem"
+                }}
                 onPointerDownCapture={(e) => e.stopPropagation()}
             >
                 {/* arrow */}
@@ -189,12 +214,12 @@ export default function CartDrawer({ open, setOpen, anchorRef }: Props) {
                 />
 
                 {/* Header */}
-                <div className="flex items-start justify-between border-b boder-[#E8E8E8] px-4 pb-3 pt-4">
+                <div className="flex items-start justify-between border-b border-[#E8E8E8] pb-3 pt-4">
                     <div className="min-w-0">
-                        <h2 className="truncate text-[25px] sm:text-[22px] font-semibold leading-tight">
+                        <h2 className="truncate text-[22px] sm:text-[25px] font-semibold leading-tight">
                             {restaurantTitle} <span style={{color: "#AF3935"}}>Jersey City</span>
                         </h2>
-                        <p className="mt-0.5 text-[20px] sm:text-[17px] text-neutral-700">{restaurantAddress}</p>
+                        <p className="mt-0.5 text-[17px] sm:text-[18px] text-neutral-700">{restaurantAddress}</p>
                     </div>
                     <button
                         onClick={() => setOpen(false)}
@@ -206,22 +231,30 @@ export default function CartDrawer({ open, setOpen, anchorRef }: Props) {
                 </div>
 
                 {/* Summary row */}
-                <div className="flex items-center justify-between px-4 py-3 text-[15px]">
-                    <div className="text-neutral-700">
-            <span className="font-medium">
-              {itemCount} {itemCount === 1 ? 'item' : 'items'}
-            </span>
+                <div className="flex items-center justify-between py-3 text-[15px]">
+                    <div className="flex items-center gap-4 text-[#262626]">
+                        <span className="font-bold font-xl">
+                          {itemCount} {itemCount === 1 ? 'item' : 'items'}
+                        </span>
+                        {itemCount > 0 && (
+                            <button
+                                onClick={resetCart}
+                                className="text-sm text-[#262626] hover:underline"
+                            >
+                                reset
+                            </button>
+                        )}
                     </div>
-                    <div className="text-neutral-900">
+                    <div className="text-[#262626] font-bold font-xl">
                         <span className="mr-1">Subtotal:</span>
                         <span className="font-semibold">{subtotalUsd}</span>
                     </div>
                 </div>
 
                 {/* Scrollable content */}
-                <div className="max-h-[60vh] overflow-auto px-4 pb-4">
+                <div className="max-h-[60vh] overflow-auto pb-4">
                     {uiItems.length === 0 ? (
-                        <div className="rounded-lg bg-neutral-50 p-4 text-sm text-neutral-600">
+                        <div className="rounded-lg bg-neutral-50 text-sm text-neutral-600">
                             Your cart is empty.
                         </div>
                     ) : (
@@ -240,9 +273,9 @@ export default function CartDrawer({ open, setOpen, anchorRef }: Props) {
 
                                         <div className="min-w-0 flex-1">
                                             <div
-                                                className="truncate text-[15px] font-semibold leading-tight">{it.name}</div>
+                                                className="truncate text-[15px] sm:text-[18px] font-semibold leading-tight">{formatWithBreaks(it.name)}</div>
                                             {it.modifiers?.length ? (
-                                                <div className="mt-1 space-y-0.5 text-[12px] text-neutral-600">
+                                                <div className="mt-1 space-y-0.5 text-[12px] sm:text-[13px] text-neutral-600">
                                                     {it.modifiers.slice(0, 6).map((m) => (
                                                         <div key={m.id} className="truncate">{m.name}</div>
                                                     ))}
@@ -250,11 +283,12 @@ export default function CartDrawer({ open, setOpen, anchorRef }: Props) {
                                             ) : null}
                                         </div>
 
-                                        <div className="text-[15px] font-semibold leading-none">
+                                        <div className="text-[15px] sm:text-[18px] font-semibold leading-none">
                                             {((it.unitCents * it.qty) / 100).toLocaleString('en-US', { style: 'currency', currency: 'USD' })}
                                         </div>
                                     </div>
-                                </li>                            ))}
+                                </li>
+                            ))}
                         </ul>
                     )}
 
@@ -306,12 +340,12 @@ export default function CartDrawer({ open, setOpen, anchorRef }: Props) {
                 </div>
 
                 {/* Footer */}
-                <div className="border-t border-[#E8E8E8] px-4 py-3">
-                    <div className="mb-2 flex items-center justify-between text-[16px]">
-                        <span className="text-neutral-700">Subtotal</span>
-                        <span className="font-semibold">{subtotalUsd}</span>
+                <div className="border-t border-[#E8E8E8] py-3">
+                    <div className="mb-2 flex items-center justify-between text-[15px] sm:text-[16px]">
+                        <span className="text-[#262626] text-xl text-semibold">Subtotal</span>
+                        <span className="font-semibold text-lg">{subtotalUsd}</span>
                     </div>
-                    <button className="mt-3 w-full rounded-2xl bg-[#AF3935] pt-4 pb-3 text-center text-[15px] font-semibold text-white hover:opacity-90 cursor-pointer">
+                    <button className="mt-3 w-full rounded-2xl bg-[#AF3935] pt-4 pb-3 text-center text-[18px] font-semibold text-white hover:opacity-90 cursor-pointer">
                         Go to checkout
                     </button>
                 </div>

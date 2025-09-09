@@ -8,7 +8,7 @@ export default function OrderNow() {
     return (
         <section
             id="order"
-            className="aboutaos-init aos-animate pt-25 pb-25"
+            className="aboutaos-init aos-animate mt-10 pt-25 pb-15"
             data-aos="zoom-in"
             data-aos-delay="350"
             data-aos-duration="500"

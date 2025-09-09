@@ -15,7 +15,7 @@ import Mojito from "@/app/components/Order/Menu/products/mojito";
 import Water from "@/app/components/Order/Menu/products/water";
 import Soda from "@/app/components/Order/Menu/products/soda";
 import IcedTea from "@/app/components/Order/Menu/products/icedTea";
-import {CardItem, CartModifier, Category} from "@/app/lib/types";
+import {CardItem, CartModifier, Category, StoreLocation} from "@/app/lib/types";
 import {useCart} from "@/app/lib/cart";
 import {useRouter} from "next/navigation";
 
@@ -148,7 +148,7 @@ function NewBadge() {
     );
 }
 
-export default function OrderingMenu() {
+export default function OrderingMenu()  {
     const [active, setActive] = useState<string>('all');
     const [open, setOpen] = useState(false);
     const [current, setCurrent] = useState<ConfigProduct | null>(null);
@@ -234,8 +234,7 @@ export default function OrderingMenu() {
                                     onClick={() => setActive(c.id)}
 
                                     className={
-                                        "inline-flex items-center text-yellow gap-2 pb-4 px-5 py-3 text-sm font-semibold tracking-wider transition-all " +
-
+                                        "flex-wrap pr-3 sm:inline-flex items-center text-yellow sm:gap-2 pb-1 sm:pb-4 sm:px-5 sm:py-3 text-sm font-semibold tracking-wider transition-all " +
                                         (on
                                             ? "text-[#AF3935] cursor-pointer"
                                             : "text-[#6b7280] hover:text-[#AF3935] hover:border-white cursor-pointer ")

@@ -57,10 +57,11 @@ export default function QuantityDropdown({
                 <div
                     role="listbox"
                     tabIndex={-1}
-                    className="absolute left-1/2 top-[calc(100%+8px)] z-50 w-32 -translate-x-1/2 overflow-auto rounded-xl border border-neutral-200 bg-white p-1 shadow-lg"
+                    className="absolute top-[calc(100%+8px)] w-10 overflow-auto rounded-xl border border-neutral-200 bg-white p-1 shadow-lg"
                     onPointerDownCapture={(e) => e.stopPropagation()}
                     onMouseDown={(e) => e.stopPropagation()}
                     onClick={(e) => e.stopPropagation()}
+                    style={{zIndex: 1000}}
                 >
                     {opts.map((n) => (
                         <button
@@ -71,7 +72,6 @@ export default function QuantityDropdown({
                             className={`flex w-full items-center justify-between rounded-lg px-2 py-2 text-sm cursor-pointer hover:bg-neutral-100 ${n === value ? 'bg-neutral-100 font-semibold' : 'text-neutral-700'}`}
                         >
                             <span>{n}</span>
-                            {n === value ? <span className="text-[10px]">selected</span> : null}
                         </button>
                     ))}
                 </div>

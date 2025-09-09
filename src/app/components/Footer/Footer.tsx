@@ -21,7 +21,7 @@ export default function Footer() {
                                     target="_blank"
                                     rel="noreferrer"
                                 >
-                                    {loc.brand}
+                                    {loc.city}
                                 </a>
                             </li>
                         ))}
