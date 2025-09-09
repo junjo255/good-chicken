@@ -36,7 +36,13 @@ export type StepDef = {
     render: (ctx: Ctx) => React.ReactNode;
 };
 
+const partners: { id: Exclude<Partner, null>; label: string; Logo: React.FC }[] = [
+    { id: "uber", label: "Uber Eats", Logo: UberLogo },
+    { id: "doordash", label: "DoorDash", Logo: DoorDashLogo },
+];
+
 export default function getSteps(ctx: Ctx): StepDef[] {
+
     return [
         {
             id: "location",
@@ -100,8 +106,7 @@ export default function getSteps(ctx: Ctx): StepDef[] {
                             {/* Pickup Card */}
                             <button
                                 onClick={() => {
-                                    setOrderType("pickup");
-                                    setPartner(null);
+                                    setOrderType("pickup")
                                 }}
                                 className={`text-left rounded-2xl cursor-pointer p-5 transition shadow-xl hover:shadow-2xl focus:outline-none focus:ring-2 focus:ring-black ${
                                     orderType === "pickup" ? "ring-2 ring-black" : ""
@@ -184,31 +189,20 @@ export default function getSteps(ctx: Ctx): StepDef[] {
                             subtitle="You’ll complete checkout on the partner site in a new tab."
                         >
                             <div className="grid md:grid-cols-2 gap-4 p-5">
-                                {/* Uber Eats  */}
-                                <button
-                                    onClick={() => setPartner("uber")}
-                                    className={`text-left rounded-2xl  p-9 transition shadow-xl cursor-pointer hover:shadow-2xl focus:outline-none focus:ring-2 focus:ring-[#3F3126] ${
-                                        partner === "uber" ? "ring-2 ring-[#3F3126]" : ""
-                                    }`}
-                                    aria-label="Order delivery via Uber Eats"
-                                >
-                                    <div className="flex items-center justify-center">
-                                        <UberLogo/>
-                                    </div>
-                                </button>
-
-                                {/* DoorDash  */}
-                                <button
-                                    onClick={() => setPartner("doordash")}
-                                    className={`text-left rounded-2xl  p-9 transition shadow-xl cursor-pointer hover:shadow-2xl focus:outline-none focus:ring-2 focus:ring-[#3F3126] ${
-                                        partner === "doordash" ? "ring-2 ring-[#" : ""
-                                    }`}
-                                    aria-label="Order delivery via DoorDash"
-                                >
-                                    <div className="flex items-center justify-center">
-                                        <DoorDashLogo/>
-                                    </div>
-                                </button>
+                                {partners.map(({ id, label, Logo }) => (
+                                    <button
+                                        key={id}
+                                        onClick={() => setPartner(id)}
+                                        className={`text-left rounded-2xl p-9 transition shadow-xl cursor-pointer hover:shadow-2xl focus:outline-none focus:ring-2 focus:ring-[#3F3126] ${
+                                            partner === id ? "ring-2 ring-[#3F3126]" : ""
+                                        }`}
+                                        aria-label={`Order delivery via ${label}`}
+                                    >
+                                        <div className="flex items-center justify-center">
+                                            <Logo />
+                                        </div>
+                                    </button>
+                                ))}
                             </div>
                         </Section>
                     );

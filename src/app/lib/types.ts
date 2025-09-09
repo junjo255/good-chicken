@@ -98,4 +98,11 @@ export type StoreLocation = {
     open: boolean;
     services?: string[];
     mapsEmbedUrl: string;
+    deliveryPartners: Partial<Record<DeliveryPartner, string>>;
 };
+
+
+export enum DeliveryPartner {
+    UberEats = "uberEats",
+    Doordash = "doordash",
+}

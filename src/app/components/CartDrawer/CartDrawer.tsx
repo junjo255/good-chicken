@@ -7,10 +7,11 @@ import React, {
     useRef,
     useState,
 } from 'react';
-import { X, Minus, Plus, ChevronLeft, ChevronRight } from 'lucide-react';
-import { useCart } from '@/app/lib/cart';
+import {X, Minus, Plus, ChevronLeft, ChevronRight} from 'lucide-react';
+import {useCart} from '@/app/lib/cart';
 import QuantityDropdown from "@/app/components/CartDrawer/QuantityDropdown";
 import {StoreLocation} from "@/app/lib/types";
+import PrimaryButton from "@/app/components/Order/Stepper/PrimaryButton";
 
 type Modifier = { id: string; name: string; priceCents: number };
 type CartItem = {
@@ -36,8 +37,7 @@ type Props = {
     loc: StoreLocation | null;
 };
 
-export default function CartDrawer(props: Props) {
-    const { open, setOpen, anchorRef, loc } = props;
+export default function CartDrawer({open, setOpen, anchorRef, loc}: Props) {
 
     const cart = useCart() as any;
     const rawItems: CartItem[] = cart.items ?? [];
@@ -69,7 +69,7 @@ export default function CartDrawer(props: Props) {
         [subtotalCents]
     );
 
-    const formatWithBreaks = (txt : string) => {
+    const formatWithBreaks = (txt: string) => {
         const parts = txt.split(/\s*[–—-]\s*/);
 
         return (
@@ -77,7 +77,7 @@ export default function CartDrawer(props: Props) {
                 {parts.map((part, index) => (
                     <React.Fragment key={index}>
                         {part}
-                        {index < parts.length - 1 && <br />}
+                        {index < parts.length - 1 && <br/>}
                     </React.Fragment>
                 ))}
             </>
@@ -89,11 +89,13 @@ export default function CartDrawer(props: Props) {
         if (cart.incQty) return cart.incQty(id);
         if (cart.increment) return cart.increment(id);
     };
+
     const dec = (id: string) => {
         if (cart.decreaseQty) return cart.decreaseQty(id);
         if (cart.decQty) return cart.decQty(id);
         if (cart.decrement) return cart.decrement(id);
     };
+
     const remove = (id: string) => {
         if (cart.removeItem) return cart.removeItem(id);
         if (cart.remove) return cart.remove(id);
@@ -119,8 +121,9 @@ export default function CartDrawer(props: Props) {
     };
 
     const [pos, setPos] = useState<{ top: number; left: number; width: number }>(
-        { top: 0, left: 0, width: 0 }
+        {top: 0, left: 0, width: 0}
     );
+
     const panelRef = useRef<HTMLDivElement | null>(null);
 
     const recompute = () => {
@@ -141,19 +144,17 @@ export default function CartDrawer(props: Props) {
         const isMobile = vw < 640;
         const isDesktop = vw >= 1024;
 
-        // Mobile: push down 75px
         if (isMobile) {
             top += 75;
         }
 
-        // Desktop: shift 20px to the right
         if (isDesktop) {
             left += 20;
         }
 
         left = Math.max(margin, Math.min(left, vw - maxWidth - margin));
 
-        setPos({ top, left, width: maxWidth });
+        setPos({top, left, width: maxWidth});
     };
 
     useLayoutEffect(() => {
@@ -162,7 +163,7 @@ export default function CartDrawer(props: Props) {
         const onResize = () => recompute();
         const onScroll = () => recompute();
         window.addEventListener('resize', onResize);
-        window.addEventListener('scroll', onScroll, { passive: true });
+        window.addEventListener('scroll', onScroll, {passive: true});
         return () => {
             window.removeEventListener('resize', onResize);
             window.removeEventListener('scroll', onScroll);
@@ -170,9 +171,6 @@ export default function CartDrawer(props: Props) {
     }, [open]);
 
     if (!open) return null;
-
-    const restaurantTitle = 'Good Chicken, ';
-    const restaurantAddress = '414 Grand St Jersey City, NJ';
 
     const resetCart = () => {
         if (cart.clearCart) {
@@ -217,16 +215,16 @@ export default function CartDrawer(props: Props) {
                 <div className="flex items-start justify-between border-b border-[#E8E8E8] pb-3 pt-4">
                     <div className="min-w-0">
                         <h2 className="truncate text-[22px] sm:text-[25px] font-semibold leading-tight">
-                            {restaurantTitle} <span style={{color: "#AF3935"}}>Jersey City</span>
+                            {loc?.brand} <span style={{color: "#AF3935"}}>{loc?.city}</span>
                         </h2>
-                        <p className="mt-0.5 text-[17px] sm:text-[18px] text-neutral-700">{restaurantAddress}</p>
+                        <p className="mt-0.5 text-[17px] sm:text-[18px] text-neutral-700">{loc?.address}</p>
                     </div>
                     <button
                         onClick={() => setOpen(false)}
                         aria-label="Close"
                         className="-mr-1 rounded-full p-2 hover:bg-neutral-100 cursor-pointer"
                     >
-                        <X className="h-5 w-5" />
+                        <X className="h-5 w-5"/>
                     </button>
                 </div>
 
@@ -275,7 +273,8 @@ export default function CartDrawer(props: Props) {
                                             <div
                                                 className="truncate text-[15px] sm:text-[18px] font-semibold leading-tight">{formatWithBreaks(it.name)}</div>
                                             {it.modifiers?.length ? (
-                                                <div className="mt-1 space-y-0.5 text-[12px] sm:text-[13px] text-neutral-600">
+                                                <div
+                                                    className="mt-1 space-y-0.5 text-[12px] sm:text-[13px] text-neutral-600">
                                                     {it.modifiers.slice(0, 6).map((m) => (
                                                         <div key={m.id} className="truncate">{m.name}</div>
                                                     ))}
@@ -284,7 +283,10 @@ export default function CartDrawer(props: Props) {
                                         </div>
 
                                         <div className="text-[15px] sm:text-[18px] font-semibold leading-none">
-                                            {((it.unitCents * it.qty) / 100).toLocaleString('en-US', { style: 'currency', currency: 'USD' })}
+                                            {((it.unitCents * it.qty) / 100).toLocaleString('en-US', {
+                                                style: 'currency',
+                                                currency: 'USD'
+                                            })}
                                         </div>
                                     </div>
                                 </li>
@@ -345,8 +347,11 @@ export default function CartDrawer(props: Props) {
                         <span className="text-[#262626] text-xl text-semibold">Subtotal</span>
                         <span className="font-semibold text-lg">{subtotalUsd}</span>
                     </div>
-                    <button className="mt-3 w-full rounded-2xl bg-[#AF3935] pt-4 pb-3 text-center text-[18px] font-semibold text-white hover:opacity-90 cursor-pointer">
-                        Go to checkout
+                    <button
+                        className="mt-3 w-full rounded-2xl pt-4 pb-3 text-center text-[18px] font-semibold text-white cursor-pointer">
+                        <PrimaryButton disabled={rawItems.length === 0}>
+                            Go to checkout
+                        </PrimaryButton>
                     </button>
                 </div>
             </div>

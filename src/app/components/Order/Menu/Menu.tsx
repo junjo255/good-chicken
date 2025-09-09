@@ -281,7 +281,7 @@ export default function OrderingMenu()  {
                                             <Plus
                                                 size={17}
                                                 strokeWidth={3}
-                                                className="transition-colors text-[#3F3126] group-hover:text-[#fff] "
+                                                className="transition-colors text-[#3F3126] hover:text-[#fff] "
                                                 aria-hidden="true"
                                             />
                                         </button>

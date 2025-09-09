@@ -6,8 +6,6 @@ import getSteps, {Ctx, OrderType, Partner} from "@/app/components/Order/Stepper/
 import StepHeader from "@/app/components/Order/Stepper/StepHeader";
 import SummaryRail from "@/app/components/Order/Stepper/SummaryRail";
 import {useRouter} from "next/navigation";
-import LocationPanel from "@/app/components/Location/LocationPanel";
-
 
 export default function StepperMain() {
     const [stepIdx, setStepIdx] = useState<number>(0);
@@ -53,13 +51,14 @@ export default function StepperMain() {
     }
 
     function openPartner(p: Exclude<Partner, null>) {
-        const url = p === "uber" ? "#uber-eats-link" : "#doordash-link";
-        alert(
-            `Would open ${p === "uber" ? "Uber Eats" : "DoorDash"} for ${
-                selectedStore?.brand
-            }.`
-        );
-        console.log("Deep link:", url);
+        const url =
+            p === "uber"
+                ? selectedStore?.deliveryPartners.uberEats
+                : selectedStore?.deliveryPartners.doordash;
+
+        if (url) {
+            window.open(url, "_blank");
+        }
     }
 
     const ctx: Ctx = {
