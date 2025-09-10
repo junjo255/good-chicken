@@ -201,13 +201,13 @@ export default function Header() {
                                 <button
                                     aria-label="Open cart"
                                     ref={cartBtnRef}
-                                    onClick={() => setCartOpen(true)}
+                                    onClick={() => setCartOpen(v => !v)}
                                     className="cursor-pointer"
                                 >
                                     <CartIcon
                                         className="h-6 w-6"
                                         count={itemCount}
-                                        onAdd={() => setCartOpen(true)}
+                                        onAdd={() => setCartOpen(v => !v)}
                                     />
                                 </button>
                             </div>

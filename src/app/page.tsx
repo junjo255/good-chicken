@@ -1,4 +1,3 @@
-import {headers} from "next/headers";
 import React from "react";
 import Hero from "@/app/components/Hero/Hero";
 import OrderNow from "@/app/components/OrderNow/OrderNow";

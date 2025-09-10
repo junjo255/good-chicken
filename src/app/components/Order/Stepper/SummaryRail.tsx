@@ -27,7 +27,7 @@ function ChangeButton({
             onClick={onClick}
             disabled={disabled}
         >
-            Change
+            update
         </button>
     );
 }

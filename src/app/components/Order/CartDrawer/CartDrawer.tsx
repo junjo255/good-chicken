@@ -35,7 +35,9 @@ export default function CartDrawer({open, setOpen, anchorRef}: Props) {
     const router = useRouter();
 
     async function checkout() {
-        router.push('/checkout');
+        setOpen(false);
+        router.push('/order/checkout');
+
     }
     const cart = useCart() as any;
     const { selectedStoreId } = useOrder();
@@ -259,7 +261,7 @@ export default function CartDrawer({open, setOpen, anchorRef}: Props) {
                         {itemCount > 0 && (
                             <button
                                 onClick={resetCart}
-                                className="text-sm text-[#262626] hover:underline"
+                                className="text-sm text-[#262626] hover:underline cursor-pointer"
                             >
                                 reset
                             </button>

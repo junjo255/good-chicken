@@ -127,8 +127,8 @@ export default function OptionModal({
                         const all = a.values;
                         return (
                             <div key={a.id} className="mb-3">
-                                <div className="font-[14px] sm:font-[17px] mb-1 text-xs font-semibold text-[#262626]">{a.name}</div>
-                                <div className="flex flex-wrap gap-2  cursor-pointer">
+                                <div className="font-[14px] sm:font-[17px] uppercase mb-1 text-xs font-semibold text-[#262626]">{a.name}</div>
+                                <div className="font-[14px] sm:font-[17px flex flex-wrap gap-2  cursor-pointer mb-2">
                                     {all.filter(a => avail.includes(a)).map(v => (
                                         <Pill
                                             key={v}
