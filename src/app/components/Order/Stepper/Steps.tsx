@@ -79,7 +79,6 @@ export default function getSteps(ctx: Ctx): StepDef[] {
                 </Section>
             ),
         },
-
         {
             id: "type",
             label: "Order Type",

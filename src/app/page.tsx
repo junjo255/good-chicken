@@ -8,12 +8,15 @@ import Locations from "@/app/components/Location/Locations";
 import ContactUs from "@/app/components/ContactUs/ContactUs";
 import Marquee from "react-fast-marquee";
 import InstagramFeed from "@/app/components/InstagramFeed/InstagramFeed";
+import Header from "@/app/components/Header/Header";
 
 export default async function Home() {
 
     return (
         <>
             {/*<AOSInit />*/}
+            <Header/>
+
             <Hero/>
 
             <Menu/>

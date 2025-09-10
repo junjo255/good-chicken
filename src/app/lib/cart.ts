@@ -1,4 +1,3 @@
-// /app/lib/cart.ts
 'use client';
 
 import { create } from 'zustand';

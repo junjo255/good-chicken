@@ -9,9 +9,12 @@ import React, {
 } from 'react';
 import {X, Minus, Plus, ChevronLeft, ChevronRight} from 'lucide-react';
 import {useCart} from '@/app/lib/cart';
-import QuantityDropdown from "@/app/components/CartDrawer/QuantityDropdown";
 import {StoreLocation} from "@/app/lib/types";
 import PrimaryButton from "@/app/components/Order/Stepper/PrimaryButton";
+import {useRouter} from "next/navigation";
+import {LOCATIONS} from "@/app/lib/locations";
+import {useOrder} from "@/app/components/Order/Stepper/OrderCtx";
+import QuantityDropdown from "@/app/components/Order/CartDrawer/QuantityDropdown";
 
 type Modifier = { id: string; name: string; priceCents: number };
 type CartItem = {
@@ -22,24 +25,25 @@ type CartItem = {
     modifiers?: Modifier[];
 };
 
-type StoreLocationLike = {
-    name?: string;
-    address?: string;
-    city?: string;
-    state?: string;
-};
-
-
 type Props = {
     open: boolean;
     setOpen: (v: boolean) => void;
     anchorRef: React.RefObject<HTMLElement | null>;
-    loc: StoreLocation | null;
 };
 
-export default function CartDrawer({open, setOpen, anchorRef, loc}: Props) {
+export default function CartDrawer({open, setOpen, anchorRef}: Props) {
+    const router = useRouter();
 
+    async function checkout() {
+        router.push('/checkout');
+    }
     const cart = useCart() as any;
+    const { selectedStoreId } = useOrder();
+    const location: StoreLocation | null = useMemo(
+        () => (selectedStoreId ? LOCATIONS.find(s => s.id === selectedStoreId) || null : null),
+        [selectedStoreId]
+    );
+
     const rawItems: CartItem[] = cart.items ?? [];
     const uiItems = rawItems.map((i) => {
         const modsTotal =
@@ -215,9 +219,9 @@ export default function CartDrawer({open, setOpen, anchorRef, loc}: Props) {
                 <div className="flex items-start justify-between border-b border-[#E8E8E8] pb-3 pt-4">
                     <div className="min-w-0">
                         <h2 className="truncate text-[22px] sm:text-[25px] font-semibold leading-tight">
-                            {loc?.brand} <span style={{color: "#AF3935"}}>{loc?.city}</span>
+                            {location?.brand} <span style={{color: "#AF3935"}}>{location?.city}</span>
                         </h2>
-                        <p className="mt-0.5 text-[17px] sm:text-[18px] text-neutral-700">{loc?.address}</p>
+                        <p className="mt-0.5 text-[17px] sm:text-[18px] text-neutral-700">{location?.address}</p>
                     </div>
                     <button
                         onClick={() => setOpen(false)}
@@ -349,7 +353,10 @@ export default function CartDrawer({open, setOpen, anchorRef, loc}: Props) {
                     </div>
                     <button
                         className="mt-3 w-full rounded-2xl pt-4 pb-3 text-center text-[18px] font-semibold text-white cursor-pointer">
-                        <PrimaryButton disabled={rawItems.length === 0}>
+                        <PrimaryButton
+                            disabled={rawItems.length === 0}
+                            onClick={checkout}
+                        >
                             Go to checkout
                         </PrimaryButton>
                     </button>

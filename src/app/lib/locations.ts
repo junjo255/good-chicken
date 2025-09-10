@@ -28,7 +28,8 @@ export const LOCATIONS: StoreLocation[] = [
         mapsEmbedUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d6048.040092383556!2d-74.05243399999999!3d40.7175752!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c250b7cecdfd47%3A0x3fbde0a2129e6c01!2s414%20Grand%20St%2C%20Jersey%20City%2C%20NJ%2007302!5e0!3m2!1sen!2sus!4v1756992079385!5m2!1sen!2sus",
         deliveryPartners: {
             [DeliveryPartner.UberEats]: "https://www.ubereats.com/store/good-chicken/Xqp8qycyQIGmq_r6pXMKQA?pl=JTdCJTIyYWRkcmVzcyUyMiUzQSUyMkdvb2QlMjBDaGlja2VuJTIyJTJDJTIycmVmZXJlbmNlJTIyJTNBJTIyQ2hJSjJRLUFZR2hWd29rUlE2YWFYYzVQam53JTIyJTJDJTIycmVmZXJlbmNlVHlwZSUyMiUzQSUyMmdvb2dsZV9wbGFjZXMlMjIlMkMlMjJsYXRpdHVkZSUyMiUzQTQwLjgwNzU2OTM3ODgxNjMyJTJDJTIybG9uZ2l0dWRlJTIyJTNBLTc0LjIxMDQxMzg0NDUyNSU3RA%3D%3D",
-            [DeliveryPartner.Doordash]: "https://order.online/store/good-chicken-montclair-2355703/?hideModal=true&pickup=true",
+            [DeliveryPartner.Doordash]: "https://www.doordash.com/store/good-chicken-montclair-2355703/20208748/?event_type=autocomplete&pickup=false",
+            // [] : "https://www.seamless.com/menu/good-chicken-114-bloomfield-avenue-montclair/10935832"
         },
     },
 ];

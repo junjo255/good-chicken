@@ -1,40 +1,23 @@
 'use client';
 
-import React from 'react';
-import {useRouter} from 'next/navigation';
+import React, {useState} from 'react';
 import StepperMain from "@/app/components/Order/Stepper/StepperMain";
-
-const LOCATIONS = [
-    {id: 'montclair', name: 'Montclair'},
-    {id: 'jersey-city', name: 'Jersey City'},
-];
+import Header from "@/app/components/Header/Header";
+import {OrderProvider} from "@/app/components/Order/Stepper/OrderCtx";
+import {OrderType, Partner} from "@/app/components/Order/Stepper/Steps";
 
 export default function OrderPage() {
-    const router = useRouter();
-
-    async function choose(id: string) {
-        try {
-            localStorage.setItem('gc_location', id);
-            let userId = localStorage.getItem('gc_user_id');
-            if (!userId) {
-                userId = crypto.randomUUID();
-                localStorage.setItem('gc_user_id', userId);
-            }
-            await fetch('/api/preferences', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userId, key: 'location', value: id }),
-            });
-        } catch {
-        }router.push('/order/menu');
-    }
+    const [selectedStoreId, setSelectedStoreId] = useState<string | null>(null);
+    const [orderType, setOrderType] = useState<OrderType>(null);
+    const [partner, setPartner] = useState<Partner>(null);
+    const [scheduleLater, setScheduleLater] = useState<boolean>(false);
 
     return (
         <section
             style={{maxWidth: "1200px"}}
             className="mx-auto space-y-4 py-10 mt-[var(--header-h)]">
 
-            <StepperMain />
+            <StepperMain/>
 
         </section>
     );

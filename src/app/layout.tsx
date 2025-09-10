@@ -18,26 +18,13 @@ export default function RootLayout({
                                          }: Readonly<{
     children: React.ReactNode;
 }>) {
-    // const h = await headers();
-    // const proto = h.get("x-forwarded-proto") ?? "http";
-    // const host = h.get("host") ?? "localhost:3000";
-    // const base = `${proto}://${host}`;
-    //
-    // const res = await fetch(`${base}/api/locations`, {cache: "no-store"});
-    // const {locations} = await res.json();
-    //
-    // const footerLocations = locations.map((l: any) => ({
-    //     id: l.id,
-    //     name: l.name,
-    //     mapsUrl: l.mapsUrl,
-    // }));
+
     return (
         <html lang="en">
         <head>
             <script async src="//www.instagram.com/embed.js"></script>
         </head>
         <body className="min-h-screen flex flex-col">
-        <Header/>
         <main className="flex-1">
             {children}
         </main>

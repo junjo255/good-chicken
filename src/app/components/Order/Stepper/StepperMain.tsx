@@ -6,18 +6,22 @@ import getSteps, {Ctx, OrderType, Partner} from "@/app/components/Order/Stepper/
 import StepHeader from "@/app/components/Order/Stepper/StepHeader";
 import SummaryRail from "@/app/components/Order/Stepper/SummaryRail";
 import {useRouter} from "next/navigation";
+import {OrderProvider, useOrder} from "@/app/components/Order/Stepper/OrderCtx";
 
 export default function StepperMain() {
     const [stepIdx, setStepIdx] = useState<number>(0);
-    const [selectedStoreId, setSelectedStoreId] = useState<string | null>(null);
-    const [orderType, setOrderType] = useState<OrderType>(null);
-    const [partner, setPartner] = useState<Partner>(null);
-    const [scheduleLater, setScheduleLater] = useState<boolean>(false);
 
-    const selectedStore = useMemo(
-        () => LOCATIONS.find((s) => s.id === selectedStoreId) || null,
-        [selectedStoreId]
-    );
+    const {
+        selectedStoreId, setSelectedStoreId,
+        orderType, setOrderType,
+        partner, setPartner,
+        scheduleLater, setScheduleLater,
+    } = useOrder();
+
+    const selectedStore = useMemo(() => {
+        if (!selectedStoreId) return null;
+        return LOCATIONS.find((s) => s.id === selectedStoreId) || null;
+    }, [selectedStoreId]);
 
     const router = useRouter();
 
@@ -26,22 +30,6 @@ export default function StepperMain() {
             alert("Please choose a location first.");
             return;
         }
-
-        try {
-            localStorage.setItem("gc_location", selectedStoreId);
-            localStorage.setItem("gc_order_type", orderType ?? "");
-
-            let userId = localStorage.getItem("gc_user_id");
-            if (!userId) {
-                userId = crypto.randomUUID();
-                localStorage.setItem("gc_user_id", userId);
-            }
-            fetch("/api/preferences", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ userId, key: "location", value: selectedStoreId }),
-            });
-        } catch {}
 
         if (orderType === "pickup") {
             router.push("/order/menu");
@@ -102,34 +90,35 @@ export default function StepperMain() {
     }
 
     return (
-        <>
-            <StepHeader
-                items={steps.map((s) => ({label: s.label, icon: s.icon}))}
-                activeIndex={stepIdx}
-                onGoTo={(n) => canReach(n) && setStepIdx(n)}
-                canReach={canReach}
-            />
 
-            <main className="max-w-7xl mx-auto px-6 py-6">
-                <div className="grid grid-cols-12 gap-6">
-                    {/* Main */}
-                    <div className="col-span-12 lg:col-span-8 xl:col-span-9 space-y-6">
-                        {curr.render(ctx)}
+            <>
+                <StepHeader
+                    items={steps.map((s) => ({label: s.label, icon: s.icon}))}
+                    activeIndex={stepIdx}
+                    onGoTo={(n) => canReach(n) && setStepIdx(n)}
+                    canReach={canReach}
+                />
+
+                <main className="max-w-7xl mx-auto px-6 py-6">
+                    <div className="grid grid-cols-12 gap-6">
+                        {/* Main */}
+                        <div className="col-span-12 lg:col-span-8 xl:col-span-9 space-y-6">
+                            {curr.render(ctx)}
+                        </div>
+
+                        <SummaryRail
+                            selectedStore={selectedStore}
+                            setStepIdx={setStepIdx}
+                            orderType={orderType}
+                            partner={partner}
+                            scheduleLater={scheduleLater}
+                            ctaLabel={ctaLabel}
+                            canContinue={canContinue}
+                            handlePrimaryClick={handlePrimaryClick}
+                        />
+
                     </div>
-
-                    <SummaryRail
-                        selectedStore={selectedStore}
-                        setStepIdx={setStepIdx}
-                        orderType={orderType}
-                        partner={partner}
-                        scheduleLater={scheduleLater}
-                        ctaLabel={ctaLabel}
-                        canContinue={canContinue}
-                        handlePrimaryClick={handlePrimaryClick}
-                    />
-
-                </div>
-            </main>
-        </>
+                </main>
+            </>
     );
 }

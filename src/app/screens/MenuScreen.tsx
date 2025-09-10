@@ -1,20 +1,20 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import OrderingMenu from '@/app/components/Order/Menu/Menu';
 import { StoreLocation } from '@/app/lib/types';
 import { LOCATIONS } from '@/app/lib/locations';
 import LocationPanel from '@/app/components/Location/LocationPanel';
+import {useOrder} from "@/app/components/Order/Stepper/OrderCtx";
 
 export default function MenuScreen() {
-    const [location, setLocation] = useState<StoreLocation | null>(null);
+    const { selectedStoreId, setSelectedStoreId } = useOrder();
 
-    useEffect(() => {
-        try {
-            const id = localStorage.getItem('gc_location');
-            if (id) setLocation(LOCATIONS.find(s => s.id === id) || null);
-        } catch {}
-    }, []);
+    const location: StoreLocation | null = useMemo(() => {
+        if (!selectedStoreId) return null;
+        return LOCATIONS.find((s) => s.id === selectedStoreId) || null;
+    }, [selectedStoreId]);
+
 
     return (
         <section

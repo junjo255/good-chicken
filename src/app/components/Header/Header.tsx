@@ -1,13 +1,12 @@
 'use client';
+
 import {useState, useEffect, useRef} from 'react';
 import styles from './Header.module.css';
 import {usePathname} from 'next/navigation';
-import CartDrawer from "@/app/components/CartDrawer/CartDrawer";
 import {useCart} from "@/app/lib/cart";
-import {CartIcon} from "@/app/components/CartDrawer/CartIcon";
 import Link from "next/link";
-import {StoreLocation} from "@/app/lib/types";
-import {LOCATIONS} from "@/app/lib/locations";
+import {CartIcon} from "@/app/components/Order/CartDrawer/CartIcon";
+import CartDrawer from "@/app/components/Order/CartDrawer/CartDrawer";
 
 const navItems = [
     {label: 'ORDER NOW', href: '/order', emphasize: true},
@@ -153,14 +152,6 @@ export default function Header() {
     const itemCount = cart.items?.reduce((n, i) => n + (i.quantity ?? 1), 0) ?? 0;
 
     const cartBtnRef = useRef<HTMLButtonElement | null>(null);
-    const [location, setLocation] = useState<StoreLocation | null>(null);
-
-    useEffect(() => {
-        try {
-            const id = localStorage.getItem('gc_location');
-            if (id) setLocation(LOCATIONS.find(s => s.id === id) || null);
-        } catch {}
-    }, []);
 
     return (
         <header
@@ -225,7 +216,6 @@ export default function Header() {
                                 open={cartOpen}
                                 setOpen={setCartOpen}
                                 anchorRef={cartBtnRef}
-                                loc={location}
                             />
                         </>
                     ) : null}
@@ -276,7 +266,6 @@ export default function Header() {
                                         open={cartOpen}
                                         setOpen={setCartOpen}
                                         anchorRef={cartBtnRef}
-                                        loc={location}
                                     />
                                 </> : null
                         }

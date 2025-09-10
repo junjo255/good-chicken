@@ -11,8 +11,8 @@ export type ModifierChoice = {
 export type ModifierGroup = {
     id: string;
     name: string;
-    min: number; // e.g., 0
-    max: number; // e.g., 3
+    min: number;
+    max: number;
     choices: ModifierChoice[];
 };
 
@@ -105,4 +105,6 @@ export type StoreLocation = {
 export enum DeliveryPartner {
     UberEats = "uberEats",
     Doordash = "doordash",
+    Seamless = "seamless",
+    Grubhub = "grubhub"
 }

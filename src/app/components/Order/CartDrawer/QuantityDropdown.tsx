@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Minus, Plus, ChevronDown } from 'lucide-react';
+import React, {useMemo, useRef, useState} from 'react';
+import {ChevronDown} from 'lucide-react';
 
 type Props = {
     value: number;
@@ -27,7 +27,7 @@ export default function QuantityDropdown({
     const ref = useRef<HTMLDivElement | null>(null);
 
     const opts = useMemo(
-        () => options ?? Array.from({ length: Math.floor((max - min) / step) + 1 }, (_, i) => min + i * step),
+        () => options ?? Array.from({length: Math.floor((max - min) / step) + 1}, (_, i) => min + i * step),
         [options, min, max, step]
     );
 
@@ -43,14 +43,17 @@ export default function QuantityDropdown({
         >
             <button
                 type="button"
-                onClick={(e) => { e.stopPropagation(); setOpen((o) => !o); }}
+                onClick={(e) => {
+                    e.stopPropagation();
+                    setOpen((o) => !o);
+                }}
                 aria-haspopup="listbox"
                 aria-expanded={open}
                 aria-label="Choose quantity"
                 className="inline-flex items-center gap-1 rounded-full px-2 py-1 text-sm font-medium hover:bg-white/10 cursor-pointer transition-colors"
             >
                 {value}
-                <ChevronDown className="h-4 w-4" aria-hidden="true" />
+                <ChevronDown className="h-4 w-4" aria-hidden="true"/>
             </button>
 
             {open && (
@@ -68,7 +71,11 @@ export default function QuantityDropdown({
                             key={n}
                             role="option"
                             aria-selected={n === value}
-                            onClick={(e) => { e.stopPropagation(); onChange(n); setOpen(false); }}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                onChange(n);
+                                setOpen(false);
+                            }}
                             className={`flex w-full items-center justify-between rounded-lg px-2 py-2 text-sm cursor-pointer hover:bg-neutral-100 ${n === value ? 'bg-neutral-100 font-semibold' : 'text-neutral-700'}`}
                         >
                             <span>{n}</span>
