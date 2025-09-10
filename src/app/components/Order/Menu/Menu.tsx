@@ -253,7 +253,7 @@ export default function OrderingMenu()  {
             <section className="grid grid-cols-1 gap-x-10 gap-y-14 md:grid-cols-2 lg:grid-cols-3" style={{padding: 0, margin: 0}}>
                 {filtered.map(item => (
                     <article key={item.id} className="group">
-                        <div className="relative overflow-hidden rounded-[14px] border border-neutral-200 bg-white">
+                        <div className="relative overflow-hidden rounded-[14px] shadow-lg bg-white">
                             <div className="relative">
                                 <img src={item.image} alt={item.name} className="h-[220px] w-full object-cover"/>
                                 {item.isNew && <NewBadge/>}
@@ -279,7 +279,7 @@ export default function OrderingMenu()  {
                                             aria-label="Add"
                                         >
                                             <Plus
-                                                size={17}
+                                                size={20}
                                                 strokeWidth={3}
                                                 className="transition-colors text-[#3F3126] hover:text-[#fff] "
                                                 aria-hidden="true"
@@ -292,7 +292,7 @@ export default function OrderingMenu()  {
                                             aria-label="Add"
                                         >
                                             <Plus
-                                                size={17}
+                                                size={20}
                                                 strokeWidth={3}
                                                 className="transition-colors text-[#3F3126] group-hover:text-[#fff]"
                                                 aria-hidden="true"

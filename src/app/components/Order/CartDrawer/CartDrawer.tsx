@@ -44,6 +44,24 @@ export default function CartDrawer({open, setOpen, anchorRef}: Props) {
         [selectedStoreId]
     );
 
+    useEffect(() => {
+        if (selectedStoreId) return;
+
+        if (cart?.clearCart) cart.clearCart();
+        else if (cart?.empty) cart.empty();
+        else if (cart?.removeAll) cart.removeAll();
+        else if (Array.isArray(cart?.items)) {
+            cart.items.forEach((it: any) => {
+                if (cart.removeItem) cart.removeItem(it.id);
+                else if (cart.remove) cart.remove(it.id);
+            });
+        }
+
+        if (open) setOpen(false);
+
+        router.replace("/order");
+    }, [selectedStoreId]);
+
     const rawItems: CartItem[] = cart.items ?? [];
     const uiItems = rawItems.map((i) => {
         const modsTotal =

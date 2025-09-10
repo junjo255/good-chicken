@@ -9,12 +9,14 @@ import ContactUs from "@/app/components/ContactUs/ContactUs";
 import Marquee from "react-fast-marquee";
 import InstagramFeed from "@/app/components/InstagramFeed/InstagramFeed";
 import Header from "@/app/components/Header/Header";
+import TempInstagramFeed from "@/app/components/InstagramFeed/TempInstagramFeed";
+import AOSInit from "@/app/AOSInit";
 
 export default async function Home() {
 
     return (
         <>
-            {/*<AOSInit />*/}
+            <AOSInit />
             <Header/>
 
             <Hero/>
@@ -25,7 +27,7 @@ export default async function Home() {
 
             <Locations />
 
-            {/*<TempInstagramFeed/>*/}
+            <TempInstagramFeed/>
             <InstagramFeed/>
             {/*<Catering/>*/}
             <ContactUs/>
