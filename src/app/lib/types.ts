@@ -88,13 +88,28 @@ export type CardItem = {
     startingPriceCents?: number;
 };
 
+export type Weekday = "Mon" | "Tue" | "Wed" | "Thu" | "Fri" | "Sat" | "Sun";
+
+export type TimeRange = { open: string; close: string };
+
+export type BusinessHours = {
+    timezone?: string;
+    regular: Record<Weekday, TimeRange[] | "closed">;
+    exceptions?: Array<{
+        date: string;
+        ranges: TimeRange[] | "closed";
+        note?: string;
+    }>;
+    note?: string;
+};
+
 export type StoreLocation = {
     id: string;
     brand: string;
     city: string;
     address: string;
     phone?: string;
-    hours?: string;
+    hours?: BusinessHours;
     open: boolean;
     services?: string[];
     mapsEmbedUrl: string;

@@ -1,4 +1,24 @@
-import {DeliveryPartner, StoreLocation} from "@/app/lib/types";
+import {BusinessHours, DeliveryPartner, StoreLocation} from "@/app/lib/types";
+
+
+
+const businessHours: BusinessHours = {
+    timezone: "America/New_York",
+    regular: {
+        Mon: "closed",
+        Tue: [{ open: "11:00", close: "21:00" }],
+        Wed: [{ open: "11:00", close: "21:00" }],
+        Thu: [{ open: "11:00", close: "21:00" }],
+        Fri: [{ open: "11:00", close: "22:00" }],
+        Sat: [{ open: "11:00", close: "22:00" }],
+        Sun: [{ open: "11:00", close: "21:00" }],
+    },
+    exceptions: [
+        { date: "2025-11-27", ranges: "closed", note: "Thanksgiving" },
+        { date: "2025-12-24", ranges: [{ open: "10:00", close: "16:00" }], note: "Christmas Eve" },
+    ],
+};
+
 
 export const LOCATIONS: StoreLocation[] = [
     {
@@ -7,7 +27,7 @@ export const LOCATIONS: StoreLocation[] = [
         city: "Montclair",
         address: "114 Bloomfield Ave, Montclair, NJ 07042",
         phone: "+1 (973) 337-5075",
-        hours: "10am ~ 10pm",
+        hours: businessHours,
         open: true,
         services: ["Dine-in", "Take out"],
         mapsEmbedUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d6039.864532511089!2d-74.2105586!3d40.807482199999995!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c2556860800fd9%3A0x7c8e4fce5d9aa643!2sGood%20Chicken!5e0!3m2!1sen!2sus!4v1756665637991!5m2!1sen!2sus",
@@ -22,7 +42,7 @@ export const LOCATIONS: StoreLocation[] = [
         city: "Jersey City",
         address: "414 Grand St Jersey City, NJ 07302",
         phone: "+1 (973) 337-5075",
-        hours: "10am ~ 10pm",
+        hours: businessHours,
         open: true,
         services: ["Dine-in", "Take out"],
         mapsEmbedUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d6048.040092383556!2d-74.05243399999999!3d40.7175752!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c250b7cecdfd47%3A0x3fbde0a2129e6c01!2s414%20Grand%20St%2C%20Jersey%20City%2C%20NJ%2007302!5e0!3m2!1sen!2sus!4v1756992079385!5m2!1sen!2sus",

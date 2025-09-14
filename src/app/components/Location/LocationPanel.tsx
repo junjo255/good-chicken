@@ -1,11 +1,12 @@
 "use client";
 
-import {StoreLocation} from "@/app/lib/types";
+import {BusinessHours, StoreLocation, Weekday} from "@/app/lib/types";
 import React from "react";
 import Badge from "@/app/classUtils";
 import styles from './Locations.module.css';
-import {Clock, Copy, MapPin} from "lucide-react";
+import {ChevronDown, Clock, Copy, MapPin} from "lucide-react";
 import Link from "next/link";
+import {formatDay, isOpenNow, to12h, todayWeekday} from "@/app/utils";
 
 type LocationPanelProps = {
     location: StoreLocation;
@@ -13,6 +14,9 @@ type LocationPanelProps = {
     selectedStoreId?: string | null;
     setSelectedStoreId?: (id: string | null) => void;
 };
+
+const ORDER: Weekday[] = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+
 
 export default function LocationPanel({
                                           location,
@@ -23,10 +27,30 @@ export default function LocationPanel({
     const renderStoreHeader = (s: { brand: string; city: string; open: boolean; prep?: string }) => {
         return (
             <div className="flex items-center gap-3">
-                {s.open ? <Badge tone="open">Open</Badge> : <Badge tone="closed">Closed</Badge>}
+                <OpenBadge hours={location.hours}/>
             </div>
         );
     };
+
+    function OpenBadge({hours}: { hours?: BusinessHours }) {
+        if (!hours) return null;
+        const status = isOpenNow(hours);
+        if (status.isOpen) {
+            return (
+                <div
+                    className="inline-flex items-center gap-2 rounded-full bg-green-100 px-3 py-1 text-green-800 text-sm">
+                    <span className="h-2 w-2 rounded-full bg-green-500"/>
+                    Open{status.until ? <> until {to12h(status.until)}</> : null}
+                </div>
+            );
+        }
+        return (
+            <div className="inline-flex items-center gap-2 rounded-full bg-red-100 px-3 py-1 text-red-800 text-sm">
+                <span className="h-2 w-2 rounded-full bg-red-500"/>
+                Closed
+            </div>
+        );
+    }
 
     const selected = selectedStoreId === location.id;
     const isStepper = component === 'stepper';
@@ -35,6 +59,18 @@ export default function LocationPanel({
         phone ? `tel:${phone.replace(/[^\d+]/g, "")}` : "";
     const mapHref = (address: string) =>
         `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
+
+    const regular = (location.hours as BusinessHours).regular;
+    const [expanded, setExpanded] = React.useState(false);
+    if (typeof location.hours === "string") {
+        // backward-compat: if some locations still have a plain string
+        return <div>{location.hours}</div>;
+    }
+
+    const hours = location.hours as BusinessHours;
+    const today = todayWeekday(hours.timezone);
+    const daysToShow: Weekday[] = expanded ? ORDER : [today];
+
     return (
         <section
             className={`${isStepper || isMenu ? styles.stepperPadding : styles.locationPadding}
@@ -61,7 +97,7 @@ export default function LocationPanel({
 
                         {!isMenu &&
                             <div>
-                                {renderStoreHeader(location)}
+                                <OpenBadge hours={location.hours}/>
                             </div>
                         }
 
@@ -91,11 +127,37 @@ export default function LocationPanel({
 
                         {!isMenu &&
                             location.hours && (
-                                <div>
-                                    <dt className="text-sm font-bold uppercase tracking-widest text-[#6b7280]">We're
-                                        Open
-                                    </dt>
-                                    <dd className="mt-1 text-[#262626]">{location.hours}</dd>
+                                <div className="space-y-2">
+                                    {/* Title + chevron together */}
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center gap-2">
+        <span className="text-sm font-bold uppercase tracking-widest text-[#6b7280]">
+          Hours
+        </span>
+                                            <button
+                                                type="button"
+                                                onClick={() => setExpanded(v => !v)}
+                                                aria-expanded={expanded}
+                                                aria-label={expanded ? "Hide hours" : "Show all hours"}
+                                                className="inline-flex items-center"
+                                            >
+                                                <ChevronDown
+                                                    className={`h-4 w-4 transition-transform ${expanded ? "rotate-180" : ""}`}
+                                                />
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    {/* Day + time close together */}
+                                    <ul className="space-y-1">
+                                        {daysToShow.map((d) => (
+                                            <li key={d} className="flex items-center text-[15px]">
+                                                <span className="font-medium">{d}</span>
+                                                <span className="mx-2 text-neutral-400">•</span>
+                                                <span>{formatDay(hours.regular[d])}</span>
+                                            </li>
+                                        ))}
+                                    </ul>
                                 </div>
                             )
                         }
@@ -119,10 +181,10 @@ export default function LocationPanel({
                                 </div>
                             ) : (
                                 <Link
-                                    href="/order"
+                                    href={`/order?lcn=${location.id}`}
                                     rel="noopener noreferrer"
                                     style={{color: "#fff"}}
-                                    className="inline-flex items-center justify-center rounded-lg px-4 py-2 hover:bg-[#C02A2E3F] bg-[#AF3935] transition font-bold"
+                                    className="inline-flex items-center justify-center rounded-lg px-4 py-2 button bg-[#AF3935] transition font-bold"
                                 >
                                     Order Now
                                 </Link>
@@ -132,7 +194,7 @@ export default function LocationPanel({
                                 href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(location.address)}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="inline-flex items-center justify-center rounded-lg px-4 py-2 border border-[#3f3126]-300 hover:border-neutral-400 transition text-md font-bold"
+                                className="inline-flex items-center justify-center rounded-lg px-4 py-2 border border-[#3f3126]-300 hover:border-neutral-400 button transition text-md font-bold"
                             >
                                 Get Directions
                             </a>
@@ -159,14 +221,7 @@ export default function LocationPanel({
                             <div
                                 className="rounded-md m-0 pt-3  items-center flex flex-row mb-4 justify-evenly sm:justify-start gap-15 md:p-3 sm:gap-20"
                             >
-                                <div className="flex items-center gap-2">
-                                    <span className="inline-flex h-2 w-2  bg-green-500 rounded-full" aria-hidden="true"/>
-                                    <span className="text-md font-medium text-[#262626]">Open</span>
-                                </div>
-                                <div className="flex items-center gap-2 text-md text-[#262626]">
-                                    <div><Clock/></div>
-                                    <div>Open until 12:00 AM</div>
-                                </div>
+                                <OpenBadge hours={location.hours}/>
                             </div>
                         </div>
                     </aside>) :

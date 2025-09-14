@@ -31,7 +31,7 @@ export default function OrderNow() {
                     data-aos-delay="320"
                     data-aos-duration="650"
                 >
-                    <Link href="/order" className="cta">Order Now</Link>
+                    <Link href="/order" className="cta button">Order Now</Link>
                     <a href="#locations" className="cta ghost">Find a Location</a>
                 </div>
             </div>

@@ -231,11 +231,11 @@ export default function Header() {
                             </li>
                         ))}
                     </ul>
-                    <a href="#" className={`${styles.brand} ${styles.centerBrand}`} aria-label="BBQ Chicken home">
+                    <Link href="/" className={`${styles.brand} ${styles.centerBrand}`} aria-label="BBQ Chicken home">
                         <img width="85" height="85"
                              src={logoSrc}
                              alt="Good Chicken"/>
-                    </a>
+                    </Link>
 
                     <ul id="primary-navigation-right" className={`${styles.navList} ${styles.rightList}`}>
                         {rightItems.map(({label, href, emphasize}) => (

@@ -2,6 +2,7 @@
 
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
+import { v4 as uuid } from "uuid";
 
 export type CartModifier = { id: string; name: string; priceCents: number };
 export type CartLine = {
@@ -39,7 +40,6 @@ export const useCart = create<CartStore>()(
             items: [],
             addItem: (sku, name, basePriceCents, modifiers = []) => {
                 set((state) => {
-                    // merge with an existing line that has the same sku+modifiers
                     const idx = state.items.findIndex(
                         (i) => i.sku === sku && sameMods(i.modifiers, modifiers)
                     );
@@ -50,7 +50,9 @@ export const useCart = create<CartStore>()(
                     }
                     const id = `${sku}-${Math.random().toString(36).slice(2, 9)}`;
                     const line: CartLine = { id, sku, name, basePriceCents, quantity: 1, modifiers };
-                    return { items: [...state.items, line] };
+                    return {
+                        items: [...state.items, line]
+                    };
                 });
             },
             increaseQty: (id) =>

@@ -5,7 +5,7 @@ import {LOCATIONS} from "@/app/lib/locations";
 import getSteps, {Ctx, OrderType, Partner} from "@/app/components/Order/Stepper/Steps";
 import StepHeader from "@/app/components/Order/Stepper/StepHeader";
 import SummaryRail from "@/app/components/Order/Stepper/SummaryRail";
-import {useRouter} from "next/navigation";
+import {usePathname, useRouter, useSearchParams} from "next/navigation";
 import {OrderProvider, useOrder} from "@/app/components/Order/Stepper/OrderCtx";
 
 export default function StepperMain() {
@@ -61,6 +61,21 @@ export default function StepperMain() {
         startMenu,
         openPartner,
     };
+
+    const searchParams = useSearchParams();
+    const [lcnHandled, setLcnHandled] = useState(false);
+
+    const pathname = usePathname();
+    useEffect(() => {
+        if (lcnHandled) return;
+        const lcn = searchParams.get("lcn");
+        if (!lcn) return;
+
+        setSelectedStoreId(lcn);
+        setStepIdx(1);
+        setLcnHandled(true);
+        router.replace("/order");
+    }, [searchParams, lcnHandled, setSelectedStoreId, router]);
 
     const steps = useMemo(() => getSteps(ctx), [selectedStoreId, orderType, partner, scheduleLater]);
     const curr = steps[stepIdx];

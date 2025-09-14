@@ -97,7 +97,7 @@ a {
     &:hover {
         background: var(--brand);
         color: white;
-        opacity: 0.9;
+        filter: brightness(.95);
         transition: white 0.7s ease;
     }
 }
@@ -242,7 +242,6 @@ footer {
     color: #cbd5e1;
 }
 
-/* accessibility helper */
 .visually-hidden {
     position: absolute !important;
     height: 1px;
@@ -256,9 +255,7 @@ footer {
 }
 
 .button {
-
     &:hover {
-        opacity: 0.9;
-        transition-delay: 1s;
+        filter: brightness(.95)
     }
 }

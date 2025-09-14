@@ -176,7 +176,6 @@ export default function OrderingMenu()  {
         name: string;
         priceCents: number;
     }) {
-        // Construct modifiers based on selections
         const modifiers: CartModifier[] = [];
 
         if (sel.part) {
@@ -195,19 +194,7 @@ export default function OrderingMenu()  {
             });
         }
 
-        // Static example modifiers to replicate screenshot
-        modifiers.push(
-            {
-                id: "included",
-                name: "Included sides",
-                priceCents: 0,
-            },
-            {
-                id: "salsa",
-                name: "Fresh Tomato Salsa",
-                priceCents: 0,
-            }
-        );
+
 
         addItem(sku, name, priceCents, modifiers);
         setOpen(false);

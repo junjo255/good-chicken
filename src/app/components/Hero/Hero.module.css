@@ -31,7 +31,9 @@
     z-index: 1;
     padding: 56px 16px;
     transform: translateY(-50px);
-    transition: transform 60ms linear;
+    /*transition: transform 60ms linear;*/
+    transition: opacity 700ms ease-in;
+
 }
 
 .tagline {
@@ -61,11 +63,11 @@
     flex-wrap: wrap;
 }
 
-@media (prefers-reduced-motion: reduce) {
-    .hero::before,
-    .inner {
-        transition: none !important;
-        transform: none !important;
-        background-position: center !important;
-    }
-}
+/*@media (prefers-reduced-motion: reduce) {*/
+/*    .hero::before,*/
+/*    .inner {*/
+/*        transition: none !important;*/
+/*        transform: none !important;*/
+/*        background-position: center !important;*/
+/*    }*/
+/*}*/

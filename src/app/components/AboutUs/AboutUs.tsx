@@ -89,78 +89,110 @@ export default function AboutUs({
                     </div>
 
                     {/* Copy + CTA */}
-                    <div className="lg:col-span-6 lg:pl-8">
-                        <p className="text-white/95 text-base md:text-lg leading-relaxed max-w-[560px] aboutaos-init aos-animate"
-                           style={{fontFamily: "GothamRnd-Light "}}
-                           data-aos="zoom-in"
-                           data-aos-delay="350"
-                           data-aos-duration="500"
-                        >
+                    {/*<div className="lg:col-span-6 lg:pl-8">*/}
+                    {/*    <p className="text-white/95 text-base md:text-lg leading-relaxed max-w-[560px] aboutaos-init aos-animate"*/}
+                    {/*       style={{fontFamily: "GothamRnd-Light "}}*/}
+                    {/*       data-aos="zoom-in"*/}
+                    {/*       data-aos-delay="350"*/}
+                    {/*       data-aos-duration="500"*/}
+                    {/*    >*/}
+                    {/*       <span*/}
+                    {/*           style={{*/}
+                    {/*               color: "#E9BC46",*/}
+                    {/*               fontSize: "1.7rem",*/}
+                    {/*               fontWeight: 500,*/}
+                    {/*               fontFamily: "GothamSSM-Medium"*/}
+                    {/*           }}*/}
+                    {/*       >*/}
+                    {/*           Welcome to Good Chicken!*/}
+                    {/*       </span>*/}
+                    {/*        <br/>*/}
+                    {/*        Motivated to prepare and provide the most delicious and healthiest*/}
+                    {/*        premium high quality fried chicken!*/}
+                    {/*        <br/>*/}
+                    {/*        We are thirsty to satisfy your family and friends’ cravings for some*/}
+                    {/*        <span*/}
+                    {/*            style={{*/}
+                    {/*                color: "#E9BC46",*/}
+                    {/*                fontWeight: 500,*/}
+                    {/*                fontFamily: "GothamSSM-Medium"*/}
+                    {/*            }}*/}
+                    {/*            >*/}
+                    {/*            {` GOOD CHICKEN.`}*/}
+                    {/*        </span>*/}
+                    {/*    </p>*/}
+                    {/*</div>*/}
+                </div>
+
+                {/* IMAGES ROW */}
+                <div className="mt-12 grid grid-cols-1 gap-8 items-end">
+                    <p
+                        className="text-white/95 text-base text-xl md:text-lg leading-relaxed max-w-[560px] aboutaos-init aos-animate"
+                       style={{fontFamily: "GothamRnd-Light "}}
+                       // data-aos="zoom-in"
+                       // data-aos-delay="350"
+                       // data-aos-duration="500"
+                    >
                            <span
                                style={{
                                    color: "#E9BC46",
-                                   fontSize: "1.7rem",
+                                   fontSize: "2rem",
                                    fontWeight: 500,
                                    fontFamily: "GothamSSM-Medium"
                                }}
                            >
                                Welcome to Good Chicken!
                            </span>
-                            <br/>
-                            Motivated to prepare and provide the most delicious and healthiest
-                            premium high quality fried chicken!
-                            <br/>
-                            We are thirsty to satisfy your family and friends’ cravings for some
-                            <span
-                                style={{
-                                    color: "#E9BC46",
-                                    fontWeight: 500,
-                                    fontFamily: "GothamSSM-Medium"
-                                }}
-                                >
+                        <br/>
+                        Motivated to prepare and provide the most delicious and healthiest
+                        premium high quality fried chicken!
+                        <br/>
+                        We are thirsty to satisfy your family and friends’ cravings for some
+                        <span
+                            style={{
+                                color: "#E9BC46",
+                                fontWeight: 500,
+                                fontFamily: "GothamSSM-Medium"
+                            }}
+                        >
                                 {` GOOD CHICKEN.`}
                             </span>
-                        </p>
-                    </div>
+                    </p>
                 </div>
+                {/*/!*<Marquee*!/*/}
+                {/*/!*    speed={20}*!/*/}
+                {/*/!*    style={{fontSize: "100px", color:"#F4BB1C"}}*!/*/}
+                {/*/!*>*!/*/}
+                {/*<div className="lg:col-span-5">*/}
+                {/*    <div className="overflow-hidden rounded-[24px] shadow-sm">*/}
+                {/*        <img src={leftImage} alt="Interior" className="w-full h-auto object-cover"/>*/}
+                {/*    </div>*/}
+                {/*</div>*/}
 
-                {/* IMAGES ROW */}
-                <div className="mt-12 grid grid-cols-1 lg:grid-cols-12 gap-8 items-end">
-                    {/*<Marquee*/}
-                    {/*    speed={20}*/}
-                    {/*    style={{fontSize: "100px", color:"#F4BB1C"}}*/}
-                    {/*>*/}
-                    <div className="lg:col-span-5">
-                        <div className="overflow-hidden rounded-[24px] shadow-sm">
-                            <img src={leftImage} alt="Interior" className="w-full h-auto object-cover"/>
-                        </div>
-                    </div>
+                {/*<div className="lg:col-span-4 flex items-end justify-center">*/}
+                {/*    <div*/}
+                {/*        className="relative w-full max-w-[560px] aspect-[5/3]"*/}
+                {/*        // style={{*/}
+                {/*        //     backgroundColor: "#E8DCCB", // beige oval*/}
+                {/*        //     borderRadius: "999px / 360px", // ellipse*/}
+                {/*        // }}*/}
+                {/*    >*/}
+                {/*        <img*/}
+                {/*            src={centerImage}*/}
+                {/*            alt="Product"*/}
+                {/*            className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[84%] h-auto object-contain"*/}
+                {/*            style={{filter: "drop-shadow(0 6px 12px rgba(0,0,0,0.25))"}}*/}
+                {/*        />*/}
+                {/*    </div>*/}
+                {/*</div>*/}
 
-                    <div className="lg:col-span-4 flex items-end justify-center">
-                        <div
-                            className="relative w-full max-w-[560px] aspect-[5/3]"
-                            // style={{
-                            //     backgroundColor: "#E8DCCB", // beige oval
-                            //     borderRadius: "999px / 360px", // ellipse
-                            // }}
-                        >
-                            <img
-                                src={centerImage}
-                                alt="Product"
-                                className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[84%] h-auto object-contain"
-                                style={{filter: "drop-shadow(0 6px 12px rgba(0,0,0,0.25))"}}
-                            />
-                        </div>
-                    </div>
+                {/*<div className="lg:col-span-3">*/}
+                {/*    <div className="overflow-hidden rounded-[24px] shadow-sm">*/}
+                {/*        <img src={rightImage} alt="Storefront" className="w-full h-auto object-cover"/>*/}
+                {/*    </div>*/}
+                {/*</div>*/}
+                {/*/!*</Marquee>*!/*/}
 
-                    <div className="lg:col-span-3">
-                        <div className="overflow-hidden rounded-[24px] shadow-sm">
-                            <img src={rightImage} alt="Storefront" className="w-full h-auto object-cover"/>
-                        </div>
-                    </div>
-                    {/*</Marquee>*/}
-
-                </div>
             </div>
         </section>
     );
