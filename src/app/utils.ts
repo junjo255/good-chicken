@@ -58,7 +58,7 @@ export function isOpenNow(hours: BusinessHours): {
 
     // helper: map to the next weekday (adapt if your Weekday differs)
     const nextDay = (d: Weekday): Weekday => {
-        const order: Weekday[] = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
+        const order: Weekday[] = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
         return order[(order.indexOf(d) + 1) % 7] as Weekday;
     };
 
@@ -112,21 +112,6 @@ export function isOpenNow(hours: BusinessHours): {
             }
         }
     }
-
-    // style={{
-    //     display: "flex",
-    //         justifyContent: "center",
-    //         background: "#FFF",
-    //         borderRadius: "20px",
-    //         border: "none",
-    //         margin: "1rem",
-    //         maxWidth: "1200px",
-    //         minWidth: "326px",
-    //         padding: "72px 0",
-    //         width: "calc(100% - 2px)",
-    // }}
-    //
-    // box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04) !important;
 
     // 4) Find the NEXT DAY that opens (first range of that day)
     let d = today;
