@@ -24,13 +24,6 @@ export default function LocationPanel({
                                           setSelectedStoreId,
                                           selectedStoreId,
                                       }: LocationPanelProps) {
-    const renderStoreHeader = (s: { brand: string; city: string; open: boolean; prep?: string }) => {
-        return (
-            <div className="flex items-center gap-3">
-                <OpenBadge hours={location.hours}/>
-            </div>
-        );
-    };
 
     function OpenBadge({hours}: { hours?: BusinessHours }) {
         if (!hours) return null;
@@ -47,9 +40,14 @@ export default function LocationPanel({
         return (
             <div className="inline-flex items-center gap-2 rounded-full bg-red-100 px-3 py-1 text-red-800 text-sm">
                 <span className="h-2 w-2 rounded-full bg-red-500"/>
-                Closed
+                {status.start ? <>Opens <br/> at {to12h(status.start)}</> : "Closed"}
             </div>
         );
+    }
+    function orderCTA({hours}: { hours?: BusinessHours }) {
+        if (!hours) return "Order Now";
+        const status = isOpenNow(hours);
+        return status?.isOpen ? "Order Now" : "Schedule Your Order";
     }
 
     const selected = selectedStoreId === location.id;
@@ -63,7 +61,6 @@ export default function LocationPanel({
     const regular = (location.hours as BusinessHours).regular;
     const [expanded, setExpanded] = React.useState(false);
     if (typeof location.hours === "string") {
-        // backward-compat: if some locations still have a plain string
         return <div>{location.hours}</div>;
     }
 
@@ -186,7 +183,7 @@ export default function LocationPanel({
                                     style={{color: "#fff"}}
                                     className="inline-flex items-center justify-center rounded-lg px-4 py-2 button bg-[#AF3935] transition font-bold"
                                 >
-                                    Order Now
+                                    {orderCTA({ hours: location?.hours })}
                                 </Link>
                             )}
 

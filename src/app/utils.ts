@@ -43,52 +43,105 @@ function isInRange(nowMin: number, r: TimeRange) {
     const end = toMinutes(r.close);
     if (start === end) return false;        // zero-length guard
     if (start < end) return nowMin >= start && nowMin < end;       // same-day
-    // overnight (e.g., 20:00–02:00): open if >= start OR < end
     return nowMin >= start || nowMin < end;
 }
 
 export function isOpenNow(hours: BusinessHours): {
     isOpen: boolean;
-    until?: string;            // close time in "HH:mm" for the current open range
-    sourceDay?: Weekday;       // which day’s range we’re currently in
-    note?: string;             // exception note if applicable
+    start?: string;
+    until?: string;
+    sourceDay?: Weekday;
+    note?: string;
 } {
     const { timezone } = hours;
     const { weekday: today, dateISO, minutes: nowMin } = zonedNowParts(timezone);
 
-    // 1) Exceptions (today only)
+    // helper: map to the next weekday (adapt if your Weekday differs)
+    const nextDay = (d: Weekday): Weekday => {
+        const order: Weekday[] = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
+        return order[(order.indexOf(d) + 1) % 7] as Weekday;
+    };
+
+    // helper: first upcoming range (open > now)
+    const firstUpcomingToday = (ranges: { open: string; close: string }[]) => {
+        const upcoming = ranges.find(r => nowMin < toMinutes(r.open));
+        return upcoming ? { start: upcoming.open } : null;
+    };
+
+    // 1) Exception for TODAY
     const todayException = hours.exceptions?.find(ex => ex.date === dateISO);
     if (todayException) {
-        if (todayException.ranges === "closed") return { isOpen: false, note: todayException.note };
-        for (const r of todayException.ranges) {
-            if (isInRange(nowMin, r)) return { isOpen: true, until: r.close, sourceDay: today, note: todayException.note };
+        if (todayException.ranges === "closed") {
+            // closed all day today → find next regular day
+        } else {
+            // open ranges today — if currently open, return OPEN
+            for (const r of todayException.ranges) {
+                if (isInRange(nowMin, r)) {
+                    return { isOpen: true, start: r.open, until: r.close, sourceDay: today, note: todayException.note };
+                }
+            }
+            // not open now → maybe opens later today under exception hours
+            const next = firstUpcomingToday(todayException.ranges);
+            if (next) return { isOpen: false, start: next.start, sourceDay: today, note: todayException.note };
+            // otherwise fall through to look at future days
         }
-        return { isOpen: false, note: todayException.note };
     }
 
-    // 2) Regular hours (today)
+    // 2) Regular hours (TODAY) — currently open?
     const todayRanges = hours.regular[today];
     if (todayRanges !== "closed") {
         for (const r of todayRanges) {
-            if (isInRange(nowMin, r)) return { isOpen: true, until: r.close, sourceDay: today };
+            if (isInRange(nowMin, r)) {
+                return { isOpen: true, start: r.open, until: r.close, sourceDay: today };
+            }
         }
+        // not open now → opens later today?
+        const next = firstUpcomingToday(todayRanges);
+        if (next) return { isOpen: false, start: next.start, sourceDay: today };
     }
 
-    // 3) Overnight spill from yesterday (if any)
+    // 3) Overnight spill from YESTERDAY (e.g., 20:00–02:00 and it's 00:30 today)
     const yday = prevDay(today);
     const yRanges = hours.regular[yday];
     if (yRanges !== "closed") {
         for (const r of yRanges) {
             const start = toMinutes(r.open);
             const end = toMinutes(r.close);
-            if (start > end) { // overnight range e.g. 20:00–02:00
-                if (nowMin < end) return { isOpen: true, until: r.close, sourceDay: yday };
+            if (start > end && nowMin < end) {
+                return { isOpen: true, start: r.open, until: r.close, sourceDay: yday };
             }
         }
     }
 
+    // style={{
+    //     display: "flex",
+    //         justifyContent: "center",
+    //         background: "#FFF",
+    //         borderRadius: "20px",
+    //         border: "none",
+    //         margin: "1rem",
+    //         maxWidth: "1200px",
+    //         minWidth: "326px",
+    //         padding: "72px 0",
+    //         width: "calc(100% - 2px)",
+    // }}
+    //
+    // box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04) !important;
+
+    // 4) Find the NEXT DAY that opens (first range of that day)
+    let d = today;
+    for (let i = 0; i < 7; i++) {
+        d = nextDay(d);
+        const ranges = hours.regular[d];
+        if (ranges !== "closed" && ranges.length > 0) {
+            return { isOpen: false, start: ranges[0].open, sourceDay: d };
+        }
+    }
+
+    // no hours found at all
     return { isOpen: false };
 }
+
 
 export function to12h(hhmm: string) {
     const [h, m] = hhmm.split(":").map(Number);

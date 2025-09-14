@@ -26,8 +26,13 @@ export default async function Home() {
 
             <Locations />
 
-            <TempInstagramFeed/>
-            <InstagramFeed/>
+            <TempInstagramFeed
+                urls={[
+                        "https://www.instagram.com/good_chicken_montclair/",
+                ]}
+                height={1200}
+            />
+            {/*<InstagramFeed/>*/}
             {/*<Catering/>*/}
             <ContactUs/>
             <Marquee
