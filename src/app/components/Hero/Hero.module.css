@@ -34,6 +34,9 @@
     /*transition: transform 60ms linear;*/
     transition: opacity 700ms ease-in;
 
+    @media (min-width: 768px) {
+        transform: translateY(-120px);
+    }
 }
 
 .tagline {

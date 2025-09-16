@@ -31,7 +31,8 @@ export default function Hero() {
                 <div className={styles.actions}
                      data-aos="fade-up"
                      data-aos-delay="320"
-                     data-aos-duration="650">
+                     data-aos-duration="650"
+                >
                     <Link href="/order" className="cta">Order Now</Link>
                     <a href="#FindUs" className="cta ghost">Find a Location</a>
                 </div>
