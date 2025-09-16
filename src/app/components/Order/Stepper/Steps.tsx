@@ -9,6 +9,7 @@ import {Shuffle, Store, Truck} from "lucide-react";
 import {DoorDashLogo, UberLogo} from "@/app/components/Order/Stepper/PartnerLogos";
 
 export type OrderType = "pickup" | "delivery" | null;
+export type OrderTiming = "now" | "schedule" | null;
 
 export type Partner = "uber" | "doordash" | null;
 
@@ -37,11 +38,11 @@ export type StepDef = {
 };
 
 const partners: { id: Exclude<Partner, null>; label: string; Logo: React.FC }[] = [
-    { id: "uber", label: "Uber Eats", Logo: UberLogo },
-    { id: "doordash", label: "DoorDash", Logo: DoorDashLogo },
+    {id: "uber", label: "Uber Eats", Logo: UberLogo},
+    {id: "doordash", label: "DoorDash", Logo: DoorDashLogo},
 ];
 
-export default function getSteps(ctx: Ctx): StepDef[] {
+export default function getSteps(ctx: Ctx, isStoreClosed: boolean, isStoreOpenToday: undefined | boolean, handlePrimaryClick: () => void): StepDef[] {
 
     return [
         {
@@ -70,6 +71,7 @@ export default function getSteps(ctx: Ctx): StepDef[] {
                                         component={"stepper"}
                                         setSelectedStoreId={setSelectedStoreId}
                                         selectedStoreId={selectedStoreId}
+                                        handlePrimaryClick={handlePrimaryClick}
                                     />
                                 </button>
 
@@ -121,7 +123,14 @@ export default function getSteps(ctx: Ctx): StepDef[] {
                                 </div>
                                 <div className="mt-3 flex items-center gap-3 text-md">
                                     <label className="inline-flex items-center gap-2 cursor-pointer">
-                                        <input type="radio" name="time" defaultChecked className="accent-black"/>
+                                        <input
+                                            type="radio"
+                                            name="time"
+                                            className="accent-black"
+                                            checked={!scheduleLater && !isStoreClosed}
+                                            onChange={() => setScheduleLater(false)}
+                                            disabled={isStoreClosed}
+                                        />
                                         ASAP
                                     </label>
                                     <label className="inline-flex items-center gap-2 cursor-pointer">
@@ -129,11 +138,18 @@ export default function getSteps(ctx: Ctx): StepDef[] {
                                             type="radio"
                                             name="time"
                                             className="accent-black"
+                                            checked={scheduleLater || isStoreClosed}
                                             onChange={() => setScheduleLater(true)}
                                         />
                                         Schedule time
+
                                     </label>
                                 </div>
+                                {isStoreClosed && (
+                                    <p className="text-md text-neutral-600 mt-3">
+                                        {`Store is closed ${isStoreOpenToday ? "now" : "today"}.`} <br/> Please schedule a pickup time.
+                                    </p>
+                                )}
                             </button>
 
                             {/* Delivery Card */}
@@ -188,7 +204,7 @@ export default function getSteps(ctx: Ctx): StepDef[] {
                             subtitle="You’ll complete checkout on the partner site in a new tab."
                         >
                             <div className="grid md:grid-cols-2 gap-4 p-5">
-                                {partners.map(({ id, label, Logo }) => (
+                                {partners.map(({id, label, Logo}) => (
                                     <button
                                         key={id}
                                         onClick={() => setPartner(id)}
@@ -198,7 +214,7 @@ export default function getSteps(ctx: Ctx): StepDef[] {
                                         aria-label={`Order delivery via ${label}`}
                                     >
                                         <div className="flex items-center justify-center">
-                                            <Logo />
+                                            <Logo/>
                                         </div>
                                     </button>
                                 ))}

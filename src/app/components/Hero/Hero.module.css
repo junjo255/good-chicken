@@ -19,7 +19,7 @@
     inset: 0;
     background-image: url("https://goodchickenusa.com/wp-content/uploads/2021/05/close-up-fried-chicken-wings-tray-with-green-onions.jpg");
     background-size: cover;
-    filter: brightness(30%);
+    filter: brightness(50%);
     z-index: 0;
     background-position: center;
     transition: background-position 60ms linear;

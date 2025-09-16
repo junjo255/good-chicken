@@ -2,7 +2,6 @@
 
 import {BusinessHours, StoreLocation, Weekday} from "@/app/lib/types";
 import React from "react";
-import Badge from "@/app/classUtils";
 import styles from './Locations.module.css';
 import {ChevronDown, Clock, Copy, MapPin} from "lucide-react";
 import Link from "next/link";
@@ -13,6 +12,7 @@ type LocationPanelProps = {
     component?: "main" | "stepper" | "menu";
     selectedStoreId?: string | null;
     setSelectedStoreId?: (id: string | null) => void;
+    handlePrimaryClick?: () => void;
 };
 
 const ORDER: Weekday[] = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
@@ -23,27 +23,41 @@ export default function LocationPanel({
                                           component = "main",
                                           setSelectedStoreId,
                                           selectedStoreId,
+                                          handlePrimaryClick
                                       }: LocationPanelProps) {
 
     function OpenBadge({hours}: { hours?: BusinessHours }) {
         if (!hours) return null;
         const status = isOpenNow(hours);
-        if (status.isOpen) {
+
+        if (!status.isOpenToday) {
             return (
                 <div
-                    className="inline-flex items-center gap-2 rounded-full bg-green-100 px-3 py-1 text-green-800 text-sm">
-                    <span className="h-2 w-2 rounded-full bg-green-500"/>
-                    Open{status.until ? <> until {to12h(status.until)}</> : null}
+                    className="items-start flex justify-end py-1 text-md min-w-[150px] ">
+                    {/*<span className="h-2 w-2 rounded-full bg-green-800"/>*/}
+                    <span className="text-red-800">Closed</span>
+                    {/*{status.until ? ` until ${to12h(status.until)}` : null}*/}
+                </div>
+            );
+        } else if (status.isOpen) {
+            return (
+                <div
+                    className="items-start flex justify-end py-1 text-md gap-1 min-w-[150px]">
+                    {/*<span className="h-2 w-2 rounded-full bg-green-800"/>*/}
+                    <span className="text-green-800">Open</span>
+                    {status.until ? ` until ${to12h(status.until)}` : null}
                 </div>
             );
         }
         return (
-            <div className="inline-flex items-center gap-2 rounded-full bg-red-100 px-3 py-1 text-red-800 text-sm">
-                <span className="h-2 w-2 rounded-full bg-red-500"/>
-                {status.start ? <>Opens <br/> at {to12h(status.start)}</> : "Closed"}
+            <div className=" items-start flex justify-end rounded-full min-w-[150px] gap-1 py-1 text-md">
+                {/*<span className="h-2 w-2 rounded-full bg-red-500"/>*/}
+                <span className="text-red-800">Opens</span>
+                {status.start ? ` at ${to12h(status.start)}` : "Closed"}
             </div>
         );
     }
+
     function orderCTA({hours}: { hours?: BusinessHours }) {
         if (!hours) return "Order Now";
         const status = isOpenNow(hours);
@@ -91,11 +105,8 @@ export default function LocationPanel({
                                 {location.brand}
                             </h2>
                         </div>
-
                         {!isMenu &&
-                            <div>
-                                <OpenBadge hours={location.hours}/>
-                            </div>
+                            <OpenBadge hours={location.hours}/>
                         }
 
                     </div>
@@ -125,18 +136,17 @@ export default function LocationPanel({
                         {!isMenu &&
                             location.hours && (
                                 <div className="space-y-2">
-                                    {/* Title + chevron together */}
                                     <div className="flex items-center justify-between">
                                         <div className="flex items-center gap-2">
-        <span className="text-sm font-bold uppercase tracking-widest text-[#6b7280]">
-          Hours
-        </span>
+                                            <span className="text-sm font-bold uppercase tracking-widest text-[#6b7280]">
+                                              Hours
+                                            </span>
                                             <button
                                                 type="button"
                                                 onClick={() => setExpanded(v => !v)}
                                                 aria-expanded={expanded}
                                                 aria-label={expanded ? "Hide hours" : "Show all hours"}
-                                                className="inline-flex items-center"
+                                                className="inline-flex items-center cursor-pointer"
                                             >
                                                 <ChevronDown
                                                     className={`h-4 w-4 transition-transform ${expanded ? "rotate-180" : ""}`}
@@ -148,8 +158,8 @@ export default function LocationPanel({
                                     {/* Day + time close together */}
                                     <ul className="space-y-1">
                                         {daysToShow.map((d) => (
-                                            <li key={d} className="flex items-center text-[15px]">
-                                                <span className="font-medium">{d}</span>
+                                            <li key={d} className="flex items-center p-1 text-[15px]">
+                                                <span className="font-bold">{d}</span>
                                                 <span className="mx-2 text-neutral-400">•</span>
                                                 <span>{formatDay(hours.regular[d])}</span>
                                             </li>
@@ -171,10 +181,15 @@ export default function LocationPanel({
                         <div className="mt-6 flex flex-row gap-2">
                             {isStepper ? (
                                 <div className="shrink-0">
-                                <span
-                                    className="inline-flex items-center h-10 px-4 rounded-lg bg-[#AF3935] text-white font-semibold">
-                                  {selected ? "Selected" : "Select"}
-                                </span>
+                                    {selected ?
+                                    <button
+                                        type="button"
+                                        onClick={handlePrimaryClick}
+                                        className="inline-flex items-center h-10 px-4 rounded-lg bg-[#AF3935] text-white font-semibold cursor-pointer"
+                                    >
+                                         Continue
+                                    </button> : null
+                                    }
                                 </div>
                             ) : (
                                 <Link
@@ -183,7 +198,7 @@ export default function LocationPanel({
                                     style={{color: "#fff"}}
                                     className="inline-flex items-center justify-center rounded-lg px-4 py-2 button bg-[#AF3935] transition font-bold"
                                 >
-                                    {orderCTA({ hours: location?.hours })}
+                                    {orderCTA({hours: location?.hours})}
                                 </Link>
                             )}
 

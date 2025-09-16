@@ -15,6 +15,7 @@ import {useRouter} from "next/navigation";
 import {useCart} from "@/app/lib/cart";
 import {v4 as uuid} from "uuid";
 import {CloverCardFields, CloverCardFieldsHandle, cloverCreateToken} from "@/app/components/Order/Payment/clover";
+import {isOpenNow} from "@/app/utils";
 
 
 export default function Checkout() {
@@ -84,6 +85,54 @@ export default function Checkout() {
         }
     }
 
+
+    // Pickup time (HH:MM) — default to today's best guess (see effect below)
+    const [pickupHour, setPickupHour] = useState<string>("");
+    const [pickupMinute, setPickupMinute] = useState<string>("");
+
+    function minsToHM(time: string | number | undefined) {
+        if (time === undefined || time === null) return { hh: "", mm: "" };
+
+        if (typeof time === "string") {
+            const [h, m] = time.split(":").map(Number);
+            return {
+                hh: String(h).padStart(2, "0"),
+                mm: String(m).padStart(2, "0"),
+            };
+        }
+
+        if (typeof time === "number") {
+            const hh = Math.floor(time / 60);
+            const mm = time % 60;
+            return {
+                hh: String(hh).padStart(2, "0"),
+                mm: String(mm).padStart(2, "0"),
+            };
+        }
+
+        return { hh: "", mm: "" };
+    }
+
+
+    React.useEffect(() => {
+        if (!selectedStore?.hours) return;
+        const status = isOpenNow(selectedStore.hours);
+        if (status.isOpen) {
+            const now = new Date();
+            setPickupHour(String(now.getHours()).padStart(2, "0"));
+            setPickupMinute(String(now.getMinutes()).padStart(2, "0"));
+            return;
+        }
+        if (status.isOpenToday) {
+            const {hh, mm} = minsToHM(status.start);
+            setPickupHour(hh);
+            setPickupMinute(mm);
+        } else {
+            setPickupHour("");
+            setPickupMinute("");
+        }
+    }, [selectedStore?.hours]);
+
     return (
         <section
             style={{marginTop: "var(--header-h, 96px)", scrollMarginTop: "var(--header-h, 96px)"}}
@@ -130,6 +179,63 @@ export default function Checkout() {
                                     <ChevronRight className="h-4 w-4 text-neutral-500"/>
                                 </button>
                             </div>
+
+                            {scheduleLater ?
+                                <div className="mt-3 rounded-xl border p-4">
+                                    <div className="flex items-center gap-3 mb-3">
+                                        <CalendarDays className="h-4 w-4 text-neutral-700"/>
+                                        <span className="text-[15px] font-medium text-neutral-800">
+       {selectedStore ? "Choose your pickup time" : "Select a store to set time"}
+                                 </span>
+                                    </div>
+                                    <div className="grid grid-cols-6 gap-3">
+                                        <div className="col-span-3">
+                                            <label className="block text-xs font-medium text-neutral-600 mb-1">Hours
+                                                (HH)</label>
+                                            <input
+                                                type="number"
+                                                min={0}
+                                                max={23}
+                                                placeholder="HH"
+                                                value={pickupHour}
+                                                onChange={(e) => {
+                                                    const v = e.target.value.slice(0, 2);
+                                                    if (v === "" || (/^\d+$/.test(v) && Number(v) <= 23)) setPickupHour(v);
+                                                }}
+                                                className="w-full rounded-lg border px-3 py-2 text-[15px] outline-none focus:ring-2 focus:ring-[#AF3935]"
+                                                disabled={!selectedStore}
+                                            />
+                                        </div>
+                                        <div className="col-span-3">
+                                            <label className="block text-xs font-medium text-neutral-600 mb-1">Minutes
+                                                (MM)</label>
+                                            <input
+                                                type="number"
+                                                min={0}
+                                                max={59}
+                                                placeholder="MM"
+                                                value={pickupMinute}
+                                                onChange={(e) => {
+                                                    const v = e.target.value.slice(0, 2);
+                                                    if (v === "" || (/^\d+$/.test(v) && Number(v) <= 59)) setPickupMinute(v);
+                                                }}
+                                                className="w-full rounded-lg border px-3 py-2 text-[15px] outline-none focus:ring-2 focus:ring-[#AF3935]"
+                                                disabled={!selectedStore}
+                                            />
+                                        </div>
+                                    </div>
+                                    {selectedStore?.hours && (
+                                        <p className="mt-3 text-sm text-neutral-600">
+                                            {(() => {
+                                                const st = isOpenNow(selectedStore.hours);
+                                                if (st.isOpen) return "Store is open now. Defaulted to current time.";
+                                                if (st.isOpenToday) return "Store opens later today. Defaulted to today’s opening time.";
+                                                return "Store is closed today. Please choose a different day/time.";
+                                            })()}
+                                        </p>
+                                    )}
+                                </div> : null
+                            }
                         </div>
                     </Card>
 
@@ -145,12 +251,12 @@ export default function Checkout() {
                             <Row
                                 icon={CreditCard}
                                 title={
-                                <div className="font-medium">
-                                    {selectedPayment.brand === "applepay"
-                                        ? "Apple Pay"
-                                        : `${selectedPayment.label}${selectedPayment.last4 ? ` —••••${selectedPayment.last4}` : ""}`}
-                                </div>
-                            }
+                                    <div className="font-medium">
+                                        {selectedPayment.brand === "applepay"
+                                            ? "Apple Pay"
+                                            : `${selectedPayment.label}${selectedPayment.last4 ? ` —••••${selectedPayment.last4}` : ""}`}
+                                    </div>
+                                }
                                 action="Edit"
                                 onAction={() => setPaymentModalOpen(true)}
                             />
@@ -172,7 +278,6 @@ export default function Checkout() {
                     <Card>
                         <div className="p-4">
                             <div className="flex items-start gap-3">
-                                <div className="h-10 w-10 rounded-md bg-neutral-200"/>
                                 <div>
                                     <div className="text-[15px] font-semibold">{selectedStore?.brand ?? "—"}</div>
                                     <div className="text-sm text-neutral-600">{selectedStore?.address ?? "—"}</div>

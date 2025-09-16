@@ -1,6 +1,7 @@
 "use client";
 import React, { useMemo } from "react";
 import { useCart } from "@/app/lib/cart";
+import QuantityDropdown from "@/app/components/Order/CartDrawer/QuantityDropdown";
 
 type Modifier = { id: string; name: string; priceCents: number };
 type UiItem = { id: string; name: string; qty: number; unitCents: number; modifiers: Modifier[] };
@@ -8,6 +9,41 @@ type UiItem = { id: string; name: string; qty: number; unitCents: number; modifi
 export function CartSummary() {
     const cart = useCart() as any;
 
+    const inc = (id: string) => {
+        if (cart.increaseQty) return cart.increaseQty(id);
+        if (cart.incQty) return cart.incQty(id);
+        if (cart.increment) return cart.increment(id);
+    };
+
+    const dec = (id: string) => {
+        if (cart.decreaseQty) return cart.decreaseQty(id);
+        if (cart.decQty) return cart.decQty(id);
+        if (cart.decrement) return cart.decrement(id);
+    };
+
+    const remove = (id: string) => {
+        if (cart.removeItem) return cart.removeItem(id);
+        if (cart.remove) return cart.remove(id);
+    };
+
+    const setQty = (id: string, current: number, next: number) => {
+        const n = Math.max(0, Math.floor(next));
+        if (n === current) return;
+
+        if (cart.setQty) return cart.setQty(id, n);
+        if (cart.updateQty) return cart.updateQty(id, n);
+        if (cart.setQuantity) return cart.setQuantity(id, n);
+        if (cart.changeQty) return cart.changeQty(id, n);
+
+        if (n === 0) return remove?.(id);
+        if (n > current) {
+            for (let i = 0; i < n - current; i++) inc?.(id);
+        } else {
+            for (let i = 0; i < current - n; i++) {
+                dec?.(id);
+            }
+        }
+    };
     const uiItems: UiItem[] = useMemo(() => {
         const raw = (cart?.items ?? []) as Array<{
             id: string; name: string; basePriceCents?: number; quantity?: number; modifiers?: Modifier[];
@@ -42,7 +78,15 @@ export function CartSummary() {
             {uiItems.map((it) => (
                 <li key={it.id} className="py-3">
                     <div className="flex items-start justify-between gap-3">
-                        <div className="">{it.qty}</div>
+                        <div className="">
+                            <QuantityDropdown
+                                value={it.qty}
+                                onChange={(n) => setQty(it.id, it.qty, n)}
+                                min={0}
+                                max={20}
+                                step={1}
+                                className="h-8"                            />
+                        </div>
                         <div className="min-w-0 flex-1">
                             <div className="truncate text-[15px] sm:text-[18px] font-semibold leading-tight">
                                 {formatWithBreaks(it.name)}
