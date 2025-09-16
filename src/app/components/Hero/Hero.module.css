@@ -34,7 +34,7 @@
     /*transition: transform 60ms linear;*/
     transition: opacity 700ms ease-in;
 
-    @media (min-width: 768px) {
+    @media (max-width: 768px) {
         transform: translateY(-120px);
     }
 }
@@ -64,13 +64,10 @@
     gap: 12px;
     justify-content: center;
     flex-wrap: wrap;
-}
+    transition: opacity 0.6s ease, transform 0.6s ease;
 
-/*@media (prefers-reduced-motion: reduce) {*/
-/*    .hero::before,*/
-/*    .inner {*/
-/*        transition: none !important;*/
-/*        transform: none !important;*/
-/*        background-position: center !important;*/
-/*    }*/
-/*}*/
+    &.visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
