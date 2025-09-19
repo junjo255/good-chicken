@@ -129,9 +129,9 @@ export default function AboutUs({
                     <p
                         className="text-white/95 text-base text-xl md:text-lg leading-relaxed max-w-[560px] aboutaos-init aos-animate"
                        style={{fontFamily: "GothamRnd-Light "}}
-                       // data-aos="zoom-in"
-                       // data-aos-delay="350"
-                       // data-aos-duration="500"
+                       data-aos="zoom-in"
+                       data-aos-delay="350"
+                       data-aos-duration="500"
                     >
                            <span
                                style={{

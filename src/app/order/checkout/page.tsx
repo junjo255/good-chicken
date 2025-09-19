@@ -1,6 +1,6 @@
 "use client";
 
-import React, {useMemo, useRef, useState} from "react";
+import React, {useEffect, useMemo, useRef, useState} from "react";
 import {ArrowLeft, ChevronRight, MapPin, CreditCard, CalendarDays} from "lucide-react";
 import {useOrder} from "@/app/components/Order/Stepper/OrderCtx";
 import {LOCATIONS} from "@/app/lib/locations";
@@ -16,13 +16,55 @@ import {useCart} from "@/app/lib/cart";
 import {v4 as uuid} from "uuid";
 import {CloverCardFields, CloverCardFieldsHandle, cloverCreateToken} from "@/app/components/Order/Payment/clover";
 import {isOpenNow} from "@/app/utils";
+import {supabase} from "@/app/lib/supabase/client";
+import AuthCard from "@/app/components/Auth/AuthCard";
+import Link from "next/link";
 
+type Profile = {
+    id: string;
+    full_name?: string | null;
+    address?: any | null;
+    preferred_location?: string | null;
+};
 
 export default function Checkout() {
     const {selectedStoreId, scheduleLater} = useOrder() as any;
     const router = useRouter();
     const cloverRef = useRef<CloverCardFieldsHandle | null>(null);
+    const [sessionUserId, setSessionUserId] = useState<string | null>(null);
+    const [profile, setProfile] = useState<Profile | null>(null);
+    const [loadingProfile, setLoadingProfile] = useState(false);
 
+    useEffect(() => {
+        const getSession = async () => {
+            const { data } = await supabase.auth.getSession();
+            setSessionUserId(data.session?.user?.id ?? null);
+        };
+        getSession();
+
+        const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => {
+            setSessionUserId(s?.user?.id ?? null);
+        });
+        return () => sub.subscription.unsubscribe();
+    }, []);
+
+    useEffect(() => {
+        if (!sessionUserId) { setProfile(null); return; }
+        let active = true;
+        const run = async () => {
+            setLoadingProfile(true);
+            const { data, error } = await supabase
+                .from("profiles")
+                .select("id, full_name, address, preferred_location")
+                .eq("id", sessionUserId)
+                .maybeSingle();
+            if (!active) return;
+            if (!error && data) setProfile(data as Profile);
+            setLoadingProfile(false);
+        };
+        run();
+        return () => { active = false; };
+    }, [sessionUserId]);
     // Store
     const selectedStore = useMemo(() => {
         if (!selectedStoreId) return null;
@@ -113,6 +155,19 @@ export default function Checkout() {
         return { hh: "", mm: "" };
     }
 
+    const [accountOpen, setAccountOpen] = useState(false);
+
+    const handleLogin = () => setAccountOpen(true);
+    useEffect(() => {
+        if (accountOpen) document.body.style.overflow = "hidden";
+        return () => { document.body.style.overflow = ""; };
+    }, [accountOpen]);
+
+    useEffect(() => {
+        const onEsc = (e: KeyboardEvent) => e.key === "Escape" && setAccountOpen(false);
+        window.addEventListener("keydown", onEsc);
+        return () => window.removeEventListener("keydown", onEsc);
+    }, []);
 
     React.useEffect(() => {
         if (!selectedStore?.hours) return;
@@ -133,26 +188,29 @@ export default function Checkout() {
         }
     }, [selectedStore?.hours]);
 
+
     return (
         <section
             style={{marginTop: "var(--header-h, 96px)", scrollMarginTop: "var(--header-h, 96px)"}}
             className="min-h-screen w-full pb-24 md:pb-12"
         >
             {/* Top bar */}
-            <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
-                <button
-                    className="inline-flex items-center gap-2 text-sm font-medium text-neutral-700 hover:text-black">
+            <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-6">
+                <Link
+                    href="/order"
+                    className="inline-flex items-center gap-2 text-lg font-medium text-neutral-700 hover:text-black cursor-pointer"
+                >
                     <ArrowLeft className="h-4 w-4"/> Back to order
-                </button>
-                <div className="text-lg font-semibold tracking-tight">Pickup Checkout</div>
-                <div className="w-[92px]"/>
+
+                </Link>
+                <div className="text-xl font-semibold tracking-tight">Pickup Checkout</div>
+                <div className="w-[192px]"/>
             </div>
 
             {/* Content */}
             <div className="mx-auto grid max-w-6xl grid-cols-1 gap-6 px-4 md:grid-cols-3">
                 {/* LEFT */}
                 <div className="md:col-span-2 space-y-4">
-                    {/* Pickup Details */}
                     <Card>
                         <div className="flex items-center justify-between p-5">
                             <div className="text-[18px] font-bold">Pickup details</div>
@@ -239,7 +297,6 @@ export default function Checkout() {
                         </div>
                     </Card>
 
-                    {/* Payment */}
                     <Card>
                         <div className="p-4">
                             <div className="text-[15px] md:text-[18px] font-bold">Payment</div>
@@ -263,10 +320,9 @@ export default function Checkout() {
                         )}
                     </Card>
 
-                    {/* Primary CTA (DESKTOP ONLY) */}
                     <button
                         onClick={handleProcessPayment}
-                        className="hidden md:block w-full rounded-lg bg-[#AF3935] py-5 text-center text-[15px] md:text-[18px] font-semibold text-white cursor-pointer"
+                        className="hidden md:block w-full rounded-lg bg-[#AF3935] py-4 text-center text-[15px] md:text-[18px] font-semibold text-white cursor-pointer"
                     >
                         Process Payment
                     </button>
@@ -274,7 +330,22 @@ export default function Checkout() {
 
                 {/* RIGHT */}
                 <div className="space-y-4">
-                    {/* Store summary + Cart summary */}
+                    <Card>
+
+                        {!sessionUserId && !profile ?
+                            <button
+                                onClick={handleLogin}
+                                className="hidden md:block w-full rounded-lg bg-[#E9BC46] py-3 text-center text-[15px] md:text-[18px] font-semibold text-[#3F3126] cursor-pointer"
+                            >
+                                Login
+                            </button>
+                            :
+                            <>
+                                {sessionUserId}
+                            </>
+                        }
+
+                    </Card>
                     <Card>
                         <div className="p-4">
                             <div className="flex items-start gap-3">
@@ -293,7 +364,7 @@ export default function Checkout() {
                             {/* Right-side CTA (DESKTOP ONLY) */}
                             <button
                                 onClick={handleProcessPayment}
-                                className="mt-4 hidden md:block w-full rounded-lg bg-[#AF3935] py-5 text-center text-[15px] md:text-[18px] font-semibold text-white cursor-pointer"
+                                className="mt-4 hidden md:block w-full rounded-lg bg-[#AF3935] py-4 text-center text-[15px] md:text-[18px] font-semibold text-white cursor-pointer"
                             >
                                 Process Payment
                             </button>
@@ -325,7 +396,6 @@ export default function Checkout() {
                 </div>
             </div>
 
-            {/* Sticky footer CTA (MOBILE ONLY) */}
             <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-neutral-200 bg-white p-4 md:hidden">
                 <button
                     onClick={handleProcessPayment}
@@ -335,7 +405,6 @@ export default function Checkout() {
                 </button>
             </div>
 
-            {/* Payment selection modal */}
             <PaymentOptionsModal
                 open={paymentModalOpen}
                 onClose={() => setPaymentModalOpen(false)}
@@ -351,13 +420,6 @@ export default function Checkout() {
                 onSave={() => setPaymentModalOpen(false)}
             />
 
-            {/*<CloverCardFields*/}
-            {/*    onToken={(clv) => setSelectedPaymentId(clv)}*/}
-            {/*    // onError={(m) => /* toast.error(m) *!/*/}
-            {/*    externalSubmitRef={cloverRef}*/}
-            {/*/>*/}
-
-            {/* Add card modal */}
             <AddCardModal
                 open={addCardOpen}
                 onClose={() => setAddCardOpen(false)}
@@ -374,6 +436,10 @@ export default function Checkout() {
                     setSelectedPaymentId(newPm.id);
                 }}
             />
+
+            {accountOpen && (
+                <AuthCard open={accountOpen} onClose={() => setAccountOpen(false)} />
+            )}
         </section>
     );
 }

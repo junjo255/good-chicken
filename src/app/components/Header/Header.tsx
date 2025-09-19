@@ -1,12 +1,13 @@
 'use client';
 
-import {useState, useEffect, useRef} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import styles from './Header.module.css';
 import {usePathname} from 'next/navigation';
 import {useCart} from "@/app/lib/cart";
 import Link from "next/link";
 import {CartIcon} from "@/app/components/Order/CartDrawer/CartIcon";
 import CartDrawer from "@/app/components/Order/CartDrawer/CartDrawer";
+import {CircleUserRound} from "lucide-react";
 
 const navItems = [
     {label: 'ORDER NOW', href: '/order', emphasize: true},
@@ -144,8 +145,8 @@ export default function Header() {
 
     const isMobile = typeof window !== "undefined" && window.innerWidth <= 1024;
     const logoSrc = (scrolled || noScroll || (isMobile && open))
-        ? "/Good-Chicken-logo.png"
-        : "/Good-Chicken-white-logo.png";
+        ? "/logo/GoodChicken-logo.png"
+        : "/logo/GoodChicken-logo_white.png";
     const isOrderPath = pathname.startsWith("/order")
     const cart = useCart();
 
@@ -209,6 +210,7 @@ export default function Header() {
                                         count={itemCount}
                                         onAdd={() => setCartOpen(v => !v)}
                                     />
+
                                 </button>
                             </div>
 
@@ -217,6 +219,11 @@ export default function Header() {
                                 setOpen={setCartOpen}
                                 anchorRef={cartBtnRef}
                             />
+
+                            <CircleUserRound
+                                className="h-6 w-6"
+                            />
+
                         </>
                     ) : null}
                 </div>

@@ -138,20 +138,23 @@ export default function LocationPanel({
                                 <div className="space-y-2">
                                     <div className="flex items-center justify-between">
                                         <div className="flex items-center gap-2">
-                                            <span className="text-sm font-bold uppercase tracking-widest text-[#6b7280]">
+                                            <span
+                                                className="text-sm font-bold uppercase tracking-widest text-[#6b7280]">
                                               Hours
                                             </span>
-                                            <button
-                                                type="button"
+                                            <span
+                                                role="button"
+                                                tabIndex={0}
                                                 onClick={() => setExpanded(v => !v)}
+                                                onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && setExpanded(v => !v)}
                                                 aria-expanded={expanded}
                                                 aria-label={expanded ? "Hide hours" : "Show all hours"}
                                                 className="inline-flex items-center cursor-pointer"
                                             >
-                                                <ChevronDown
-                                                    className={`h-4 w-4 transition-transform ${expanded ? "rotate-180" : ""}`}
-                                                />
-                                            </button>
+                                            <ChevronDown
+                                                className={`h-4 w-4 transition-transform ${expanded ? "rotate-180" : ""}`}
+                                            />
+                                          </span>
                                         </div>
                                     </div>
 

@@ -21,9 +21,8 @@ export default function ContactUs() {
                     Questions, feedback, or large orders? We’d love to hear from you.
                 </p>
                 <div className={styles.cols2}>
-                    <div className="card">
+                    <div className="card" style={{maxWidth: "500px"}}>
                         <div className="card-body">
-                            <h3 style={{ margin: 0 }}>General</h3>
                             <p className={styles.muted} style={{ marginTop: 6 }}>
                                 <a href="mailto:goodchickenusa@gmail.com">
                                     goodchickenusa@gmail.com

@@ -1,7 +1,8 @@
 "use client";
-import React, { useMemo } from "react";
+import React, {useMemo} from "react";
 import { useCart } from "@/app/lib/cart";
 import QuantityDropdown from "@/app/components/Order/CartDrawer/QuantityDropdown";
+import AccountCard from "@/app/components/Auth/AccountCard";
 
 type Modifier = { id: string; name: string; priceCents: number };
 type UiItem = { id: string; name: string; qty: number; unitCents: number; modifiers: Modifier[] };
@@ -55,8 +56,13 @@ export function CartSummary() {
     }, [cart?.items]);
 
     if (!uiItems.length) {
-        return <div className="py-3 text-sm text-neutral-600">Your cart is empty.</div>;
+        return (
+            <div className="space-y-3">
+                <div className="py-3 text-sm text-neutral-600">Your cart is empty.</div>
+            </div>
+        );
     }
+
 
     const formatWithBreaks = (txt: string) => {
         const parts = txt.split(/\s*[–—-]\s*/);
@@ -75,6 +81,7 @@ export function CartSummary() {
 
     return (
         <ul className="divide-y divide-neutral-200">
+
             {uiItems.map((it) => (
                 <li key={it.id} className="py-3">
                     <div className="flex items-start justify-between gap-3">

@@ -32,7 +32,7 @@ export default function Footer() {
                 <nav aria-labelledby="footer-general">
                     <h3 id="footer-general" className="footer-title">General Info</h3>
                     <ul className="footer-list">
-                        <li><a href="/nutrition-and-allergens">Nutrition &amp; Allergens</a></li>
+                        {/*<li><a href="/nutrition-and-allergens">Nutrition &amp; Allergens</a></li>*/}
                         <li><a href="/support">Customer Support</a></li>
                         <li><a href="/legal">Legal</a></li>
                         <li><a href="/franchising">Franchising</a></li>
