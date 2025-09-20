@@ -10,7 +10,7 @@ const items = [
 const Lemonade: ConfigProduct = {
     id: 'lemonade',
     title: 'Lemonade (Carbonated)',
-    image: '/fried-chicken.webp', // swap to lemonade photo
+    image: 'https://cdn.smartonlineorder.com/wp-content/uploads/sites/3370/2021/09/strawberry-Lemonade.jpg', // swap to lemonade photo
     attributes: [
         { id: 'heat', name: 'Flavor', values: items.map(i => i.name) },
         { id: 'part', name: 'Type', values: ['Carbonated'] },

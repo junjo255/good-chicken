@@ -2,7 +2,6 @@
 import React, {useMemo} from "react";
 import { useCart } from "@/app/lib/cart";
 import QuantityDropdown from "@/app/components/Order/CartDrawer/QuantityDropdown";
-import AccountCard from "@/app/components/Auth/AccountCard";
 
 type Modifier = { id: string; name: string; priceCents: number };
 type UiItem = { id: string; name: string; qty: number; unitCents: number; modifiers: Modifier[] };

@@ -7,7 +7,7 @@ const flavors = ['Peach Green Tea', 'Dragon Fruit Green Tea', 'Tropical Mango Bl
 const IcedTea: ConfigProduct = {
     id: 'iced-tea',
     title: 'Iced Tea',
-    image: '/fried-chicken.webp', // swap to tea photo
+    image: 'https://cdn.smartonlineorder.com/wp-content/uploads/sites/3370/2021/09/Tropical-Mango-Iced-Tea.jpg',
     attributes: [
         { id: 'heat', name: 'Flavor', values: [...flavors] },                          // reuse heat as "Flavor"
         { id: 'part', name: 'Additional Topping', values: ['None', 'Lychee Jelly (+$1.00)'] },

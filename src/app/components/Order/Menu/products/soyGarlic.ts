@@ -4,7 +4,7 @@ import {ConfigProduct} from "@/app/components/Order/Menu/OptionalModal";
 const SoyGarlic: ConfigProduct = {
     id: 'soy-garlic',
     title: 'Soy Garlic',
-    image: '/fried-chicken.webp',
+    image: 'https://cdn.smartonlineorder.com/wp-content/uploads/sites/3370/2021/09/soy-garlic-hot.jpg',
     ribbon: 'MILD or HOT',
     attributes: [
         { id: 'heat', name: 'Spices', values: ['Mild', 'Hot'] },

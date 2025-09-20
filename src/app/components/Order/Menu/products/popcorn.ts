@@ -4,7 +4,7 @@ import {ConfigProduct} from "@/app/components/Order/Menu/OptionalModal";
 const Popcorn: ConfigProduct = {
     id: 'popcorn',
     title: 'Popcorn Chicken',
-    image: 'https://media.istockphoto.com/id/470177926/photo/homemade-crispy-popcorn-chicken.jpg?s=1024x1024&w=is&k=20&c=KrKLuXFflBfx_Pn_XPxbqqfHYgbTEJpCDXgI3SnOGO0=',
+    image: 'https://cdn.smartonlineorder.com/wp-content/uploads/sites/3370/2021/09/popcorn.png',
     attributes: [
         { id: 'heat', name: 'Style', values: ['Crispy', 'Glazed'] }, // reuse heat slot
         { id: 'part', name: 'Type', values: ['Popcorn'] },

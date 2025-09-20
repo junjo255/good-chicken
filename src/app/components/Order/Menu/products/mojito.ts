@@ -9,7 +9,7 @@ const items = [
 const Mojito: ConfigProduct = {
     id: 'mojito',
     title: 'Mojito (Carbonated)',
-    image: '/fried-chicken.webp', // swap to mojito photo
+    image: 'https://cdn.smartonlineorder.com/wp-content/uploads/sites/3370/2021/09/Tropical-Mango-Mojito.jpg', // swap to mojito photo
     attributes: [
         { id: 'heat', name: 'Flavor', values: items.map(i => i.name) },
         { id: 'part', name: 'Type', values: ['Carbonated'] },

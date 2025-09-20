@@ -4,7 +4,7 @@ import {ConfigProduct} from "@/app/components/Order/Menu/OptionalModal";
 const Crispy: ConfigProduct = {
     id: 'crispy',
     title: 'Crispy',
-    image: '/fried-chicken.webp',
+    image: 'https://cdn.smartonlineorder.com/wp-content/uploads/sites/3370/2021/09/crispy-hot.png',
     ribbon: 'MILD or HOT',
     attributes: [
         { id: 'heat', name: 'Spices', values: ['Mild', 'Hot'] },

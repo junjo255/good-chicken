@@ -5,7 +5,7 @@ const base = { Original: 5.49, 'Half & Half': 5.99, Mozzarella: 5.99 } as const;
 const PotatoDog: ConfigProduct = {
     id: 'potato-dog',
     title: 'Potato Dog',
-    image: '/hot-dog.jpg',
+    image: 'https://cdn.smartonlineorder.com/wp-content/uploads/sites/3370/2021/09/potato-dog.jpg',
     attributes: [
         { id: 'heat', name: 'Type', values: ['Original', 'Half & Half', 'Mozzarella'] },
         { id: 'part', name: 'Additional Topping', values: ['None', 'Cheddar (+$1.00)'] },

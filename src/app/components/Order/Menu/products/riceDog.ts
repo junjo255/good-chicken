@@ -7,7 +7,7 @@ const base = { Original: 4.49, 'Half & Half': 4.99, Mozzarella: 4.99 } as const;
 const RiceDog: ConfigProduct = {
     id: 'rice-dog',
     title: 'Rice Dog',
-    image: '/hot-dog.jpg',
+    image: 'https://cdn.smartonlineorder.com/wp-content/uploads/sites/3370/2021/09/hot-dog.jpg',
     attributes: [
         { id: 'heat', name: 'Type', values: ['Original', 'Half & Half', 'Mozzarella'] }, // reuse "heat" slot
         { id: 'part', name: 'Additional Topping', values: ['None', 'Cheddar (+$1.00)'] },
