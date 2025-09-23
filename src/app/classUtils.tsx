@@ -1,7 +1,8 @@
+"use client";
+
 import React from "react";
 
-
-export default function Badge({children, tone = "neutral"}: any) {
+export function Badge({children, tone = "neutral"}: any) {
     const tones: Record<string, string> = {
         neutral: "bg-neutral-100 text-neutral-700",
         open: "bg-emerald-50 text-emerald-700 ring-1 ring-emerald-100",
@@ -16,5 +17,24 @@ export default function Badge({children, tone = "neutral"}: any) {
         >
               {children}
             </span>
+    );
+}
+
+
+export function ChangeButton({
+                                         onClick,
+                                         disabled,
+                                     }: {
+    onClick: () => void;
+    disabled?: boolean;
+}) {
+    return (
+        <button
+            className="text-sm md:text-base underline text-[#6b7280] hover:text-[#262626] disabled:text-neutral-300 cursor-pointer"
+            onClick={onClick}
+            disabled={disabled}
+        >
+            update
+        </button>
     );
 }

@@ -1,3 +1,5 @@
+import {AppRouterInstance} from "next/dist/shared/lib/app-router-context.shared-runtime";
+
 export function formatUSD(amount?: number) {
     if (typeof amount !== "number" || Number.isNaN(amount)) return "";
     return amount.toLocaleString("en-US", {style: "currency", currency: "USD"});
@@ -124,8 +126,6 @@ export function isOpenNow(hours: BusinessHours): {
             return { isOpen: false,  isOpenToday: true, start: ranges[0].open, sourceDay: d };
         }
     }
-
-    console.log("EHRE ")
     return { isOpen: false };
 }
 

@@ -37,8 +37,8 @@ export default function CartDrawer({open, setOpen, anchorRef}: Props) {
     async function checkout() {
         setOpen(false);
         router.push('/order/checkout');
-
     }
+
     const cart = useCart() as any;
     const { selectedStoreId } = useOrder();
     const location: StoreLocation | null = useMemo(
@@ -232,7 +232,7 @@ export default function CartDrawer({open, setOpen, anchorRef}: Props) {
                 {/* arrow */}
                 <div
                     aria-hidden
-                    className="absolute -top-2 right-6 h-4 w-4 rotate-45 border-l border-t border-neutral-200 bg-white"
+                    className="absolute -top-2 right-18 h-4 w-4 rotate-45 border-l border-t border-neutral-200 bg-white"
                 />
 
                 {/* Header */}

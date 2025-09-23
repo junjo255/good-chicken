@@ -2,6 +2,7 @@
 
 import PrimaryButton from "@/app/components/Order/Stepper/PrimaryButton";
 import React from "react";
+import {ChangeButton} from "@/app/classUtils";
 
 type Props = {
     selectedStore: { brand: string; address: string } | null;
@@ -13,24 +14,6 @@ type Props = {
     canContinue: boolean;
     handlePrimaryClick: () => void;
 };
-
-function ChangeButton({
-                          onClick,
-                          disabled,
-                      }: {
-    onClick: () => void;
-    disabled?: boolean;
-}) {
-    return (
-        <button
-            className="text-sm md:text-base underline text-[#6b7280] hover:text-[#262626] disabled:text-neutral-300 cursor-pointer"
-            onClick={onClick}
-            disabled={disabled}
-        >
-            update
-        </button>
-    );
-}
 
 function InfoRow({
                      label,
@@ -121,7 +104,7 @@ export default function SummaryRail({
     ] as const;
 
     return (
-        <aside className="col-span-12 lg:col-span-4 xl:col-span-3">
+        <aside className="col-span-12 lg:col-span-4">
             <section
                 style={{padding: "2rem 1rem"}}
                 className="sticky top-28 rounded-2xl bg-white shadow-xl p-8 md:p-10

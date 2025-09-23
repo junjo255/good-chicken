@@ -3,6 +3,7 @@ import React from "react";
 
 export function Row({
                         icon: Icon,
+                        showIcon = true,
                         title,
                         subtitle,
                         action = "Edit",
@@ -10,6 +11,7 @@ export function Row({
                         onAction,
                     }: {
     icon: any;
+    showIcon?: boolean;
     title: React.ReactNode;
     subtitle?: React.ReactNode;
     action?: string;
@@ -20,19 +22,22 @@ export function Row({
     return (
         <div className="flex items-start justify-between gap-3 p-4">
             <div className="flex items-start gap-3">
-                <div className="mt-0.5">
-                    <Icon className="h-[18px] w-[18px] text-neutral-700" />
-                </div>
+                {showIcon &&
+                    <div className="mt-0.5">
+                        <Icon className="h-[18px] w-[18px] text-neutral-700"/>
+                    </div>
+                }
                 <div>
-                    <div className="text-[15px] font-medium text-neutral-900">{title}</div>
-                    {subtitle && <div className="mt-0.5 text-sm text-neutral-600">{subtitle}</div>}
+                    <div className="text-[17px] md:text-[18px] font-bold text-[#AF3935]">{title}</div>
+                    {subtitle &&
+                        <div className="mt-0.5 text-[15px] font-medium md:text-[17px] text-[#3F3126]">{subtitle}</div>}
                 </div>
             </div>
             {actionText && (
                 <button
                     type="button"
                     onClick={onAction}
-                    className="text-sm font-medium text-neutral-700 hover:text-black cursor-pointer"
+                    className="text-sm md:text-md font-medium text-[#6b7280]  hover:underline cursor-pointer"
                 >
                     {actionText}
                 </button>

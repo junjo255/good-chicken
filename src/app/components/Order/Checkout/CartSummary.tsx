@@ -2,6 +2,7 @@
 import React, {useMemo} from "react";
 import { useCart } from "@/app/lib/cart";
 import QuantityDropdown from "@/app/components/Order/CartDrawer/QuantityDropdown";
+import {Line, SectionTitle} from "@/app/components/ui/Card";
 
 type Modifier = { id: string; name: string; priceCents: number };
 type UiItem = { id: string; name: string; qty: number; unitCents: number; modifiers: Modifier[] };
@@ -79,39 +80,45 @@ export function CartSummary() {
     }
 
     return (
-        <ul className="divide-y divide-neutral-200">
+        <>
+            <SectionTitle>Cart Summary</SectionTitle>
+            <Line/>
+            <ul className="divide-y divide-neutral-200">
 
-            {uiItems.map((it) => (
-                <li key={it.id} className="py-3">
-                    <div className="flex items-start justify-between gap-3">
-                        <div className="">
-                            <QuantityDropdown
-                                value={it.qty}
-                                onChange={(n) => setQty(it.id, it.qty, n)}
-                                min={0}
-                                max={20}
-                                step={1}
-                                className="h-8"                            />
-                        </div>
-                        <div className="min-w-0 flex-1">
-                            <div className="truncate text-[15px] sm:text-[18px] font-semibold leading-tight">
-                                {formatWithBreaks(it.name)}
-                                {/*<span className="text-neutral-500">× {it.qty}</span>*/}
+                {uiItems.map((it) => (
+                    <li key={it.id} className="py-3">
+                        <div className="flex items-start justify-between gap-3">
+                            <div className="">
+                                <QuantityDropdown
+                                    value={it.qty}
+                                    onChange={(n) => setQty(it.id, it.qty, n)}
+                                    min={0}
+                                    max={20}
+                                    step={1}
+                                    className="h-8"/>
                             </div>
-                            {it.modifiers?.length ? (
-                                <div className="mt-1 space-y-0.5 text-[12px] sm:text-[13px] text-neutral-600">
-                                    {it.modifiers.slice(0, 6).map((m) => (
-                                        <div key={m.id} className="truncate">{m.name}</div>
-                                    ))}
+                            <div className="min-w-0 flex-1">
+                                <div className="truncate text-[15px] sm:text-[18px] font-semibold leading-tight">
+                                    {formatWithBreaks(it.name)}
                                 </div>
-                            ) : null}
+                                {it.modifiers?.length ? (
+                                    <div className="mt-1 space-y-0.5 text-[13px] sm:text-[15px] text-neutral-600">
+                                        {it.modifiers.slice(0, 6).map((m) => (
+                                            <div key={m.id} className="truncate">{m.name}</div>
+                                        ))}
+                                    </div>
+                                ) : null}
+                            </div>
+                            <div className="text-[15px] sm:text-[18px] font-semibold leading-none">
+                                {((it.unitCents * it.qty) / 100).toLocaleString("en-US", {
+                                    style: "currency",
+                                    currency: "USD"
+                                })}
+                            </div>
                         </div>
-                        <div className="text-[15px] sm:text-[18px] font-semibold leading-none">
-                            {((it.unitCents * it.qty) / 100).toLocaleString("en-US", { style: "currency", currency: "USD" })}
-                        </div>
-                    </div>
-                </li>
-            ))}
-        </ul>
+                    </li>
+                ))}
+            </ul>
+        </>
     );
 }

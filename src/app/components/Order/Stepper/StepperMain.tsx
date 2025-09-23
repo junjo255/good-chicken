@@ -160,7 +160,7 @@ export default function StepperMain({initialLcn}: { initialLcn: string | null })
             <main className="max-w-7xl mx-auto px-6 py-6">
                 <div className="grid grid-cols-12 gap-6">
                     {/* Main */}
-                    <div className="col-span-12 lg:col-span-8 xl:col-span-9 space-y-6">
+                    <div className="col-span-12 lg:col-span-8 space-y-6">
                         {curr.render(ctx)}
                     </div>
 

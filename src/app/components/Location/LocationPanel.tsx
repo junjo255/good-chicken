@@ -33,7 +33,7 @@ export default function LocationPanel({
         if (!status.isOpenToday) {
             return (
                 <div
-                    className="items-start flex justify-end py-1 text-md min-w-[150px] ">
+                    className="items-start flex md:justify-end py-1 text-md min-w-[150px] ">
                     {/*<span className="h-2 w-2 rounded-full bg-green-800"/>*/}
                     <span className="text-red-800">Closed</span>
                     {/*{status.until ? ` until ${to12h(status.until)}` : null}*/}
@@ -42,7 +42,7 @@ export default function LocationPanel({
         } else if (status.isOpen) {
             return (
                 <div
-                    className="items-start flex justify-end py-1 text-md gap-1 min-w-[150px]">
+                    className="items-start flex md:justify-end py-1 text-md gap-1 min-w-[150px]">
                     {/*<span className="h-2 w-2 rounded-full bg-green-800"/>*/}
                     <span className="text-green-800">Open</span>
                     {status.until ? ` until ${to12h(status.until)}` : null}

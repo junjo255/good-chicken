@@ -4,9 +4,9 @@ import React from "react";
 import Section from "@/app/components/Order/Stepper/Section";
 import {LOCATIONS} from "@/app/lib/locations";
 import LocationPanel from "@/app/components/Location/LocationPanel";
-import Badge from "@/app/classUtils";
 import {Shuffle, Store, Truck} from "lucide-react";
 import {DoorDashLogo, UberLogo} from "@/app/components/Order/Stepper/PartnerLogos";
+import {Badge} from "@/app/classUtils";
 
 export type OrderType = "pickup" | "delivery" | null;
 export type OrderTiming = "now" | "schedule" | null;

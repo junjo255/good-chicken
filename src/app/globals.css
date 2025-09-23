@@ -82,6 +82,12 @@ a {
 }
 
 
+button {
+    &:hover {
+        cursor: pointer;
+    }
+}
+
 .cta {
     display: inline-flex;
     align-items: center;

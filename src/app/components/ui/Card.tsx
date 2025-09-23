@@ -5,8 +5,14 @@ export function Card({ children, className = "" }: React.PropsWithChildren<{ cla
     return <div className={`rounded-2xl border-[#f3f3f3] bg-white shadow-xl ${className}`}>{children}</div>;
 }
 export function SectionTitle({ children }: React.PropsWithChildren) {
-    return <div className="text-[15px] font-medium text-neutral-900">{children}</div>;
+    return <div className="text-[18px] font-bold text-[#3F3126]">{children}</div>;
 }
-export function Line() {
-    return <div className="h-px w-full bg-neutral-200" />;
+
+export function Line({ className = "", ...rest }: React.HTMLAttributes<HTMLDivElement>) {
+    return (
+        <div
+            className={`h-px w-full bg-neutral-20 ${className}`}
+            {...rest}
+        />
+    );
 }

@@ -19,6 +19,9 @@ import {isOpenNow} from "@/app/utils";
 import {supabase} from "@/app/lib/supabase/client";
 import AuthCard from "@/app/components/Auth/AuthCard";
 import Link from "next/link";
+import {AppRouterInstance} from "next/dist/shared/lib/app-router-context.shared-runtime";
+import {ConfirmResetModal, resetStoreAndCartAndGoToOrder} from "@/app/components/Order/OrderReset/OrderReset";
+import {useAuth} from "@/app/components/Auth/AuthProvider";
 
 type Profile = {
     id: string;
@@ -30,41 +33,8 @@ type Profile = {
 export default function Checkout() {
     const {selectedStoreId, scheduleLater} = useOrder() as any;
     const router = useRouter();
-    const cloverRef = useRef<CloverCardFieldsHandle | null>(null);
-    const [sessionUserId, setSessionUserId] = useState<string | null>(null);
-    const [profile, setProfile] = useState<Profile | null>(null);
-    const [loadingProfile, setLoadingProfile] = useState(false);
+    const { userId, openAuth } = useAuth();
 
-    useEffect(() => {
-        const getSession = async () => {
-            const { data } = await supabase.auth.getSession();
-            setSessionUserId(data.session?.user?.id ?? null);
-        };
-        getSession();
-
-        const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => {
-            setSessionUserId(s?.user?.id ?? null);
-        });
-        return () => sub.subscription.unsubscribe();
-    }, []);
-
-    useEffect(() => {
-        if (!sessionUserId) { setProfile(null); return; }
-        let active = true;
-        const run = async () => {
-            setLoadingProfile(true);
-            const { data, error } = await supabase
-                .from("profiles")
-                .select("id, full_name, address, preferred_location")
-                .eq("id", sessionUserId)
-                .maybeSingle();
-            if (!active) return;
-            if (!error && data) setProfile(data as Profile);
-            setLoadingProfile(false);
-        };
-        run();
-        return () => { active = false; };
-    }, [sessionUserId]);
     // Store
     const selectedStore = useMemo(() => {
         if (!selectedStoreId) return null;
@@ -133,7 +103,7 @@ export default function Checkout() {
     const [pickupMinute, setPickupMinute] = useState<string>("");
 
     function minsToHM(time: string | number | undefined) {
-        if (time === undefined || time === null) return { hh: "", mm: "" };
+        if (time === undefined || time === null) return {hh: "", mm: ""};
 
         if (typeof time === "string") {
             const [h, m] = time.split(":").map(Number);
@@ -152,15 +122,19 @@ export default function Checkout() {
             };
         }
 
-        return { hh: "", mm: "" };
+        return {hh: "", mm: ""};
     }
 
     const [accountOpen, setAccountOpen] = useState(false);
 
-    const handleLogin = () => setAccountOpen(true);
+    const [showConfirmReset, setShowConfirmReset] = useState(false);
+
+    const handleLogin = () => openAuth();
     useEffect(() => {
         if (accountOpen) document.body.style.overflow = "hidden";
-        return () => { document.body.style.overflow = ""; };
+        return () => {
+            document.body.style.overflow = "";
+        };
     }, [accountOpen]);
 
     useEffect(() => {
@@ -188,6 +162,24 @@ export default function Checkout() {
         }
     }, [selectedStore?.hours]);
 
+    const isMobile = typeof window !== "undefined" && window.innerWidth <= 1024;
+
+    function LoginDisplay() {
+        return (
+            <Card>
+                {!userId ? (
+                    <button
+                        onClick={handleLogin}
+                        className="hidden md:block w-full rounded-lg bg-[#E9BC46] py-3 text-center text-[15px] md:text-[18px] font-semibold text-[#3F3126] cursor-pointer"
+                    >
+                        Login
+                    </button>
+                ) : (
+                    <>{userId}</>
+                )}
+            </Card>
+        );
+    }
 
     return (
         <section
@@ -195,44 +187,69 @@ export default function Checkout() {
             className="min-h-screen w-full pb-24 md:pb-12"
         >
             {/* Top bar */}
-            <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-6">
+            <div className="mx-auto grid max-w-6xl grid-cols-2 md:grid-cols-3 items-center px-4 py-6">
+
+                {/* Left: Back link */}
                 <Link
                     href="/order"
-                    className="inline-flex items-center gap-2 text-lg font-medium text-neutral-700 hover:text-black cursor-pointer"
+                    className="justify-self-start inline-flex items-center gap-2 text-sm md:text-lg font-medium text-neutral-700 hover:text-black cursor-pointer"
                 >
                     <ArrowLeft className="h-4 w-4"/> Back to order
-
                 </Link>
-                <div className="text-xl font-semibold tracking-tight">Pickup Checkout</div>
-                <div className="w-[192px]"/>
+
+                {/* Title: right on mobile, centered on desktop */}
+                <div
+                    className="justify-self-end md:justify-self-center text-md md:text-xl font-semibold tracking-tight">
+                    Pickup Checkout
+                </div>
+
+                {/* Spacer: only on desktop */}
+                <div className="hidden md:block justify-self-end w-[192px]"/>
             </div>
 
             {/* Content */}
-            <div className="mx-auto grid max-w-6xl grid-cols-1 gap-6 px-4 md:grid-cols-3">
+            <div className="mx-auto grid max-w-6xl grid-cols-1 !gap-0 md:!gap-6 px-4 md:grid-cols-8">
                 {/* LEFT */}
-                <div className="md:col-span-2 space-y-4">
+                <div className="md:col-span-5 space-y-4">
+                    {isMobile &&
+                        <LoginDisplay/>
+                    }
                     <Card>
-                        <div className="flex items-center justify-between p-5">
-                            <div className="text-[18px] font-bold">Pickup details</div>
+                        <div className="px-4">
+                            <SectionTitle>Pickup Details</SectionTitle>
                         </div>
+
                         <Row
                             icon={MapPin}
                             title={selectedStore ? selectedStore.brand : "Choose a store"}
                             subtitle={selectedStore?.address}
-                            action="Edit"
-                            onAction={() => {/* open store picker when ready */
+                            action="change"
+                            onAction={() => setShowConfirmReset(true)}
+                        />
+
+                        <ConfirmResetModal
+                            open={showConfirmReset}
+                            onCancel={() => setShowConfirmReset(false)}
+                            onConfirm={() => {
+                                setShowConfirmReset(false);
+                                resetStoreAndCartAndGoToOrder({
+                                    cart,
+                                    router,
+                                });
                             }}
                         />
+
+
                         <Line/>
                         <div className="p-4">
-                            <SectionTitle>Pickup time</SectionTitle>
+                            <SectionTitle>Pickup Time</SectionTitle>
                             <div className="mt-3 rounded-xl border">
                                 <button className="flex w-full items-center justify-between p-4 text-left">
                                     <div className="flex items-center gap-3">
                                         <CalendarDays className="h-4 w-4 text-neutral-700"/>
                                         <span className="text-[15px] font-medium text-neutral-800">
-                      {scheduleLater ? "Scheduled" : "ASAP"}
-                    </span>
+                                          {scheduleLater ? "Scheduled" : "ASAP"}
+                                        </span>
                                     </div>
                                     <ChevronRight className="h-4 w-4 text-neutral-500"/>
                                 </button>
@@ -243,13 +260,14 @@ export default function Checkout() {
                                     <div className="flex items-center gap-3 mb-3">
                                         <CalendarDays className="h-4 w-4 text-neutral-700"/>
                                         <span className="text-[15px] font-medium text-neutral-800">
-       {selectedStore ? "Choose your pickup time" : "Select a store to set time"}
+                                     {selectedStore ? "Choose your pickup time" : "Select a store to set time"}
                                  </span>
                                     </div>
                                     <div className="grid grid-cols-6 gap-3">
                                         <div className="col-span-3">
-                                            <label className="block text-xs font-medium text-neutral-600 mb-1">Hours
-                                                (HH)</label>
+                                            <label className="block text-xs font-medium text-neutral-600 mb-1">
+                                                Hours (HH)
+                                            </label>
                                             <input
                                                 type="number"
                                                 min={0}
@@ -265,8 +283,9 @@ export default function Checkout() {
                                             />
                                         </div>
                                         <div className="col-span-3">
-                                            <label className="block text-xs font-medium text-neutral-600 mb-1">Minutes
-                                                (MM)</label>
+                                            <label className="block text-xs font-medium text-neutral-600 mb-1">
+                                                Minutes (MM)
+                                            </label>
                                             <input
                                                 type="number"
                                                 min={0}
@@ -299,22 +318,22 @@ export default function Checkout() {
 
                     <Card>
                         <div className="p-4">
-                            <div className="text-[15px] md:text-[18px] font-bold">Payment</div>
+                            <SectionTitle>Payment</SectionTitle>
                         </div>
                         <Line/>
                         {!selectedPayment ? (
-                            <div className="p-4 text-sm text-neutral-600">Choose a payment method.</div>
+                            <div className="p-4 text-sm md:text-md text-neutral-600">Choose a payment method.</div>
                         ) : (
                             <Row
                                 icon={CreditCard}
                                 title={
-                                    <div className="font-medium">
+                                    <div className="font-medium text-[#3F3126]">
                                         {selectedPayment.brand === "applepay"
                                             ? "Apple Pay"
                                             : `${selectedPayment.label}${selectedPayment.last4 ? ` —••••${selectedPayment.last4}` : ""}`}
                                     </div>
                                 }
-                                action="Edit"
+                                action="update"
                                 onAction={() => setPaymentModalOpen(true)}
                             />
                         )}
@@ -329,35 +348,39 @@ export default function Checkout() {
                 </div>
 
                 {/* RIGHT */}
-                <div className="space-y-4">
+                <div className="md:col-span-3 space-y-4">
+                    {!isMobile &&
+                        <LoginDisplay/>
+                    }
                     <Card>
-
-                        {!sessionUserId && !profile ?
-                            <button
-                                onClick={handleLogin}
-                                className="hidden md:block w-full rounded-lg bg-[#E9BC46] py-3 text-center text-[15px] md:text-[18px] font-semibold text-[#3F3126] cursor-pointer"
-                            >
-                                Login
-                            </button>
-                            :
+                        {!isMobile && (
                             <>
-                                {sessionUserId}
-                            </>
-                        }
+                                <Row
+                                    icon={MapPin}
+                                    showIcon={false}
+                                    title={selectedStore?.brand ?? "—"}
+                                    subtitle={selectedStore?.address ?? "—"}
+                                    action="change"
+                                    onAction={() => setShowConfirmReset(true)}
+                                />
 
-                    </Card>
-                    <Card>
+                                <ConfirmResetModal
+                                    open={showConfirmReset}
+                                    onCancel={() => setShowConfirmReset(false)}
+                                    onConfirm={() => {
+                                        setShowConfirmReset(false);
+                                        resetStoreAndCartAndGoToOrder({
+                                            cart,
+                                            router,
+                                        });
+                                    }}
+                                />
+                            </>
+                        )
+                        }
                         <div className="p-4">
-                            <div className="flex items-start gap-3">
-                                <div>
-                                    <div className="text-[15px] font-semibold">{selectedStore?.brand ?? "—"}</div>
-                                    <div className="text-sm text-neutral-600">{selectedStore?.address ?? "—"}</div>
-                                </div>
-                            </div>
 
                             <div className="mt-4 rounded-xl">
-                                <div className="py-3 text-[18px] font-bold">Cart summary</div>
-                                <Line/>
                                 <CartSummary/>
                             </div>
 
@@ -374,7 +397,7 @@ export default function Checkout() {
                     {/* Order total */}
                     <Card>
                         <div className="p-4">
-                            <div className="text-[15px] md:text-[18px] font-semibold">Order total</div>
+                            <SectionTitle>Order total</SectionTitle>
                             <div className="mt-2">
                                 <PriceRow label="Subtotal" value={(subtotalCents / 100).toLocaleString("en-US", {
                                     style: "currency",
@@ -386,8 +409,8 @@ export default function Checkout() {
                                 })} info muted/>
                             </div>
                             <div className="mt-4 flex items-center justify-between border-t pt-4 text-[15px]">
-                                <div className="font-semibold">Total</div>
-                                <div className="font-semibold">
+                                <SectionTitle>Total</SectionTitle>
+                                <div className="font-semibold font-[18px]">
                                     {(totalCents / 100).toLocaleString("en-US", {style: "currency", currency: "USD"})}
                                 </div>
                             </div>
@@ -438,7 +461,7 @@ export default function Checkout() {
             />
 
             {accountOpen && (
-                <AuthCard open={accountOpen} onClose={() => setAccountOpen(false)} />
+                <AuthCard open={accountOpen} onClose={() => setAccountOpen(false)}/>
             )}
         </section>
     );
