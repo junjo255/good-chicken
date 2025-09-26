@@ -2,11 +2,9 @@ import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { type NextRequest, NextResponse } from "next/server";
 
 export const createClient = (request: NextRequest) => {
-    const url = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-    const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
-    if (!url || !key) {
-        throw new Error("Missing NEXT_PUBLIC_SUPABASE_URL / NEXT_PUBLIC_SUPABASE_ANON_KEY");
-    }
+
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
+    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
 
     let supabaseResponse = NextResponse.next({
         request: {
@@ -15,8 +13,8 @@ export const createClient = (request: NextRequest) => {
     });
 
     const supabase = createServerClient(
-        url,
-        key,
+        supabaseUrl,
+        supabaseAnonKey,
         {
             cookies: {
                 getAll() {
