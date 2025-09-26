@@ -29,7 +29,7 @@ type Props = {
     open: boolean;
     setOpen: (v: boolean) => void;
     anchorRef: React.RefObject<HTMLElement | null>;
-    isMobile: boolean
+    isMobile?: boolean
 };
 
 export default function CartDrawer({open, setOpen, anchorRef, isMobile = false}: Props) {
