@@ -29,9 +29,10 @@ type Props = {
     open: boolean;
     setOpen: (v: boolean) => void;
     anchorRef: React.RefObject<HTMLElement | null>;
+    isMobile: boolean
 };
 
-export default function CartDrawer({open, setOpen, anchorRef}: Props) {
+export default function CartDrawer({open, setOpen, anchorRef, isMobile = false}: Props) {
     const router = useRouter();
 
     async function checkout() {
@@ -40,7 +41,7 @@ export default function CartDrawer({open, setOpen, anchorRef}: Props) {
     }
 
     const cart = useCart() as any;
-    const { selectedStoreId } = useOrder();
+    const {selectedStoreId} = useOrder();
     const location: StoreLocation | null = useMemo(
         () => (selectedStoreId ? LOCATIONS.find(s => s.id === selectedStoreId) || null : null),
         [selectedStoreId]
@@ -160,20 +161,18 @@ export default function CartDrawer({open, setOpen, anchorRef}: Props) {
         const vw = window.innerWidth;
         const maxWidth = Math.min(500, vw - margin * 2);
 
-        // Base position next to the anchor
         let top = Math.round(rect.bottom + margin);
         let left = Math.round(rect.right - maxWidth);
 
-        // Breakpoints (match Tailwind: sm=640, lg=1024)
         const isMobile = vw < 640;
         const isDesktop = vw >= 1024;
 
         if (isMobile) {
-            top += 75;
+            top -= 700;
         }
 
         if (isDesktop) {
-            left += 20;
+            left += 70;
         }
 
         left = Math.max(margin, Math.min(left, vw - maxWidth - margin));
@@ -220,7 +219,7 @@ export default function CartDrawer({open, setOpen, anchorRef}: Props) {
                 ref={panelRef}
                 role="dialog"
                 aria-label="Shopping cart"
-                className="fixed z-[101] rounded-2xl border border-neutral-200 bg-white shadow-2xl flex flex-col"
+                className="fixed z-[1001] rounded-2xl border border-neutral-200 bg-white shadow-2xl flex flex-col"
                 style={{
                     top: pos.top,
                     left: pos.left,
@@ -230,10 +229,12 @@ export default function CartDrawer({open, setOpen, anchorRef}: Props) {
                 onPointerDownCapture={(e) => e.stopPropagation()}
             >
                 {/* arrow */}
-                <div
-                    aria-hidden
-                    className="absolute -top-2 right-18 h-4 w-4 rotate-45 border-l border-t border-neutral-200 bg-white"
-                />
+                {!isMobile && (
+                    <div
+                        aria-hidden
+                        className="absolute -top-2 right-18 h-4 w-4 rotate-45 border-l border-t border-neutral-200 bg-white"
+                    />
+                )}
 
                 {/* Header */}
                 <div className="flex items-start justify-between border-b border-[#E8E8E8] pb-3 pt-4">

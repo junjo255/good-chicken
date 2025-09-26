@@ -194,7 +194,7 @@ export default function Checkout() {
                     href="/order"
                     className="justify-self-start inline-flex items-center gap-2 text-sm md:text-lg font-medium text-neutral-700 hover:text-black cursor-pointer"
                 >
-                    <ArrowLeft className="h-4 w-4"/> Back to order
+                    <ArrowLeft className="h-4 w-4"/> Back to menu
                 </Link>
 
                 {/* Title: right on mobile, centered on desktop */}

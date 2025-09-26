@@ -10,7 +10,7 @@ export default async function OrderPage({
     return (
         <section
             style={{ maxWidth: "1200px" }}
-            className="mx-auto space-y-4 py-10 mt-[var(--header-h)]"
+            className="mx-auto space-y-4 py-6 mt-[var(--header-h)]"
         >
             <StepperMain initialLcn={lcn ?? null} />
         </section>

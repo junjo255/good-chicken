@@ -1,41 +1,35 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { supabase } from "@/app/lib/supabase/client";
 import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 import styles from "./AuthCard.module.css";
 
-type AuthCardProps = {
-    open: boolean;
-    onClose: () => void;
-};
-
-// Toggle this if you maintain a `profiles` table (id uuid PK references auth.users)
-// create table profiles (id uuid primary key references auth.users on delete cascade, name text, phone text, created_at timestamp default now());
-const MIRROR_TO_PROFILES = false;
+type AuthCardProps = { open: boolean; onClose: () => void };
 
 export default function AuthCard({ open, onClose }: AuthCardProps) {
-    const [mode, setMode] = useState<"sign_in" | "sign_up">("sign_in");
+    const [mode, setMode] = useState<"sign_in" | "sign_up">("sign_up"); // open directly to Create Account
     const [loading, setLoading] = useState(false);
     const [err, setErr] = useState<string | null>(null);
     const [ok, setOk] = useState<string | null>(null);
 
-    // sign-up form fields
-    const [fullName, setFullName] = useState("");
     const [phone, setPhone] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [firstName, setFirstName] = useState("");
+    const [lastName, setLastName] = useState("");
 
     const canSubmit = useMemo(() => {
         if (mode === "sign_in") return true;
         return (
-            fullName.trim().length >= 2 &&
+            firstName.trim().length >= 1 &&
+            lastName.trim().length >= 1 &&
             email.trim().length > 3 &&
             password.length >= 6 &&
             phone.trim().length >= 7
         );
-    }, [mode, fullName, email, password, phone]);
+    }, [mode, firstName, lastName, email, password, phone]);
 
     if (!open) return null;
 
@@ -45,41 +39,20 @@ export default function AuthCard({ open, onClose }: AuthCardProps) {
         setOk(null);
         setLoading(true);
         try {
-            const { data, error } = await supabase.auth.signUp({
+            const { error } = await supabase.auth.signUp({
                 email,
                 password,
                 options: {
                     data: {
-                        name: fullName,
-                        phone_number: phone,
+                        first_name: firstName,
+                        last_name: lastName,
+                        full_name: `${firstName} ${lastName}`.trim(),
                     },
-                    // emailRedirectTo: `${window.location.origin}/auth/callback`, // optional
                 },
             });
-
             if (error) throw error;
-
-            // Optionally mirror to a `profiles` table for relational queries
-            if (MIRROR_TO_PROFILES && data.user) {
-                const { error: insertErr } = await supabase.from("profiles").insert({
-                    id: data.user.id,
-                    name: fullName,
-                    phone,
-                });
-                if (insertErr) {
-                    // Non-fatal; user is created and metadata is stored
-                    console.warn("profiles insert failed:", insertErr.message);
-                }
-            }
-
-            // Supabase may require email confirmation depending on your project settings
-            setOk(
-                "Account created. Check your email to confirm, then sign in."
-            );
-            // Optionally switch back to sign_in
+            setOk("Account created. Check your email to confirm, then sign in.");
             setMode("sign_in");
-            // Pre-fill email for convenience
-            setEmail(email);
             setPassword("");
         } catch (e: any) {
             setErr(e?.message ?? "Something went wrong creating your account.");
@@ -97,7 +70,20 @@ export default function AuthCard({ open, onClose }: AuthCardProps) {
         >
             <div className="absolute inset-0 bg-black/40" onClick={onClose} />
 
-            <div className="relative z-[101] text-md md:text-lg w-full md:max-w-lg md:rounded-2xl bg-white shadow-xl">
+            {/* Card */}
+            <div className="relative z-[101] text-[16px] w-full md:max-w-sm md:rounded-2xl bg-white shadow-xl">
+                {/* Close */}
+             <div className={styles.header}>
+
+                    <div className="flex items-center justify-center">
+                        <img
+                            width="85"
+                            height="85"
+                            src={"/logo/GoodChicken-logo.png"}
+                            alt="Good Chicken"
+                        />
+                    </div>
+
                 <button
                     type="button"
                     onClick={onClose}
@@ -107,28 +93,20 @@ export default function AuthCard({ open, onClose }: AuthCardProps) {
                     ✕
                 </button>
 
-                <div className="p-6">
+             </div>
+                <div className="pt-1 px-6 pb-6">
+                    {/* (Optional) little heading area for consistency */}
                     <div className={styles.header}>
-                        <div className="flex items-center justify-center">
-                            <img
-                                width="85"
-                                height="85"
-                                src={"/logo/GoodChicken-logo.png"}
-                                alt="Good Chicken"
-                            />
-                        </div>
-                        <p className={`${styles.subheader} mt-2 text-center`}>
+                        <p className={`${styles.subheader} text-center`}>
                             {mode === "sign_in" ? "Welcome back!" : "Create your account"}
                         </p>
                     </div>
 
-                    {/* Tab switcher */}
-                    <div className="mt-4 mb-6 grid grid-cols-2 gap-2 bg-neutral-100 rounded-xl p-1">
+                    {/* Mode switch (kept but subtle) */}
+                    <div className="mt-3 mb-5 grid grid-cols-2 gap-2 bg-neutral-100 rounded-xl p-1">
                         <button
                             className={`py-2 rounded-lg ${
-                                mode === "sign_in"
-                                    ? "bg-white shadow font-medium"
-                                    : "text-neutral-600"
+                                mode === "sign_in" ? "bg-white shadow font-medium" : "text-neutral-600"
                             }`}
                             onClick={() => setMode("sign_in")}
                             type="button"
@@ -137,9 +115,7 @@ export default function AuthCard({ open, onClose }: AuthCardProps) {
                         </button>
                         <button
                             className={`py-2 rounded-lg ${
-                                mode === "sign_up"
-                                    ? "bg-white shadow font-medium"
-                                    : "text-neutral-600"
+                                mode === "sign_up" ? "bg-white shadow font-medium" : "text-neutral-600"
                             }`}
                             onClick={() => setMode("sign_up")}
                             type="button"
@@ -152,7 +128,7 @@ export default function AuthCard({ open, onClose }: AuthCardProps) {
                         <Auth
                             supabaseClient={supabase}
                             view="sign_in"
-                            providers={["google", "facebook", "apple"]}
+                            providers={["google"]}
                             socialLayout="vertical"
                             appearance={{
                                 theme: ThemeSupa,
@@ -167,8 +143,8 @@ export default function AuthCard({ open, onClose }: AuthCardProps) {
                                 variables: {
                                     default: {
                                         colors: {
-                                            brand: "#AF3935",
-                                            brandAccent: "#AF3935",
+                                            brand: "#3F3126",
+                                            brandAccent: "#3a2a1e",
                                             inputText: "#0f172a",
                                             inputBackground: "#ffffff",
                                             inputBorder: "#e5e7eb",
@@ -178,14 +154,8 @@ export default function AuthCard({ open, onClose }: AuthCardProps) {
                                             defaultButtonText: "#3F3126",
                                             messageText: "#6b7280",
                                         },
-                                        radii: {
-                                            inputBorderRadius: "10px",
-                                            borderRadiusButton: "10px",
-                                        },
-                                        space: {
-                                            inputPadding: "12px",
-                                            buttonPadding: "12px",
-                                        },
+                                        radii: {inputBorderRadius: "12px", borderRadiusButton: "12px"},
+                                        space: {inputPadding: "12px", buttonPadding: "12px"},
                                         fonts: {
                                             bodyFontFamily: "inherit",
                                             buttonFontFamily: "inherit",
@@ -193,20 +163,20 @@ export default function AuthCard({ open, onClose }: AuthCardProps) {
                                             labelFontFamily: "inherit",
                                         },
                                         fontSizes: {
-                                            baseBodySize: "18px",
-                                            baseLabelSize: "16px",
+                                            baseBodySize: "16px",
+                                            baseLabelSize: "14px",
                                             baseInputSize: "16px",
-                                            baseButtonSize: "18px",
+                                            baseButtonSize: "16px",
                                         },
                                     },
                                 },
                                 className: {
                                     container: "auth-container",
-                                    button: "auth-btn",
-                                    input: "auth-input",
-                                    label: "auth-label",
+                                    button: styles.googleBtn,
+                                    input: styles["auth-input"],
+                                    label: styles["auth-label"],
                                     divider: "auth-divider",
-                                    anchor: "auth-link",
+                                    anchor: styles["auth-link"],
                                 },
                             }}
                             localization={{
@@ -219,97 +189,115 @@ export default function AuthCard({ open, onClose }: AuthCardProps) {
                             }}
                         />
                     ) : (
-                        <form onSubmit={handleSignUp} className="space-y-4">
+                        <form onSubmit={handleSignUp} className="space-y-5">
+                            {/* Google button */}
+                            <button
+                                type="button"
+                                onClick={async () => {
+                                    await supabase.auth.signInWithOAuth({provider: "google"});
+                                }}
+                                className={styles.googleBtn}
+                            >
+                                {/* Google "G" */}
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="25" height="25"
+                                     aria-hidden="true">
+                                    <path fill="#FFC107"
+                                          d="M43.6 20.5H42V20H24v8h11.3C33.6 32.4 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.1 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20c10 0 19-7.3 19-20 0-1.3-.1-2.5-.4-3.5z"/>
+                                    <path fill="#FF3D00"
+                                          d="M6.3 14.7l6.6 4.8C14.7 16.1 18.9 13 24 13c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.1 6.1 29.3 4 24 4 15.5 4 8.4 9 6.3 14.7z"/>
+                                    <path fill="#4CAF50"
+                                          d="M24 44c5.1 0 10-1.9 13.6-5.3l-6.3-5.3C29.3 35.9 26.8 37 24 37c-5.2 0-9.6-3.6-11.1-8.5l-6.5 5C8.4 39 15.5 44 24 44z"/>
+                                    <path fill="#1976D2"
+                                          d="M43.6 20.5H42V20H24v8h11.3c-1.1 3.2-3.6 5.8-6.7 7.2l6.3 5.3C37.5 38.6 43 33.5 43.6 24c.1-1.2 0-2.3 0-3.5z"/>
+                                </svg>
+                                <span className="text-md">Create account with Google</span>
+                            </button>
+
+                            {/* Divider */}
+                            <div className={styles.divider}>
+                                <div className={styles.dividerLine}/>
+                                <span className={styles.dividerText}>or</span>
+                                <div className={styles.dividerLine}/>
+                            </div>
+
+                            {/* Alerts */}
                             {err && (
-                                <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+                                <div
+                                    className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
                                     {err}
                                 </div>
                             )}
                             {ok && (
-                                <div className="rounded-lg border border-green-200 bg-green-50 px-3 py-2 text-sm text-green-700">
+                                <div
+                                    className="rounded-lg border border-green-200 bg-green-50 px-3 py-2 text-sm text-green-700">
                                     {ok}
                                 </div>
                             )}
 
-                            <div className="space-y-1">
-                                <label className="auth-label" htmlFor="fullName">
-                                    Full name
+                            {/* Name */}
+                            <div>
+                                <label className={styles["auth-label"]}>
+                                    Name<span className="text-red-500">*</span>
                                 </label>
                                 <input
-                                    id="fullName"
-                                    className="auth-input"
+                                    className={styles["auth-input"]}
                                     type="text"
-                                    placeholder="Jane Doe"
-                                    value={fullName}
-                                    onChange={(e) => setFullName(e.target.value)}
+                                    placeholder="Enter your name"
+                                    value={`${firstName} ${lastName}`.trim()}
+                                    onChange={(e) => {
+                                        const v = e.target.value;
+                                        const [f, ...rest] = v.split(" ");
+                                        setFirstName(f ?? "");
+                                        setLastName(rest.join(" ") ?? "");
+                                    }}
                                     required
                                 />
                             </div>
 
-                            <div className="space-y-1">
-                                <label className="auth-label" htmlFor="phone">
-                                    Phone number
-                                </label>
-                                <input
-                                    id="phone"
-                                    className="auth-input"
-                                    type="tel"
-                                    placeholder="+1 555 123 4567"
-                                    value={phone}
-                                    onChange={(e) => setPhone(e.target.value)}
-                                    required
-                                />
-                            </div>
-
-                            <div className="space-y-1">
-                                <label className="auth-label" htmlFor="email">
-                                    Email
+                            {/* Email */}
+                            <div>
+                                <label className={styles["auth-label"]} htmlFor="email">
+                                    Email<span className="text-red-500">*</span>
                                 </label>
                                 <input
                                     id="email"
-                                    className="auth-input"
+                                    className={styles["auth-input"]}
                                     type="email"
-                                    placeholder="jane@example.com"
+                                    placeholder="Enter your email"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     required
-                                    autoComplete="email"
                                 />
                             </div>
 
-                            <div className="space-y-1">
-                                <label className="auth-label" htmlFor="password">
-                                    Password
+                            {/* Password */}
+                            <div>
+                                <label className={styles["auth-label"]}>
+                                    Password<span className="text-red-500">*</span>
                                 </label>
                                 <input
                                     id="password"
-                                    className="auth-input"
+                                    className={styles["auth-input"]}
                                     type="password"
-                                    placeholder="••••••••"
+                                    placeholder="Enter your password"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                     required
-                                    autoComplete="new-password"
                                     minLength={6}
+                                    autoComplete="new-password"
                                 />
                             </div>
 
-                            <button
-                                type="submit"
-                                className="auth-btn w-full"
-                                disabled={!canSubmit || loading}
-                            >
-                                {loading ? "Creating account…" : "Create account"}
+                            {/* CTA */}
+                            <button type="submit" disabled={!canSubmit || loading} className={styles.submitBtn}>
+                                Create Account
                             </button>
 
-                            <p className="text-sm text-neutral-600">
+                            {/* Footer link */}
+                            <p className={styles.footerText}>
                                 Already have an account?{" "}
-                                <button
-                                    type="button"
-                                    className="auth-link underline"
-                                    onClick={() => setMode("sign_in")}
-                                >
-                                    Sign in
+                                <button type="button" className={styles.footerLink} onClick={() => setMode("sign_in")}>
+                                    Login Here
                                 </button>
                             </p>
                         </form>

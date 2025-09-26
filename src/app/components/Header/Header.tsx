@@ -44,12 +44,12 @@ export default function Header() {
 
     useEffect(() => {
         const getSession = async () => {
-            const { data } = await supabase.auth.getSession();
+            const {data} = await supabase.auth.getSession();
             setSessionUserId(data.session?.user?.id ?? null);
         };
         getSession();
 
-        const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
+        const {data: sub} = supabase.auth.onAuthStateChange((_event, session) => {
             setSessionUserId(session?.user?.id ?? null);
         });
         return () => sub.subscription.unsubscribe();
@@ -94,17 +94,6 @@ export default function Header() {
     }, []);
 
     useEffect(() => {
-        const onClick = (e: MouseEvent) => {
-            if (!open) return;
-            if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
-                setOpen(false);
-            }
-        };
-        window.addEventListener('click', onClick);
-        return () => window.removeEventListener('click', onClick);
-    }, [open]);
-
-    useEffect(() => {
         const banner = document.querySelector<HTMLElement>("section[role='banner']");
         const recomputeScrolled = () => {
             if (banner) {
@@ -119,18 +108,22 @@ export default function Header() {
         let observer: IntersectionObserver | null = null;
         if (banner && 'IntersectionObserver' in window) {
             observer = new IntersectionObserver(
-                (entries) => { setScrolled(!entries[0].isIntersecting); },
-                { root: null, threshold: 0.01, rootMargin: '-1px 0px 0px 0px' }
+                (entries) => {
+                    setScrolled(!entries[0].isIntersecting);
+                },
+                {root: null, threshold: 0.01, rootMargin: '-1px 0px 0px 0px'}
             );
             observer.observe(banner);
         } else {
             const onScroll = () => recomputeScrolled();
-            window.addEventListener('scroll', onScroll, { passive: true });
+            window.addEventListener('scroll', onScroll, {passive: true});
             recomputeScrolled();
             return () => window.removeEventListener('scroll', onScroll);
         }
 
-        const onHashOrHistory = () => { requestAnimationFrame(recomputeScrolled); };
+        const onHashOrHistory = () => {
+            requestAnimationFrame(recomputeScrolled);
+        };
         window.addEventListener('hashchange', onHashOrHistory);
         window.addEventListener('popstate', onHashOrHistory);
         window.addEventListener('load', onHashOrHistory);
@@ -186,7 +179,7 @@ export default function Header() {
         e.stopPropagation();
         setOpen((v) => !v)
     }
-    const { userId, openAuth } = useAuth();
+    const {userId, openAuth} = useAuth();
 
     function UserDisplay() {
         if (!userId) {
@@ -213,7 +206,7 @@ export default function Header() {
                     aria-label="Account menu"
                     className="cursor-pointer flex items-center"
                 >
-                    <CircleUserRound className="h-7 w-7" color="#3F3126" />
+                    <CircleUserRound className="h-7 w-7" color="#3F3126"/>
                 </button>
 
                 <UserDropdown
@@ -251,7 +244,6 @@ export default function Header() {
             data-aos-duration="400"
         >
             <div className={`${styles.inner} ${isMobile && open ? styles.mobileMenuOpen : ""}`}>
-                {/* Mobile brand row (shown only under 1024px) */}
                 <div className={styles.brandRow}>
                     <button
                         type="button"
@@ -266,51 +258,21 @@ export default function Header() {
                     >
                         {!open ? (
                             <svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true">
-                                <path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                                <path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" strokeWidth="2"
+                                      strokeLinecap="round"/>
                             </svg>
                         ) : (
                             <svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true">
-                                <path style={{color: "#3F3126"}} d="M6 6l12 12M18 6l-12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                                <path style={{color: "#3F3126"}} d="M6 6l12 12M18 6l-12 12" stroke="currentColor"
+                                      strokeWidth="2" strokeLinecap="round"/>
                             </svg>
                         )}
                     </button>
 
                     <Link href="/" className={styles.brand} aria-label="BBQ Chicken home">
-                        <img width="85" height="85" src={logoSrc} alt="Good Chicken" />
+                        <img width="85" height="85" src={logoSrc} alt="Good Chicken"/>
                     </Link>
 
-                    {isOrderPath && isMobile? (
-                        <>
-                            {/* Mobile actions: single absolutely-positioned container */}
-                            <div className={styles.cartButton}>
-                                <div className="inline-flex items-center gap-6 relative">
-                                    <button
-                                        aria-label="Open cart"
-                                        ref={cartBtnRef}
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            setCartOpen(prev => {
-                                                const next = !prev;
-                                                if (next) setUserMenuOpen(false);
-                                                return next;
-                                            });
-                                        }}
-                                        className="cursor-pointer"
-                                    >
-                                        <CartIcon className="h-6 w-6" count={itemCount} onAdd={() => setCartOpen(v => !v)} />
-                                    </button>
-
-                                  <UserDisplay />
-                                </div>
-                            </div>
-
-                            <CartDrawer
-                                open={cartOpen}
-                                setOpen={setCartOpen}
-                                anchorRef={cartBtnRef}
-                            />
-                        </>
-                    ) : null}
                 </div>
 
                 {/* Desktop / tablet nav cluster */}
@@ -318,7 +280,8 @@ export default function Header() {
                     <ul id="primary-navigation-left" className={`${styles.navList} ${styles.leftList}`}>
                         {leftItems.map(({label, href, emphasize}) => (
                             <li key={`l-${label}`} className={styles.navItem}>
-                                <a href={href} className={`${styles.link} ${emphasize ? styles.emphasize : ''}`}>{label}</a>
+                                <a href={href}
+                                   className={`${styles.link} ${emphasize ? styles.emphasize : ''}`}>{label}</a>
                             </li>
                         ))}
                     </ul>
@@ -330,7 +293,8 @@ export default function Header() {
                     <ul id="primary-navigation-right" className={`${styles.navList} ${styles.rightList}`}>
                         {rightItems.map(({label, href, emphasize}) => (
                             <li key={`r-${label}`} className={styles.navItem}>
-                                <a href={href} className={`${styles.link} ${emphasize ? styles.emphasize : ''}`}>{label}</a>
+                                <a href={href}
+                                   className={`${styles.link} ${emphasize ? styles.emphasize : ''}`}>{label}</a>
                             </li>
                         ))}
 
@@ -351,16 +315,17 @@ export default function Header() {
                                         }}
                                         className="relative cursor-pointer flex items-center gap-2"
                                     >
-                                        <CartIcon className="h-6 w-6" count={itemCount} onAdd={() => setCartOpen(true)} />
+                                        <CartIcon className="h-6 w-6" count={itemCount}
+                                                  onAdd={() => setCartOpen(true)}/>
                                     </button>
                                 </li>
 
                                 {/* User + dropdown (desktop) */}
                                 <li className={`${styles.navItem} relative`}>
-                                    <UserDisplay />
+                                    <UserDisplay/>
                                 </li>
 
-                                <CartDrawer open={cartOpen} setOpen={setCartOpen} anchorRef={cartBtnRef} />
+                                <CartDrawer open={cartOpen} setOpen={setCartOpen} anchorRef={cartBtnRef}/>
                             </>
                         ) : null}
                     </ul>
@@ -384,7 +349,7 @@ export default function Header() {
                                         setOpen(false);
                                         setCartOpen(false);
                                         setUserMenuOpen(false);
-                                    }}                                >
+                                    }}>
                                     {label}
                                 </a>
                             </li>

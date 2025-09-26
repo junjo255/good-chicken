@@ -1,59 +1,154 @@
 @media (min-width: 768px) {
-  .dialog {
-    align-items: center;
-  }
-  .panel {
-    font-size: 1.125rem;
-    max-width: 32rem;
-    border-radius: 1rem;
-  }
+    .dialog {
+        align-items: center;
+    }
+
+    .panel {
+        font-size: 1.125rem;
+        max-width: 24rem;
+        border-radius: 1rem;
+    }
 }
 
 .dialog {
-  position: fixed;
-  inset: 0;
-  z-index: 100;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
 }
 
 .backdrop {
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.4);
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
 }
 
 .panel {
-  position: relative;
-  z-index: 101;
-  font-size: 1rem;
-  width: 100%;
-  background: #ffffff;
-  box-shadow:
-          0 20px 25px -5px rgba(0, 0, 0, 0.1),
-          0 8px 10px -6px rgba(0, 0, 0, 0.1);
+    position: relative;
+    z-index: 101;
+    font-size: 1rem;
+    width: 100%;
+    background: #ffffff;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 8px 10px -6px rgba(0, 0, 0, 0.1);
 }
 
 .closeBtn {
-  position: absolute;
-  top: 0.75rem;
-  right: 0.75rem;
-  border-radius: 0.375rem;
-  padding: 0.25rem 0.5rem;
-  font-size: 1rem;
-  color: #525252;
-  cursor: pointer;
-  background: transparent;
-  border: none;
-  line-height: 1;
-}
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    border-radius: 0.375rem;
+    padding: 0.25rem 0.5rem;
+    font-size: 1rem;
+    color: #525252;
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    line-height: 1;
 
-.closeBtn:hover {
-  background: #f5f5f5;
-  border-radius: 9999px;
+    &:hover {
+        background: #f5f5f5;
+        border-radius: 9999px;
+    }
 }
 
 .panelBody {
-  padding: 1.5rem;
+    padding: 1.5rem;
+}
+
+.header {
+    padding: 1rem 0.5rem 0 0.5rem;
+}
+
+.subheader {
+    font-size: 18px;
+    color: #111827;
+    font-weight: 600;
+}
+
+.auth-input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    font-size: 16px;
+    color: #0f172a;
+    background: #fff;
+}
+
+.auth-label {
+    display: block;
+    margin-bottom: 0.25rem;
+    font-size: 14px;
+    color: #3F3126;
+    font-weight: 500;
+}
+
+.auth-link {
+    color: #111;
+    text-decoration: underline;
+}
+
+/* Google button to look like the mock */
+.googleBtn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    background: #fff;
+    padding: 12px 16px;
+    font-size: 14px;
+}
+
+.googleBtn:hover {
+    background: #f8fafc;
+}
+
+/* Thin divider with “or” */
+.divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 2px 0;
+}
+
+.dividerLine {
+    height: 1px;
+    background: #e5e7eb;
+    flex: 1;
+}
+
+.dividerText {
+    font-size: 1rem;
+    color: #9ca3af;
+}
+
+.submitBtn {
+    width: 100%;
+    border-radius: 12px;
+    background: #3F3126;
+    color: #fff;
+    padding: 12px 16px;
+    font-weight: 500;
+
+    &:hover {
+        opacity: .9;
+    }
+}
+
+
+.footerText {
+    font-size: 14px;
+    color: #6b7280;
+}
+
+.footerLink {
+    font-weight: 600;
+    text-decoration: underline;
+    color: #262626;
 }
