@@ -16,7 +16,6 @@ export async function GET(req: Request) {
     const items = await listItems(merchantId, merchant.access_token, 100, 0);
 
 
-// For demo: hydrate each item with its stock (beware of rate/latency; batch where possible)
     const withStock = await Promise.all(
         items.elements.map(async (it: any) => {
             try {

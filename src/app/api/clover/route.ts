@@ -10,7 +10,7 @@ export async function POST(req: NextRequest) {
     try {
         const body = await req.json();
 
-        // ⚠️ Always compute the total on the server (do NOT trust client amount)
+        // ⚠Always compute the total on the server (do NOT trust client amount)
         // Example: const amount = await calculateAmountFromCart(body.cartId);
         const amount: number = Number(body.amount); // cents; replace with real calc
         const currency = "usd";
