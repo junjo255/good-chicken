@@ -6,6 +6,7 @@ import styles from './Locations.module.css';
 import {ChevronDown, Clock, Copy, MapPin} from "lucide-react";
 import Link from "next/link";
 import {formatDay, isOpenNow, to12h, todayWeekday} from "@/app/utils";
+import {OpenBadge} from "@/app/classUtils";
 
 type LocationPanelProps = {
     location: StoreLocation;
@@ -26,37 +27,6 @@ export default function LocationPanel({
                                           handlePrimaryClick
                                       }: LocationPanelProps) {
 
-    function OpenBadge({hours}: { hours?: BusinessHours }) {
-        if (!hours) return null;
-        const status = isOpenNow(hours);
-
-        if (!status.isOpenToday) {
-            return (
-                <div
-                    className="items-start flex md:justify-end py-1 text-md min-w-[150px] ">
-                    {/*<span className="h-2 w-2 rounded-full bg-green-800"/>*/}
-                    <span className="text-red-800">Closed</span>
-                    {/*{status.until ? ` until ${to12h(status.until)}` : null}*/}
-                </div>
-            );
-        } else if (status.isOpen) {
-            return (
-                <div
-                    className="items-start flex md:justify-end py-1 text-md gap-1 min-w-[150px]">
-                    {/*<span className="h-2 w-2 rounded-full bg-green-800"/>*/}
-                    <span className="text-green-800">Open</span>
-                    {status.until ? ` until ${to12h(status.until)}` : null}
-                </div>
-            );
-        }
-        return (
-            <div className=" items-start flex justify-end rounded-full min-w-[150px] gap-1 py-1 text-md">
-                {/*<span className="h-2 w-2 rounded-full bg-red-500"/>*/}
-                <span className="text-red-800">Opens</span>
-                {status.start ? ` at ${to12h(status.start)}` : "Closed"}
-            </div>
-        );
-    }
 
     function orderCTA({hours}: { hours?: BusinessHours }) {
         if (!hours) return "Order Now";
@@ -149,7 +119,7 @@ export default function LocationPanel({
                                                 onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && setExpanded(v => !v)}
                                                 aria-expanded={expanded}
                                                 aria-label={expanded ? "Hide hours" : "Show all hours"}
-                                                className="inline-flex items-center cursor-pointer"
+                                                className="inline-flex items-center "
                                             >
                                             <ChevronDown
                                                 className={`h-4 w-4 transition-transform ${expanded ? "rotate-180" : ""}`}
@@ -188,7 +158,7 @@ export default function LocationPanel({
                                     <button
                                         type="button"
                                         onClick={handlePrimaryClick}
-                                        className="inline-flex items-center h-10 px-4 rounded-lg bg-[#AF3935] text-white font-semibold cursor-pointer"
+                                        className="inline-flex items-center h-10 px-4 rounded-lg bg-[#AF3935] text-white font-semibold "
                                     >
                                          Continue
                                     </button> : null

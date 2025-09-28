@@ -49,7 +49,7 @@ function PaymentRow({
             type="button"
             onClick={() => !disabled && onSelect(pm.id)}
             className={[
-                "w-full select-none items-center justify-between px-3 py-5 text-left flex cursor-pointer",
+                "w-full select-none items-center justify-between px-3 py-5 text-left flex",
                 disabled ? "opacity-60 cursor-not-allowed" : "hover:bg-neutral-50",
             ].join(" ")}
         >
@@ -108,7 +108,7 @@ export function PaymentOptionsModal({
                     {payments.map((pm) => (
                         <PaymentRow key={pm.id} pm={pm} selected={pm.id === selectedId} onSelect={onSelect} />
                     ))}
-                    <button type="button" onClick={onAddNew} className="flex w-full items-center gap-2 px-3 py-3 hover:bg-neutral-50 cursor-pointer">
+                    <button type="button" onClick={onAddNew} className="flex w-full items-center gap-2 px-3 py-3 hover:bg-neutral-50">
                         <Plus className="h-5 w-5" />
                         <span className="text-[15px] md:text-[17px] font-medium">Add Payment Method</span>
                     </button>

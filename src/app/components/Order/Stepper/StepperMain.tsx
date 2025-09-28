@@ -9,6 +9,7 @@ import {useRouter} from "next/navigation";
 import {useOrder} from "@/app/components/Order/Stepper/OrderCtx";
 import {isOpenNow} from "@/app/utils";
 import {useCart} from "@/app/lib/cart";
+import {ConfirmResetModal} from "@/app/components/Order/OrderReset/OrderReset";
 
 export default function StepperMain({initialLcn}: { initialLcn: string | null }) {
     const [stepIdx, setStepIdx] = useState<number>(0);
@@ -61,6 +62,55 @@ export default function StepperMain({initialLcn}: { initialLcn: string | null })
             window.open(url, "_blank");
         }
     }
+    const cart = useCart() as any;
+    const hasItems = useMemo(
+        () => Array.isArray(cart?.items) && cart.items.length > 0,
+        [cart?.items]
+    );
+
+    const [confirmOpen, setConfirmOpen] = useState(false);
+    const [pendingStoreId, setPendingStoreId] = useState<string | null>(null);
+
+    const guardedSetSelectedStoreId = (currentId: string | null, nextId: string) => {
+        if (!currentId || currentId === nextId || !hasItems) {
+            setSelectedStoreId(nextId);
+            return;
+        }
+        setPendingStoreId(nextId);
+        setConfirmOpen(true);
+    };
+
+    const handleConfirmChangeStore = () => {
+        resetCart();
+        if (pendingStoreId) setSelectedStoreId(pendingStoreId);
+        setPendingStoreId(null);
+        setConfirmOpen(false);
+    };
+
+    const handleCancelChangeStore = () => {
+        setPendingStoreId(null);
+        setConfirmOpen(false);
+    };
+
+    const resetCart = () => {
+        if (cart?.clearCart) cart.clearCart();
+        else if (cart?.empty) cart.empty();
+        else if (cart?.removeAll) cart.removeAll();
+        else if (Array.isArray(cart?.items)) {
+            cart.items.forEach((it: any) => {
+                if (cart.removeItem) cart.removeItem(it.id);
+                else if (cart.remove) cart.remove(it.id);
+            });
+        }
+    };
+
+    const confirmModal = (
+        <ConfirmResetModal
+            open={confirmOpen}
+            onConfirm={handleConfirmChangeStore}
+            onCancel={handleCancelChangeStore}
+        />
+    );
 
     const ctx: Ctx = {
         selectedStoreId,
@@ -93,14 +143,25 @@ export default function StepperMain({initialLcn}: { initialLcn: string | null })
         router.replace("/order");
     }, [initialLcn, lcnHandled, setSelectedStoreId, router]);
 
-    const steps = useMemo(() => getSteps(ctx, isStoreClosed, isStoreOpenToday, handlePrimaryClick), [
-        selectedStoreId,
-        orderType,
-        partner,
-        scheduleLater,
-        isStoreClosed,
-        isStoreOpenToday
-    ]);
+    const steps = useMemo(
+        () =>
+            getSteps(
+                ctx,
+                isStoreClosed,
+                isStoreOpenToday,
+                handlePrimaryClick,
+                guardedSetSelectedStoreId,
+                confirmModal
+            ),
+        [
+            ctx,
+            isStoreClosed,
+            isStoreOpenToday,
+            handlePrimaryClick,
+            guardedSetSelectedStoreId,
+            confirmModal
+        ]
+    );
 
     useEffect(() => {
         if (stepIdx === 1) {
@@ -138,7 +199,6 @@ export default function StepperMain({initialLcn}: { initialLcn: string | null })
         else goNext();
     }
 
-    // const cart = useCart();
     // useEffect(() => {
     //     if (!selectedStoreId) return;
     //     const hasItems = Array.isArray(cart?.items) && cart.items.length > 0;

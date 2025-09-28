@@ -16,9 +16,6 @@ type ResetAndNavigateArgs = {
     router: AppRouterInstance;
 };
 
-/**
- * Clears selected store & cart, then navigates to /order
- */
 export function resetStoreAndCartAndGoToOrder({
                                                   cart,
                                                   router,
@@ -51,13 +48,13 @@ export function ConfirmResetModal({ open, onConfirm, onCancel }: ConfirmResetMod
                 <div className="mt-6 flex justify-end gap-3">
                     <button
                         onClick={onCancel}
-                        className="rounded-lg border border-neutral-300 px-4 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-50 cursor-pointer"
+                        className="rounded-lg border border-neutral-300 px-4 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-50"
                     >
                         Cancel
                     </button>
                     <button
                         onClick={onConfirm}
-                        className="rounded-lg bg-[#AF3935] px-4 py-2 text-sm font-semibold text-white hover:bg-[#922f2b] cursor-pointer"
+                        className="rounded-lg bg-[#AF3935] px-4 py-2 text-sm font-semibold text-white hover:bg-[#922f2b]"
                     >
                         Yes, Continue
                     </button>

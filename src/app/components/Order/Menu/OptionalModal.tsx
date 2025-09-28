@@ -45,7 +45,7 @@ function Pill({ children, on, disabled, onClick }:{
             disabled={disabled}
             onClick={onClick}
             className={[
-                'rounded-full border px-3 py-1 text-sm cursor-pointer',
+                'rounded-full border px-3 py-1 text-sm ',
                 on ? 'bg-[#3F3126] text-white' : 'bg-white hover:bg-neutral-100',
                 disabled ? 'opacity-40 cursor-not-allowed' : ''
             ].join(' ')}
@@ -118,7 +118,7 @@ export default function OptionModal({
                         </div>
                         <div className="mt-1 text-sm text-[#262626]">Choose Options</div>
                     </div>
-                    <button onClick={onClose} className="ml-auto rounded-lg border px-2 py-1 text-sm  cursor-pointer">Close</button>
+                    <button onClick={onClose} className="ml-auto rounded-lg border px-2 py-1 text-sm  ">Close</button>
                 </div>
 
                 <div className="border-t p-4">
@@ -128,7 +128,7 @@ export default function OptionModal({
                         return (
                             <div key={a.id} className="mb-3">
                                 <div className="font-[14px] sm:font-[17px] uppercase mb-1 text-xs font-semibold text-[#262626]">{a.name}</div>
-                                <div className="font-[14px] sm:font-[17px flex flex-wrap gap-2  cursor-pointer mb-2">
+                                <div className="font-[14px] sm:font-[17px flex flex-wrap gap-2   mb-2">
                                     {all.filter(a => avail.includes(a)).map(v => (
                                         <Pill
                                             key={v}
@@ -150,7 +150,7 @@ export default function OptionModal({
                         ${(chosen?.priceCents ?? 0).toLocaleString('usd')}
                     </div>
                     <button
-                        className="rounded-xl bg-[#AF3935] px-4 py-2 text-white disabled:opacity-50  cursor-pointer"
+                        className="rounded-xl bg-[#AF3935] px-4 py-2 text-white disabled:opacity-50"
                         disabled={!chosen}
                         onClick={() => {
                             if (!chosen) return;

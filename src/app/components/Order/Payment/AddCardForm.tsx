@@ -86,7 +86,7 @@ export function AddCardForm({
                         <button
                             type="button"
                             onClick={onClose}
-                            className="p-1 rounded-full hover:bg-neutral-100 cursor-pointer"
+                            className="p-1 rounded-full hover:bg-neutral-100"
                         >
                             <X className="h-6 w-6 text-neutral-600" />
                         </button>
@@ -215,7 +215,7 @@ export function AddCardForm({
                 disabled={!canSubmit || submitting}
                 className={`w-full rounded-xl py-4 text-[15px] font-semibold ${
                     canSubmit && !submitting
-                        ? "bg-[#AF3935] text-white cursor-pointer"
+                        ? "bg-[#AF3935] text-white"
                         : "bg-neutral-300 text-white cursor-not-allowed"
                 }`}
             >

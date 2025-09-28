@@ -88,7 +88,7 @@ export default function AuthCard({ open, onClose }: AuthCardProps) {
                     type="button"
                     onClick={onClose}
                     aria-label="Close"
-                    className="absolute top-3 right-3 rounded-md px-2 py-1 text-md text-neutral-600 hover:bg-neutral-100 hover:rounded-full cursor-pointer"
+                    className="absolute top-3 right-3 rounded-md px-2 py-1 text-md text-neutral-600 hover:bg-neutral-100 hover:rounded-full "
                 >
                     ✕
                 </button>

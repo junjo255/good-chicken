@@ -267,3 +267,19 @@ footer {
         filter: brightness(.95)
     }
 }
+
+.line-b {
+    border-bottom: 1px solid rgb(243, 243, 243);;
+}
+
+.line-t {
+    border-top: 1px solid rgb(243, 243, 243);;
+}
+
+.shadow-t {
+    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.12);
+}
+
+.shadow-b {
+    box-shadow: 0 4px 6px -4px rgba(0,0,0,0.12);
+}

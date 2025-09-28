@@ -189,7 +189,7 @@ export default function Header() {
                         setUserMenuOpen(false);
                         openAuth();
                     }}
-                    className="cursor-pointer flex items-center gap-2 px-3 py-2 rounded-lg bg-[#E9BC46] text-[#3F3126] font-semibold"
+                    className=" flex items-center gap-2 px-3 py-2 rounded-lg bg-[#E9BC46] text-[#3F3126] font-semibold"
                 >
                     Login
                 </button>
@@ -204,7 +204,7 @@ export default function Header() {
                     aria-haspopup="menu"
                     aria-expanded={userMenuOpen}
                     aria-label="Account menu"
-                    className="cursor-pointer flex items-center"
+                    className=" flex items-center"
                 >
                     <CircleUserRound className="h-7 w-7" color="#3F3126"/>
                 </button>
@@ -313,7 +313,7 @@ export default function Header() {
                                                 return next;
                                             });
                                         }}
-                                        className="relative cursor-pointer flex items-center gap-2"
+                                        className="relative  flex items-center gap-2"
                                     >
                                         <CartIcon className="h-6 w-6" count={itemCount}
                                                   onAdd={() => setCartOpen(true)}/>

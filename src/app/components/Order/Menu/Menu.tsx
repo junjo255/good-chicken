@@ -223,8 +223,8 @@ export default function OrderingMenu()  {
                                     className={
                                         "flex-wrap pr-3 sm:inline-flex items-center text-yellow sm:gap-2 pb-1 sm:pb-4 sm:px-5 sm:py-3 text-sm font-semibold tracking-wider transition-all " +
                                         (on
-                                            ? "text-[#AF3935] cursor-pointer"
-                                            : "text-[#6b7280] hover:text-[#AF3935] hover:border-white cursor-pointer ")
+                                            ? "text-[#AF3935] "
+                                            : "text-[#6b7280] hover:text-[#AF3935] hover:border-white  ")
                                     }
                                 >
                                     {c.icon && <span className="grid place-items-center">{c.icon}</span>}
@@ -262,7 +262,7 @@ export default function OrderingMenu()  {
                                     {item.product ? (
                                         <button
                                             onClick={() => openPicker(item.product!)}
-                                            className="inline-flex w-8 h-8 items-center justify-center p-0 rounded-full border border-[#262626] bg-white text-[12px] leading-none transition-colors hover:bg-[#AF3935] hover:border-[#AF3935] hover:cursor-pointer"
+                                            className="inline-flex w-8 h-8 items-center justify-center p-0 rounded-full border border-[#262626] bg-white text-[12px] leading-none transition-colors hover:bg-[#AF3935] hover:border-[#AF3935] hover:"
                                             aria-label="Add"
                                         >
                                             <Plus

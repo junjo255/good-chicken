@@ -66,7 +66,7 @@ export default function UserDropdown({
             <Line />
             <button
                 onClick={handleLogin}
-                className="w-full text-left px-3 py-2 rounded-xl hover:bg-[#f8f8f8] cursor-pointer"
+                className="w-full text-left px-3 py-2 rounded-xl hover:bg-[#f8f8f8] "
             >
                 {loginLabel}
             </button>

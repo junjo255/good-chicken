@@ -7,7 +7,7 @@ import React, {
     useRef,
     useState,
 } from 'react';
-import {X, Minus, Plus, ChevronLeft, ChevronRight} from 'lucide-react';
+import {X} from 'lucide-react';
 import {useCart} from '@/app/lib/cart';
 import {StoreLocation} from "@/app/lib/types";
 import PrimaryButton from "@/app/components/Order/Stepper/PrimaryButton";
@@ -247,7 +247,7 @@ export default function CartDrawer({open, setOpen, anchorRef, isMobile = false}:
                     <button
                         onClick={() => setOpen(false)}
                         aria-label="Close"
-                        className="-mr-1 rounded-full p-2 hover:bg-neutral-100 cursor-pointer"
+                        className="-mr-1 rounded-full p-2 hover:bg-neutral-100 "
                     >
                         <X className="h-5 w-5"/>
                     </button>
@@ -256,19 +256,19 @@ export default function CartDrawer({open, setOpen, anchorRef, isMobile = false}:
                 {/* Summary row */}
                 <div className="flex items-center justify-between py-3 text-[15px]">
                     <div className="flex items-center gap-4 text-[#262626]">
-                        <span className="font-bold font-xl">
+                        <span className="font-bold font-[1rem]]">
                           {itemCount} {itemCount === 1 ? 'item' : 'items'}
                         </span>
                         {itemCount > 0 && (
                             <button
                                 onClick={resetCart}
-                                className="text-sm text-[#262626] hover:underline cursor-pointer"
+                                className="text-[1rem] text-[#6b7280] hover:underline "
                             >
                                 reset
                             </button>
                         )}
                     </div>
-                    <div className="text-[#262626] font-bold font-xl">
+                    <div className="text-[#262626] font-bold text-[1rem]">
                         <span className="mr-1">Subtotal:</span>
                         <span className="font-semibold">{subtotalUsd}</span>
                     </div>
@@ -284,22 +284,22 @@ export default function CartDrawer({open, setOpen, anchorRef, isMobile = false}:
                         <ul className="divide-y divide-neutral-200">
                             {uiItems.map((it) => (
                                 <li key={it.id} className="py-3">
-                                    <div className="flex items-start justify-between gap-3">
+                                    <div className="flex items-start justify-between gap-6">
                                         <QuantityDropdown
                                             value={it.qty}
                                             onChange={(n) => setQty(it.id, it.qty, n)}
                                             min={0}
                                             max={20}
                                             step={1}
-                                            className="h-8"
+                                            className="h-8 "
                                         />
 
                                         <div className="min-w-0 flex-1">
                                             <div
-                                                className="truncate text-[15px] sm:text-[18px] font-semibold leading-tight">{formatWithBreaks(it.name)}</div>
+                                                className="truncate text-[1rem] md:text-[1.2rem] font-semibold leading-tight">{formatWithBreaks(it.name)}</div>
                                             {it.modifiers?.length ? (
                                                 <div
-                                                    className="mt-1 space-y-0.5 text-[12px] sm:text-[13px] text-neutral-600">
+                                                    className="mt-1 space-y-0.5 text-[0.95rem] md:text-[1rem] text-neutral-600">
                                                     {it.modifiers.slice(0, 6).map((m) => (
                                                         <div key={m.id} className="truncate">{m.name}</div>
                                                     ))}
@@ -307,7 +307,7 @@ export default function CartDrawer({open, setOpen, anchorRef, isMobile = false}:
                                             ) : null}
                                         </div>
 
-                                        <div className="text-[15px] sm:text-[18px] font-semibold leading-none">
+                                        <div className="text-[1rem] md:text-[1.2rem] font-semibold leading-none">
                                             {((it.unitCents * it.qty) / 100).toLocaleString('en-US', {
                                                 style: 'currency',
                                                 currency: 'USD'
@@ -318,62 +318,16 @@ export default function CartDrawer({open, setOpen, anchorRef, isMobile = false}:
                             ))}
                         </ul>
                     )}
-
-                    {/*<div className="mt-5">*/}
-                    {/*    <div className="mb-2 flex items-center justify-between">*/}
-                    {/*        <h3 className="text-[16px] font-semibold">Offers for you</h3>*/}
-                    {/*        <div className="flex items-center gap-1 text-neutral-500">*/}
-                    {/*            <button className="p-1 hover:text-neutral-800 cursor-pointer" aria-label="Prev">*/}
-                    {/*                <ChevronLeft className="h-5 w-5" />*/}
-                    {/*            </button>*/}
-                    {/*            <button className="p-1 hover:text-neutral-800 cursor-pointer" aria-label="Next">*/}
-                    {/*                <ChevronRight className="h-5 w-5" />*/}
-                    {/*            </button>*/}
-                    {/*        </div>*/}
-                    {/*    </div>*/}
-
-                    {/*    <div className="grid grid-cols-3 gap-3">*/}
-                    {/*        {[*/}
-                    {/*            { t: 'Burrito', p: 1345, img: '/offers/burrito.jpg' },*/}
-                    {/*            { t: 'Tacos', p: 1345, img: '/offers/tacos.jpg' },*/}
-                    {/*            { t: 'Salad', p: 1435, img: '/offers/salad.jpg' },*/}
-                    {/*        ].map((o, i) => (*/}
-                    {/*            <div key={i} className="overflow-hidden rounded-2xl border">*/}
-                    {/*                <div className="relative h-[110px] w-full bg-neutral-100">*/}
-                    {/*                    <img src={o.img} alt="" className="h-full w-full object-cover" />*/}
-                    {/*                    <button*/}
-                    {/*                        className="absolute right-2 top-2 grid h-7 w-7 place-items-center rounded-full bg-white shadow cursor-pointer" // add pointer*/}
-                    {/*                        aria-label={`Add ${o.t}`}*/}
-                    {/*                    >*/}
-                    {/*                        <Plus className="h-4 w-4" />*/}
-                    {/*                    </button>*/}
-                    {/*                </div>*/}
-                    {/*                <div className="p-3">*/}
-                    {/*                    <div className="text-[13px] font-medium leading-tight">{o.t}</div>*/}
-                    {/*                    <div className="mt-1 text-[13px] text-neutral-600">*/}
-                    {/*                        {(o.p / 100).toLocaleString('en-US', {*/}
-                    {/*                            style: 'currency',*/}
-                    {/*                            currency: 'USD',*/}
-                    {/*                        })}*/}
-                    {/*                    </div>*/}
-                    {/*                    <div className="mt-2 inline-flex items-center gap-1 rounded bg-neutral-100 px-2 py-[2px] text-[11px] font-medium text-neutral-700">*/}
-                    {/*                        Free on $20.00+*/}
-                    {/*                    </div>*/}
-                    {/*                </div>*/}
-                    {/*            </div>*/}
-                    {/*        ))}*/}
-                    {/*    </div>*/}
-                    {/*</div>*/}
                 </div>
 
                 {/* Footer */}
                 <div className="border-t border-[#E8E8E8] py-3">
                     <div className="mb-2 flex items-center justify-between text-[15px] sm:text-[16px]">
-                        <span className="text-[#262626] text-xl text-semibold">Subtotal</span>
-                        <span className="font-semibold text-lg">{subtotalUsd}</span>
+                        <span className="text-[#262626] text-[1.3rem] text-semibold">Subtotal</span>
+                        <span className="font-semibold text-[1.3rem]">{subtotalUsd}</span>
                     </div>
                     <button
-                        className="mt-3 w-full rounded-2xl pt-4 pb-3 text-center text-[18px] font-semibold text-white cursor-pointer">
+                        className="mt-3 w-full rounded-2xl pt-4 pb-3 text-center text-[18px] font-semibold text-white ">
                         <PrimaryButton
                             disabled={rawItems.length === 0}
                             onClick={checkout}

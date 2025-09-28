@@ -1,12 +1,14 @@
 "use client";
 
-import React from "react";
+import React, {useMemo, useState} from "react";
 import Section from "@/app/components/Order/Stepper/Section";
 import {LOCATIONS} from "@/app/lib/locations";
 import LocationPanel from "@/app/components/Location/LocationPanel";
 import {Shuffle, Store, Truck} from "lucide-react";
 import {DoorDashLogo, UberLogo} from "@/app/components/Order/Stepper/PartnerLogos";
 import {Badge} from "@/app/classUtils";
+import {useCart} from "@/app/lib/cart";
+import {ConfirmResetModal} from "@/app/components/Order/OrderReset/OrderReset";
 
 export type OrderType = "pickup" | "delivery" | null;
 export type OrderTiming = "now" | "schedule" | null;
@@ -42,7 +44,14 @@ const partners: { id: Exclude<Partner, null>; label: string; Logo: React.FC }[] 
     {id: "doordash", label: "DoorDash", Logo: DoorDashLogo},
 ];
 
-export default function getSteps(ctx: Ctx, isStoreClosed: boolean, isStoreOpenToday: undefined | boolean, handlePrimaryClick: () => void): StepDef[] {
+export default function getSteps(
+    ctx: Ctx,
+    isStoreClosed: boolean,
+    isStoreOpenToday: boolean | undefined,
+    handlePrimaryClick: () => void,
+    guardedSetSelectedStoreId: (currentId: string | null, nextId: string) => void,
+    confirmModal: React.ReactNode
+): StepDef[] {
 
     return [
         {
@@ -61,8 +70,8 @@ export default function getSteps(ctx: Ctx, isStoreClosed: boolean, isStoreOpenTo
                             return (
                                 <button
                                     key={s.id}
-                                    onClick={() => setSelectedStoreId(s.id)}
-                                    className={`text-left rounded-2xl  cursor-pointer p-1 transition shadow-xl hover:shadow-2xl focus:outline-none focus:ring-2 focus:ring-black ${
+                                    onClick={() => guardedSetSelectedStoreId(selectedStoreId, s.id)}
+                                    className={`text-left rounded-2xl   p-1 transition shadow-xl hover:shadow-2xl focus:outline-none focus:ring-2 focus:ring-black ${
                                         selected ? "ring-2 ring-[#AF3935]" : ""
                                     }`}
                                 >
@@ -78,6 +87,7 @@ export default function getSteps(ctx: Ctx, isStoreClosed: boolean, isStoreOpenTo
                             );
                         })}
                     </div>
+                    {confirmModal}
                 </Section>
             ),
         },
@@ -109,7 +119,7 @@ export default function getSteps(ctx: Ctx, isStoreClosed: boolean, isStoreOpenTo
                                 onClick={() => {
                                     setOrderType("pickup")
                                 }}
-                                className={`text-left rounded-2xl cursor-pointer p-5 transition shadow-xl hover:shadow-2xl focus:outline-none focus:ring-2 focus:ring-black ${
+                                className={`text-left rounded-2xl  p-5 transition shadow-xl hover:shadow-2xl focus:outline-none focus:ring-2 focus:ring-black ${
                                     orderType === "pickup" ? "ring-2 ring-black" : ""
                                 }`}
                             >
@@ -157,7 +167,7 @@ export default function getSteps(ctx: Ctx, isStoreClosed: boolean, isStoreOpenTo
                                 onClick={() => {
                                     setOrderType("delivery");
                                 }}
-                                className={`text-left cursor-pointer rounded-2xl  p-5 transition shadow-xl hover:shadow-md focus:outline-none focus:ring-2 focus:ring-black ${
+                                className={`text-left  rounded-2xl  p-5 transition shadow-xl hover:shadow-md focus:outline-none focus:ring-2 focus:ring-black ${
                                     orderType === "delivery" ? "ring-2 ring-black" : ""
                                 }`}
                             >
@@ -208,7 +218,7 @@ export default function getSteps(ctx: Ctx, isStoreClosed: boolean, isStoreOpenTo
                                     <button
                                         key={id}
                                         onClick={() => setPartner(id)}
-                                        className={`text-left rounded-2xl p-9 transition shadow-xl cursor-pointer hover:shadow-2xl focus:outline-none focus:ring-2 focus:ring-[#3F3126] ${
+                                        className={`text-left rounded-2xl p-9 transition shadow-xl  hover:shadow-2xl focus:outline-none focus:ring-2 focus:ring-[#3F3126] ${
                                             partner === id ? "ring-2 ring-[#3F3126]" : ""
                                         }`}
                                         aria-label={`Order delivery via ${label}`}

@@ -1,5 +1,6 @@
 "use client";
 import React from "react";
+import {EditButton} from "@/app/classUtils";
 
 export function Row({
                         icon: Icon,
@@ -28,19 +29,24 @@ export function Row({
                     </div>
                 }
                 <div>
-                    <div className="text-[17px] md:text-[18px] font-bold text-[#AF3935]">{title}</div>
+                    <div className="text-[1.1rem] md:text-[1.2rem] font-bold text-[#AF3935]">{title}</div>
                     {subtitle &&
-                        <div className="mt-0.5 text-[15px] font-medium md:text-[17px] text-[#3F3126]">{subtitle}</div>}
+                        <div className="mt-0.5 text-[0.9rem] md:text-[1rem] font-medium text-[#3F3126]">{subtitle}</div>}
                 </div>
             </div>
             {actionText && (
-                <button
-                    type="button"
+
+                <EditButton
                     onClick={onAction}
-                    className="text-sm md:text-md font-medium text-[#6b7280]  hover:underline cursor-pointer"
-                >
-                    {actionText}
-                </button>
+                    disabled={false}
+                />
+                // <button
+                //     type="button"
+                //     onClick={onAction}
+                //     className="text-sm md:text-md font-medium text-[#6b7280]  hover:underline "
+                // >
+                //     {actionText}
+                // </button>
             )}
         </div>
     );

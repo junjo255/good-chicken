@@ -2,7 +2,7 @@
 
 import PrimaryButton from "@/app/components/Order/Stepper/PrimaryButton";
 import React from "react";
-import {ChangeButton} from "@/app/classUtils";
+import {EditButton} from "@/app/classUtils";
 
 type Props = {
     selectedStore: { brand: string; address: string } | null;
@@ -43,7 +43,7 @@ function InfoRow({
             </div>
 
             {onChange && (
-                <ChangeButton onClick={onChange} disabled={changeDisabled}/>
+                <EditButton onClick={onChange} disabled={changeDisabled}/>
             )}
         </div>
     );

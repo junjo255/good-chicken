@@ -1,7 +1,7 @@
 "use client";
 
-import React, {useEffect, useMemo, useRef, useState} from "react";
-import {ArrowLeft, ChevronRight, MapPin, CreditCard, CalendarDays} from "lucide-react";
+import React, {useEffect, useMemo, useState} from "react";
+import {ArrowLeft, MapPin, CreditCard} from "lucide-react";
 import {useOrder} from "@/app/components/Order/Stepper/OrderCtx";
 import {LOCATIONS} from "@/app/lib/locations";
 import {PaymentKind, Pm} from "@/app/components/Order/Payment/types";
@@ -14,14 +14,13 @@ import {AddCardModal} from "@/app/components/Order/Payment/AddCardModal";
 import {useRouter} from "next/navigation";
 import {useCart} from "@/app/lib/cart";
 import {v4 as uuid} from "uuid";
-import {CloverCardFields, CloverCardFieldsHandle, cloverCreateToken} from "@/app/components/Order/Payment/clover";
-import {isOpenNow} from "@/app/utils";
-import {supabase} from "@/app/lib/supabase/client";
+import {cloverCreateToken} from "@/app/components/Order/Payment/clover";
+import {formatPickupLabel, isOpenNow, minutesToLabel, PickupSlot, to12h, toMinutes} from "@/app/utils";
 import AuthCard from "@/app/components/Auth/AuthCard";
 import Link from "next/link";
-import {AppRouterInstance} from "next/dist/shared/lib/app-router-context.shared-runtime";
 import {ConfirmResetModal, resetStoreAndCartAndGoToOrder} from "@/app/components/Order/OrderReset/OrderReset";
 import {useAuth} from "@/app/components/Auth/AuthProvider";
+import TimePickerModal from "@/app/components/TimePickerModal/TimePickerModal";
 
 type Profile = {
     id: string;
@@ -31,15 +30,30 @@ type Profile = {
 };
 
 export default function Checkout() {
-    const {selectedStoreId, scheduleLater} = useOrder() as any;
+    const {selectedStoreId, scheduleLater, setScheduleLater} = useOrder() as any;
     const router = useRouter();
-    const { userId, openAuth } = useAuth();
+    const {userId, openAuth} = useAuth();
 
     // Store
     const selectedStore = useMemo(() => {
         if (!selectedStoreId) return null;
         return LOCATIONS.find((s) => s.id === selectedStoreId) || null;
     }, [selectedStoreId]);
+
+    const storeStatus = React.useMemo(() => {
+        return selectedStore?.hours ? isOpenNow(selectedStore.hours) : null;
+    }, [selectedStore?.hours]);
+
+    const isClosedNow = !!(storeStatus && !storeStatus.isOpen);
+
+    const opensAtLabel = React.useMemo(() => {
+        if (!isClosedNow || !storeStatus?.start) return "";
+        const startMin =
+            typeof storeStatus.start === "number"
+                ? storeStatus.start
+                : toMinutes(storeStatus.start); // "HH:MM" -> minutes since midnight
+        return minutesToLabel(startMin);
+    }, [isClosedNow, storeStatus]);
 
     // Totals (cents) — computed the same way the drawer does; keep your tax % here
     const [subtotalCents, setSubtotalCents] = useState<number>(0); // optional: lift from a totals hook
@@ -63,6 +77,11 @@ export default function Checkout() {
     const selectedPayment = payments.find((p) => p.id === selectedPaymentId) || null;
 
     async function handleProcessPayment() {
+        if (scheduleLater && !selectedTimeLabel) {
+            setTimeModalOpen(true);
+            return;
+        }
+
         const {token} = await cloverCreateToken(process.env.NEXT_PUBLIC_CLOVER_PUBLIC_KEY!);
 
         setSelectedPaymentId(token);
@@ -96,11 +115,26 @@ export default function Checkout() {
             // toast.error(e.message ?? "Something went wrong");
         }
     }
-
-
-    // Pickup time (HH:MM) — default to today's best guess (see effect below)
     const [pickupHour, setPickupHour] = useState<string>("");
     const [pickupMinute, setPickupMinute] = useState<string>("");
+    const [timeModalOpen, setTimeModalOpen] = useState(false);
+    const [selectedSlot, setSelectedSlot] = useState<{
+        targetDate: Date | null;
+        startMin: number | null;
+        durationMin: number;
+    } | null>(null);
+
+    const selectedTimeLabel = useMemo(() => {
+        if (!selectedSlot?.targetDate || selectedSlot.startMin == null) return "";
+        return formatPickupLabel({
+            targetDate: selectedSlot.targetDate,
+            startMin: selectedSlot.startMin,
+            durationMin: selectedSlot.durationMin ?? 30,
+            timezone: selectedStore?.hours?.timezone,
+        });
+    }, [selectedSlot, selectedStore?.hours?.timezone]);
+
+    const missingScheduledTime = scheduleLater && !selectedTimeLabel;
 
     function minsToHM(time: string | number | undefined) {
         if (time === undefined || time === null) return {hh: "", mm: ""};
@@ -126,7 +160,6 @@ export default function Checkout() {
     }
 
     const [accountOpen, setAccountOpen] = useState(false);
-
     const [showConfirmReset, setShowConfirmReset] = useState(false);
 
     const handleLogin = () => openAuth();
@@ -170,7 +203,7 @@ export default function Checkout() {
                 {!userId ? (
                     <button
                         onClick={handleLogin}
-                        className="hidden md:block w-full rounded-lg bg-[#E9BC46] py-3 text-center text-[15px] md:text-[18px] font-semibold text-[#3F3126] cursor-pointer"
+                        className="hidden md:block w-full rounded-lg bg-[#E9BC46] py-3 text-center text-[15px] md:text-[18px] font-semibold text-[#3F3126] "
                     >
                         Login
                     </button>
@@ -199,7 +232,7 @@ export default function Checkout() {
 
                 {/* Title: right on mobile, centered on desktop */}
                 <div
-                    className="justify-self-end md:justify-self-center text-md md:text-xl font-semibold tracking-tight">
+                    className="justify-self-end md:justify-self-center text-md md:text-[1.5rem] font-semibold tracking-tight">
                     Pickup Checkout
                 </div>
 
@@ -223,7 +256,7 @@ export default function Checkout() {
                             icon={MapPin}
                             title={selectedStore ? selectedStore.brand : "Choose a store"}
                             subtitle={selectedStore?.address}
-                            action="change"
+                            action="Edit"
                             onAction={() => setShowConfirmReset(true)}
                         />
 
@@ -243,77 +276,60 @@ export default function Checkout() {
                         <Line/>
                         <div className="p-4">
                             <SectionTitle>Pickup Time</SectionTitle>
-                            <div className="mt-3 rounded-xl border">
-                                <button className="flex w-full items-center justify-between p-4 text-left">
+
+                            {/* Choice cards: Standard (ASAP) vs Schedule */}
+                            <div className="mt-3 grid grid-cols-1 gap-1">
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        if (isClosedNow) return;
+                                        setScheduleLater?.(false);
+                                    }}
+                                    disabled={isClosedNow}
+                                    aria-disabled={isClosedNow}
+                                    className={`flex items-center justify-between rounded-xl px-4 py-6 transition
+                                    ${!scheduleLater && !isClosedNow ? "border-2 border-[#3F3126]": "border border-[#F3F3F3] bg-neutral-50"}
+                                    ${isClosedNow ? "opacity-60 cursor-not-allowed" : ""} `}
+                                >
                                     <div className="flex items-center gap-3">
-                                        <CalendarDays className="h-4 w-4 text-neutral-700"/>
-                                        <span className="text-[15px] font-medium text-neutral-800">
-                                          {scheduleLater ? "Scheduled" : "ASAP"}
-                                        </span>
+                                        <div
+                                            className={`text-[1.1rem] font-medium ${
+                                                isClosedNow ? "text-neutral-400" : "text-neutral-900"
+                                            }`}
+                                        >
+                                            ASAP
+                                        </div>
+                                        <div className="text-[1rem] text-neutral-500">
+                                            {isClosedNow
+                                                ? `Currently closed${opensAtLabel ? `. Opens at ${opensAtLabel}` : ""}`
+                                                : "15–30 min"}
+                                        </div>
                                     </div>
-                                    <ChevronRight className="h-4 w-4 text-neutral-500"/>
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        setScheduleLater?.(true);
+                                        setTimeModalOpen(true);
+                                    }}
+                                    className={`flex items-center justify-between rounded-xl px-4 py-6
+                                        ${scheduleLater ? "border-2 border-[#3F3126]" : "border border-[#F3F3F3] bg-neutral-50"}`}
+                                >
+                                    <div className="flex items-center gap-3">
+                                        {scheduleLater && selectedTimeLabel ?
+                                            <div className="text-[1.1rem] font-semibold text-neutral-900">
+                                                {selectedTimeLabel}
+                                            </div> :
+                                            <>
+                                                <div className="text-[1.1rem] font-medium text-neutral-900">Schedule</div>
+                                                <div className="text-[1rem] text-neutral-500">Choose a time</div>
+                                            </>
+                                        }
+                                    </div>
                                 </button>
                             </div>
-
-                            {scheduleLater ?
-                                <div className="mt-3 rounded-xl border p-4">
-                                    <div className="flex items-center gap-3 mb-3">
-                                        <CalendarDays className="h-4 w-4 text-neutral-700"/>
-                                        <span className="text-[15px] font-medium text-neutral-800">
-                                     {selectedStore ? "Choose your pickup time" : "Select a store to set time"}
-                                 </span>
-                                    </div>
-                                    <div className="grid grid-cols-6 gap-3">
-                                        <div className="col-span-3">
-                                            <label className="block text-xs font-medium text-neutral-600 mb-1">
-                                                Hours (HH)
-                                            </label>
-                                            <input
-                                                type="number"
-                                                min={0}
-                                                max={23}
-                                                placeholder="HH"
-                                                value={pickupHour}
-                                                onChange={(e) => {
-                                                    const v = e.target.value.slice(0, 2);
-                                                    if (v === "" || (/^\d+$/.test(v) && Number(v) <= 23)) setPickupHour(v);
-                                                }}
-                                                className="w-full rounded-lg border px-3 py-2 text-[15px] outline-none focus:ring-2 focus:ring-[#AF3935]"
-                                                disabled={!selectedStore}
-                                            />
-                                        </div>
-                                        <div className="col-span-3">
-                                            <label className="block text-xs font-medium text-neutral-600 mb-1">
-                                                Minutes (MM)
-                                            </label>
-                                            <input
-                                                type="number"
-                                                min={0}
-                                                max={59}
-                                                placeholder="MM"
-                                                value={pickupMinute}
-                                                onChange={(e) => {
-                                                    const v = e.target.value.slice(0, 2);
-                                                    if (v === "" || (/^\d+$/.test(v) && Number(v) <= 59)) setPickupMinute(v);
-                                                }}
-                                                className="w-full rounded-lg border px-3 py-2 text-[15px] outline-none focus:ring-2 focus:ring-[#AF3935]"
-                                                disabled={!selectedStore}
-                                            />
-                                        </div>
-                                    </div>
-                                    {selectedStore?.hours && (
-                                        <p className="mt-3 text-sm text-neutral-600">
-                                            {(() => {
-                                                const st = isOpenNow(selectedStore.hours);
-                                                if (st.isOpen) return "Store is open now. Defaulted to current time.";
-                                                if (st.isOpenToday) return "Store opens later today. Defaulted to today’s opening time.";
-                                                return "Store is closed today. Please choose a different day/time.";
-                                            })()}
-                                        </p>
-                                    )}
-                                </div> : null
-                            }
                         </div>
+
                     </Card>
 
                     <Card>
@@ -322,7 +338,7 @@ export default function Checkout() {
                         </div>
                         <Line/>
                         {!selectedPayment ? (
-                            <div className="p-4 text-sm md:text-md text-neutral-600">Choose a payment method.</div>
+                            <div className="p-4 text-[0.95rem] md:text-[1rem] text-neutral-600">Choose a payment method.</div>
                         ) : (
                             <Row
                                 icon={CreditCard}
@@ -341,8 +357,9 @@ export default function Checkout() {
 
                     <button
                         onClick={handleProcessPayment}
-                        className="hidden md:block w-full rounded-lg bg-[#AF3935] py-4 text-center text-[15px] md:text-[18px] font-semibold text-white cursor-pointer"
-                    >
+                        className={`hidden md:block w-full rounded-lg py-4 text-center text-[15px] md:text-[18px] font-semibold text-white ${
+                            missingScheduledTime ? "bg-neutral-300 cursor-not-allowed" : "bg-[#AF3935]"
+                        }`}>
                         Process Payment
                     </button>
                 </div>
@@ -360,7 +377,7 @@ export default function Checkout() {
                                     showIcon={false}
                                     title={selectedStore?.brand ?? "—"}
                                     subtitle={selectedStore?.address ?? "—"}
-                                    action="change"
+                                    action="Edit"
                                     onAction={() => setShowConfirmReset(true)}
                                 />
 
@@ -387,7 +404,7 @@ export default function Checkout() {
                             {/* Right-side CTA (DESKTOP ONLY) */}
                             <button
                                 onClick={handleProcessPayment}
-                                className="mt-4 hidden md:block w-full rounded-lg bg-[#AF3935] py-4 text-center text-[15px] md:text-[18px] font-semibold text-white cursor-pointer"
+                                className="mt-4 hidden md:block w-full rounded-lg bg-[#AF3935] py-4 text-center text-[15px] md:text-[18px] font-semibold text-white"
                             >
                                 Process Payment
                             </button>
@@ -410,7 +427,7 @@ export default function Checkout() {
                             </div>
                             <div className="mt-4 flex items-center justify-between border-t pt-4 text-[15px]">
                                 <SectionTitle>Total</SectionTitle>
-                                <div className="font-semibold font-[18px]">
+                                <div className="font-semibold text-[1.5rem]">
                                     {(totalCents / 100).toLocaleString("en-US", {style: "currency", currency: "USD"})}
                                 </div>
                             </div>
@@ -422,7 +439,7 @@ export default function Checkout() {
             <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-neutral-200 bg-white p-4 md:hidden">
                 <button
                     onClick={handleProcessPayment}
-                    className="w-full rounded-lg bg-[#AF3935] py-5 text-center text-[15px] font-semibold text-white cursor-pointer"
+                    className="w-full rounded-lg bg-[#AF3935] py-5 text-center text-[15px] font-semibold text-white"
                 >
                     Process Payment
                 </button>
@@ -463,6 +480,29 @@ export default function Checkout() {
             {accountOpen && (
                 <AuthCard open={accountOpen} onClose={() => setAccountOpen(false)}/>
             )}
+
+            <TimePickerModal
+                open={timeModalOpen}
+                onClose={() => setTimeModalOpen(false)}
+                selectedStore={selectedStore}
+                scheduleLater={scheduleLater}
+                onPick={(meta: PickupSlot) => {
+                    // derive hour/min from minutes
+                    const hour = Math.floor(meta.startMin / 60);
+                    const minute = meta.startMin % 60;
+
+                    // keep your hour/min state (string, zero-padded)
+                    setPickupHour(String(hour).padStart(2, "0"));
+                    setPickupMinute(String(minute).padStart(2, "0"));
+
+                    // keep a structured selection for label rendering
+                    setSelectedSlot({
+                        targetDate: meta.targetDate,
+                        startMin: meta.startMin,
+                        durationMin: meta.durationMin ?? 30,
+                    });
+                }}
+            />
         </section>
     );
 }
