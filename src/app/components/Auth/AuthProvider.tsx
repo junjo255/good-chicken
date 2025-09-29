@@ -6,6 +6,7 @@ import AuthCard from "@/app/components/Auth/AuthCard";
 
 type AuthCtx = {
     userId: string | null;
+    firstName: string | null;
     openAuth: () => void;
     closeAuth: () => void;
 };
@@ -17,6 +18,7 @@ export function useAuth() {
     return (
         ctx ?? {
             userId: null,
+            firstName: null,
             openAuth: () => {},
             closeAuth: () => {},
         }
@@ -26,6 +28,32 @@ export function useAuth() {
 export default function AuthProvider({ children }: { children: React.ReactNode }) {
     const [userId, setUserId] = React.useState<string | null>(null);
     const [authOpen, setAuthOpen] = React.useState(false);
+    const [firstName, setFirstName] = React.useState<string | null>(null);
+
+    React.useEffect(() => {
+        let cancelled = false;
+        async function loadProfile() {
+            if (!userId) { setFirstName(null); return; }
+            const { data, error } = await supabase
+                .from("profiles")
+                .select("first_name, last_name")
+                .eq("id", userId)
+                .maybeSingle();
+
+            if (cancelled) return;
+            if (error) {
+                console.error("load profile failed:", error.message);
+                setFirstName(null);
+                return;
+            }
+
+            setFirstName(data?.first_name);
+        }
+
+        loadProfile();
+        return () => { cancelled = true; };
+    }, [userId]);
+
 
     // single source of truth for session
     React.useEffect(() => {
@@ -54,6 +82,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
 
     const ctxValue: AuthCtx = {
         userId,
+        firstName,
         openAuth: () => setAuthOpen(true),
         closeAuth: () => setAuthOpen(false),
     };
@@ -61,7 +90,6 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
     return (
         <Ctx.Provider value={ctxValue}>
             {children}
-            {/* Centralized Auth UI so any component can open it */}
             <AuthCard open={authOpen} onClose={() => setAuthOpen(false)} />
         </Ctx.Provider>
     );

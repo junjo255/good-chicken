@@ -4,6 +4,12 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { v4 as uuid } from "uuid";
 
+const ONE_DAY_MS = 24 * 60 * 60 * 1000;
+
+function isExpired(ts?: number) {
+    return !ts || Date.now() - ts > ONE_DAY_MS;
+}
+
 export type CartModifier = { id: string; name: string; priceCents: number };
 export type CartLine = {
     id: string;
@@ -16,6 +22,7 @@ export type CartLine = {
 
 type CartStore = {
     items: CartLine[];
+    createdAt: number;
     addItem: (sku: string, name: string, basePriceCents: number, modifiers?: CartModifier[]) => void;
     increaseQty: (id: string) => void;
     decreaseQty: (id: string) => void;
@@ -38,6 +45,12 @@ export const useCart = create<CartStore>()(
     persist(
         (set, get) => ({
             items: [],
+            createdAt: Date.now(),
+            _ensureFresh() {
+                if (isExpired(get().createdAt)) {
+                    set({ items: [], createdAt: Date.now() });
+                }
+            },
             addItem: (sku, name, basePriceCents, modifiers = []) => {
                 set((state) => {
                     const idx = state.items.findIndex(

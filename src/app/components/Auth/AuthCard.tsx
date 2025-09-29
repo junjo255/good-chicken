@@ -1,15 +1,18 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/app/lib/supabase/client";
 import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
+import { useRouter } from "next/navigation";
 import styles from "./AuthCard.module.css";
 
 type AuthCardProps = { open: boolean; onClose: () => void };
 
 export default function AuthCard({ open, onClose }: AuthCardProps) {
-    const [mode, setMode] = useState<"sign_in" | "sign_up">("sign_up"); // open directly to Create Account
+    const router = useRouter();
+
+    const [mode, setMode] = useState<"sign_in" | "sign_up">("sign_up");
     const [loading, setLoading] = useState(false);
     const [err, setErr] = useState<string | null>(null);
     const [ok, setOk] = useState<string | null>(null);
@@ -31,6 +34,46 @@ export default function AuthCard({ open, onClose }: AuthCardProps) {
         );
     }, [mode, firstName, lastName, email, password, phone]);
 
+    useEffect(() => {
+        const { data: sub } = supabase.auth.onAuthStateChange(async (event, session) => {
+            if (event === "SIGNED_IN" && session?.user) {
+                try {
+                    const u = session.user;
+                    const meta = (u.user_metadata ?? {}) as {
+                        first_name?: string; last_name?: string; phone?: string;
+                    };
+                    const { error: upsertErr } = await supabase
+                        .from("profiles")
+                        .upsert(
+                            {
+                                id: u.id, // FK to auth.users.id
+                                phone: meta.phone ?? null,
+                                first_name: meta.first_name ?? null,
+                                last_name: meta.last_name ?? null,
+                                updated_at: new Date().toISOString(),
+                            },
+                            { onConflict: "id" }
+                        );
+
+                    if (upsertErr) {
+                        // console.error("profiles upsert failed:", upsertErr.message);
+                        setErr(upsertErr.message);
+                    }
+                } catch {
+                    /* non-fatal: ignore profile upsert errors here */
+                } finally {
+                    onClose?.();
+                    if (typeof window !== "undefined" && window.history.length > 1) {
+                        window.history.back();
+                    } else {
+                        router.refresh();
+                    }
+                }
+            }
+        });
+        return () => sub.subscription.unsubscribe();
+    }, [onClose, router]);
+
     if (!open) return null;
 
     async function handleSignUp(e: React.FormEvent) {
@@ -38,22 +81,30 @@ export default function AuthCard({ open, onClose }: AuthCardProps) {
         setErr(null);
         setOk(null);
         setLoading(true);
+
         try {
-            const { error } = await supabase.auth.signUp({
+            // Create user with email+password; store name/phone in user_metadata.
+            // With email confirmation enabled, this WILL NOT create a session yet.
+            const { data, error } = await supabase.auth.signUp({
                 email,
                 password,
                 options: {
                     data: {
                         first_name: firstName,
                         last_name: lastName,
-                        full_name: `${firstName} ${lastName}`.trim(),
+                        phone,
                     },
+                    emailRedirectTo:
+                        typeof window !== "undefined"
+                            ? `${window.location.origin}/auth/callback`
+                            : undefined,
                 },
             });
             if (error) throw error;
-            setOk("Account created. Check your email to confirm, then sign in.");
-            setMode("sign_in");
+
+            setOk("Account created. Please check your email to confirm your address before signing in.");
             setPassword("");
+            setMode("sign_in");
         } catch (e: any) {
             setErr(e?.message ?? "Something went wrong creating your account.");
         } finally {
@@ -72,57 +123,43 @@ export default function AuthCard({ open, onClose }: AuthCardProps) {
 
             {/* Card */}
             <div className="relative z-[101] text-[16px] w-full md:max-w-sm md:rounded-2xl bg-white shadow-xl">
-                {/* Close */}
-             <div className={styles.header}>
-
+                {/* Header */}
+                <div className={styles.header}>
                     <div className="flex items-center justify-center">
-                        <img
-                            width="85"
-                            height="85"
-                            src={"/logo/GoodChicken-logo.png"}
-                            alt="Good Chicken"
-                        />
+                        <img width="85" height="85" src={"/logo/GoodChicken-logo.png"} alt="Good Chicken" />
                     </div>
+                    <button
+                        type="button"
+                        onClick={onClose}
+                        aria-label="Close"
+                        className="absolute top-3 right-3 rounded-md px-2 py-1 text-md text-neutral-600 hover:bg-neutral-100 hover:rounded-full "
+                    >
+                        ✕
+                    </button>
+                </div>
 
-                <button
-                    type="button"
-                    onClick={onClose}
-                    aria-label="Close"
-                    className="absolute top-3 right-3 rounded-md px-2 py-1 text-md text-neutral-600 hover:bg-neutral-100 hover:rounded-full "
-                >
-                    ✕
-                </button>
-
-             </div>
                 <div className="pt-1 px-6 pb-6">
-                    {/* (Optional) little heading area for consistency */}
-                    <div className={styles.header}>
-                        <p className={`${styles.subheader} text-center`}>
-                            {mode === "sign_in" ? "Welcome back!" : "Create your account"}
-                        </p>
-                    </div>
-
-                    {/* Mode switch (kept but subtle) */}
+                    {/* Mode switch */}
                     <div className="mt-3 mb-5 grid grid-cols-2 gap-2 bg-neutral-100 rounded-xl p-1">
                         <button
-                            className={`py-2 rounded-lg ${
-                                mode === "sign_in" ? "bg-white shadow font-medium" : "text-neutral-600"
-                            }`}
+                            className={`py-2 rounded-lg ${mode === "sign_in" ? "bg-white shadow font-medium" : "text-neutral-600"}`}
                             onClick={() => setMode("sign_in")}
                             type="button"
                         >
                             Sign in
                         </button>
                         <button
-                            className={`py-2 rounded-lg ${
-                                mode === "sign_up" ? "bg-white shadow font-medium" : "text-neutral-600"
-                            }`}
+                            className={`py-2 rounded-lg ${mode === "sign_up" ? "bg-white shadow font-medium" : "text-neutral-600"}`}
                             onClick={() => setMode("sign_up")}
                             type="button"
                         >
                             Create account
                         </button>
                     </div>
+
+                    {/* Alerts */}
+                    {err && <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">{err}</div>}
+                    {ok && <div className="rounded-lg border border-green-200 bg-green-50 px-3 py-2 text-sm text-green-700">{ok}</div>}
 
                     {mode === "sign_in" ? (
                         <Auth
@@ -133,12 +170,7 @@ export default function AuthCard({ open, onClose }: AuthCardProps) {
                             appearance={{
                                 theme: ThemeSupa,
                                 style: {
-                                    anchor: {
-                                        justifyContent: "flex-start",
-                                        fontSize: "14px",
-                                        color: "#6b7280",
-                                        textAlign: "left",
-                                    },
+                                    anchor: { justifyContent: "flex-start", fontSize: "14px", color: "#6b7280", textAlign: "left" },
                                 },
                                 variables: {
                                     default: {
@@ -154,8 +186,8 @@ export default function AuthCard({ open, onClose }: AuthCardProps) {
                                             defaultButtonText: "#3F3126",
                                             messageText: "#6b7280",
                                         },
-                                        radii: {inputBorderRadius: "12px", borderRadiusButton: "12px"},
-                                        space: {inputPadding: "12px", buttonPadding: "12px"},
+                                        radii: { inputBorderRadius: "12px", borderRadiusButton: "12px" },
+                                        space: { inputPadding: "12px", buttonPadding: "12px" },
                                         fonts: {
                                             bodyFontFamily: "inherit",
                                             buttonFontFamily: "inherit",
@@ -181,10 +213,7 @@ export default function AuthCard({ open, onClose }: AuthCardProps) {
                             }}
                             localization={{
                                 variables: {
-                                    sign_in: {
-                                        email_label: "Email",
-                                        password_label: "Password",
-                                    },
+                                    sign_in: { email_label: "Email", password_label: "Password" },
                                 },
                             }}
                         />
@@ -193,46 +222,29 @@ export default function AuthCard({ open, onClose }: AuthCardProps) {
                             {/* Google button */}
                             <button
                                 type="button"
-                                onClick={async () => {
-                                    await supabase.auth.signInWithOAuth({provider: "google"});
-                                }}
+                                onClick={async () => { await supabase.auth.signInWithOAuth({ provider: "google" }); }}
                                 className={styles.googleBtn}
                             >
                                 {/* Google "G" */}
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="25" height="25"
-                                     aria-hidden="true">
-                                    <path fill="#FFC107"
-                                          d="M43.6 20.5H42V20H24v8h11.3C33.6 32.4 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.1 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20c10 0 19-7.3 19-20 0-1.3-.1-2.5-.4-3.5z"/>
-                                    <path fill="#FF3D00"
-                                          d="M6.3 14.7l6.6 4.8C14.7 16.1 18.9 13 24 13c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.1 6.1 29.3 4 24 4 15.5 4 8.4 9 6.3 14.7z"/>
-                                    <path fill="#4CAF50"
-                                          d="M24 44c5.1 0 10-1.9 13.6-5.3l-6.3-5.3C29.3 35.9 26.8 37 24 37c-5.2 0-9.6-3.6-11.1-8.5l-6.5 5C8.4 39 15.5 44 24 44z"/>
-                                    <path fill="#1976D2"
-                                          d="M43.6 20.5H42V20H24v8h11.3c-1.1 3.2-3.6 5.8-6.7 7.2l6.3 5.3C37.5 38.6 43 33.5 43.6 24c.1-1.2 0-2.3 0-3.5z"/>
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="25" height="25" aria-hidden="true">
+                                    <path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.6 32.4 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.1 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20c10 0 19-7.3 19-20 0-1.3-.1-2.5-.4-3.5z"/>
+                                    <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 16.1 18.9 13 24 13c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.1 6.1 29.3 4 24 4 15.5 4 8.4 9 6.3 14.7z"/>
+                                    <path fill="#4CAF50" d="M24 44c5.1 0 10-1.9 13.6-5.3l-6.3-5.3C29.3 35.9 26.8 37 24 37c-5.2 0-9.6-3.6-11.1-8.5l-6.5 5C8.4 39 15.5 44 24 44z"/>
+                                    <path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-1.1 3.2-3.6 5.8-6.7 7.2l6.3 5.3C37.5 38.6 43 33.5 43.6 24c.1-1.2 0-2.3 0-3.5z"/>
                                 </svg>
                                 <span className="text-md">Create account with Google</span>
                             </button>
 
                             {/* Divider */}
                             <div className={styles.divider}>
-                                <div className={styles.dividerLine}/>
+                                <div className={styles.dividerLine} />
                                 <span className={styles.dividerText}>or</span>
-                                <div className={styles.dividerLine}/>
+                                <div className={styles.dividerLine} />
                             </div>
 
                             {/* Alerts */}
-                            {err && (
-                                <div
-                                    className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
-                                    {err}
-                                </div>
-                            )}
-                            {ok && (
-                                <div
-                                    className="rounded-lg border border-green-200 bg-green-50 px-3 py-2 text-sm text-green-700">
-                                    {ok}
-                                </div>
-                            )}
+                            {err && <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">{err}</div>}
+                            {ok && <div className="rounded-lg border border-green-200 bg-green-50 px-3 py-2 text-sm text-green-700">{ok}</div>}
 
                             {/* Name */}
                             <div>
@@ -252,6 +264,22 @@ export default function AuthCard({ open, onClose }: AuthCardProps) {
                                     }}
                                     required
                                 />
+                            </div>
+
+                            {/* Phone (stored in metadata; no OTP here) */}
+                            <div>
+                                <label className={styles["auth-label"]}>
+                                    Phone number<span className="text-red-500">*</span>
+                                </label>
+                                <input
+                                    className={styles["auth-input"]}
+                                    type="tel"
+                                    placeholder="+1 555 123 4567"
+                                    value={phone}
+                                    onChange={(e) => setPhone(e.target.value)}
+                                    required
+                                />
+                                <p className="mt-1 text-xs text-neutral-500">We’ll use this for your profile and support.</p>
                             </div>
 
                             {/* Email */}

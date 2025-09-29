@@ -60,13 +60,13 @@ export default function UserDropdown({
 
     const content = children ?? (
         <>
-            <Link href="/account" role="menuitem" className="block px-3 py-2 rounded-xl hover:bg-[#f8f8f8] cursor-pointer">
+            <Link href="/account" role="menuitem" className="block px-3 py-2 rounded-xl text-[1rem] hover:bg-[#f8f8f8] cursor-pointer">
                 Manage account
             </Link>
             <Line />
             <button
                 onClick={handleLogin}
-                className="w-full text-left px-3 py-2 rounded-xl hover:bg-[#f8f8f8] "
+                className="w-full text-left px-3 py-2 rounded-xl text-[1rem] hover:bg-[#f8f8f8] "
             >
                 {loginLabel}
             </button>

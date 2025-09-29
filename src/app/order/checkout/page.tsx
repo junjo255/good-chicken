@@ -1,7 +1,7 @@
 "use client";
 
 import React, {useEffect, useMemo, useState} from "react";
-import {ArrowLeft, MapPin, CreditCard} from "lucide-react";
+import {ArrowLeft, MapPin, CreditCard, Plus} from "lucide-react";
 import {useOrder} from "@/app/components/Order/Stepper/OrderCtx";
 import {LOCATIONS} from "@/app/lib/locations";
 import {PaymentKind, Pm} from "@/app/components/Order/Payment/types";
@@ -21,6 +21,7 @@ import Link from "next/link";
 import {ConfirmResetModal, resetStoreAndCartAndGoToOrder} from "@/app/components/Order/OrderReset/OrderReset";
 import {useAuth} from "@/app/components/Auth/AuthProvider";
 import TimePickerModal from "@/app/components/TimePickerModal/TimePickerModal";
+import {supabase} from "@/app/lib/supabase/client";
 
 type Profile = {
     id: string;
@@ -32,9 +33,9 @@ type Profile = {
 export default function Checkout() {
     const {selectedStoreId, scheduleLater, setScheduleLater} = useOrder() as any;
     const router = useRouter();
-    const {userId, openAuth} = useAuth();
+    const {userId, firstName, openAuth} = useAuth();
+    const [loadingPayments, setLoadingPayments] = useState(false);
 
-    // Store
     const selectedStore = useMemo(() => {
         if (!selectedStoreId) return null;
         return LOCATIONS.find((s) => s.id === selectedStoreId) || null;
@@ -87,6 +88,19 @@ export default function Checkout() {
         setSelectedPaymentId(token);
 
         try {
+            let source = selectedPaymentId;
+
+            // If nothing selected, try to tokenize a new card (AddCardModal flow)
+            if (!source) {
+                const {token} = await cloverCreateToken(process.env.NEXT_PUBLIC_CLOVER_PUBLIC_KEY!);
+                source = token; // single-use token; server will confirm & (optionally) vault
+            }
+
+            if (!source) {
+                // toast.error("Please add or select a card.");
+                return;
+            }
+
             // 1) Ensure you have a Clover token from the card fields
             if (!selectedPaymentId?.startsWith("clv_")) {
                 // Ask CloverCardFields to tokenize (e.g., fire an event or ref callback)
@@ -100,9 +114,9 @@ export default function Checkout() {
                 method: "POST",
                 headers: {"content-type": "application/json"},
                 body: JSON.stringify({
-                    source: selectedPaymentId,
+                    source,
                     amount: totalCents,
-                    cartId: cartId, // temporary solution
+                    cartId: cartId,
                 }),
             });
 
@@ -115,6 +129,7 @@ export default function Checkout() {
             // toast.error(e.message ?? "Something went wrong");
         }
     }
+
     const [pickupHour, setPickupHour] = useState<string>("");
     const [pickupMinute, setPickupMinute] = useState<string>("");
     const [timeModalOpen, setTimeModalOpen] = useState(false);
@@ -158,6 +173,35 @@ export default function Checkout() {
 
         return {hh: "", mm: ""};
     }
+
+    // useEffect(() => {
+    //     if (!userId) return;
+    //     setLoadingPayments(true);
+    //     supabase
+    //         .from("payment_methods")
+    //         .select("id, processor, processor_payment_method_id, brand, last4, exp_month, exp_year, is_default")
+    //         .eq("profile_id", userId)
+    //         .order("is_default", { ascending: false })
+    //         .then(({ data, error }) => {
+    //             if (error) {
+    //                 console.error("load payment methods failed:", error.message);
+    //                 return;
+    //             }
+    //             const mapped: Pm[] = (data ?? []).map((m) => ({
+    //                 // Use the PSP token as our runtime id to charge with
+    //                 id: m.processor_payment_method_id,
+    //                 label: m.brand ? m.brand.toUpperCase() : "Card",
+    //                 brand: m.brand ?? "card",
+    //                 last4: m.last4 ?? undefined,
+    //                 kind: "personal",
+    //                 available: true,
+    //             }));
+    //             setPayments(mapped);
+    //             const def = data?.find((x) => x.is_default);
+    //             setSelectedPaymentId(def ? def.processor_payment_method_id : mapped[0]?.id ?? null);
+    //         }).then(() => setLoadingPayments(false));
+    // }, [userId]);
+
 
     const [accountOpen, setAccountOpen] = useState(false);
     const [showConfirmReset, setShowConfirmReset] = useState(false);
@@ -208,7 +252,7 @@ export default function Checkout() {
                         Login
                     </button>
                 ) : (
-                    <>{userId}</>
+                    <SectionTitle>Welcome back, {firstName}</SectionTitle>
                 )}
             </Card>
         );
@@ -288,7 +332,7 @@ export default function Checkout() {
                                     disabled={isClosedNow}
                                     aria-disabled={isClosedNow}
                                     className={`flex items-center justify-between rounded-xl px-4 py-6 transition
-                                    ${!scheduleLater && !isClosedNow ? "border-2 border-[#3F3126]": "border border-[#F3F3F3] bg-neutral-50"}
+                                    ${!scheduleLater && !isClosedNow ? "border-2 border-[#3F3126]" : "border border-[#F3F3F3] bg-neutral-50"}
                                     ${isClosedNow ? "opacity-60 cursor-not-allowed" : ""} `}
                                 >
                                     <div className="flex items-center gap-3">
@@ -321,7 +365,9 @@ export default function Checkout() {
                                                 {selectedTimeLabel}
                                             </div> :
                                             <>
-                                                <div className="text-[1.1rem] font-medium text-neutral-900">Schedule</div>
+                                                <div className="text-[1.1rem] font-medium text-neutral-900">
+                                                    Schedule
+                                                </div>
                                                 <div className="text-[1rem] text-neutral-500">Choose a time</div>
                                             </>
                                         }
@@ -338,7 +384,14 @@ export default function Checkout() {
                         </div>
                         <Line/>
                         {!selectedPayment ? (
-                            <div className="p-4 text-[0.95rem] md:text-[1rem] text-neutral-600">Choose a payment method.</div>
+                            <button
+                                type="button"
+                                onClick={() => setAddCardOpen(true)}
+                                className="flex w-full items-center gap-2 px-3 py-3 hover:bg-neutral-50"
+                            >
+                                <Plus className="h-5 w-5"/>
+                                <span className="text-[15px] md:text-[17px] font-medium">Add Payment Method</span>
+                            </button>
                         ) : (
                             <Row
                                 icon={CreditCard}
@@ -476,6 +529,40 @@ export default function Checkout() {
                     setSelectedPaymentId(newPm.id);
                 }}
             />
+            {/*<AddCardModal*/}
+            {/*    open={addCardOpen}*/}
+            {/*    onClose={() => setAddCardOpen(false)}*/}
+            {/*    onSaved={async (p) => {*/}
+            {/*        try {*/}
+            {/*            const vaultedId = p.id;*/}
+
+            {/*            const { error: dbErr } = await supabase.from("payment_methods").insert({*/}
+            {/*                profile_id: userId,*/}
+            {/*                processor: "clover",*/}
+            {/*                processor_payment_method_id: vaultedId,*/}
+            {/*                brand: p.brand,*/}
+            {/*                last4: p.last4,*/}
+            {/*                // exp_month / exp_year if your modal provides them; else omit*/}
+            {/*                is_default: true,*/}
+            {/*            });*/}
+            {/*            if (dbErr) throw new Error(dbErr.message);*/}
+
+            {/*            const newPm: Pm = {*/}
+            {/*                id: vaultedId,*/}
+            {/*                label: p.label,*/}
+            {/*                brand: p.brand,*/}
+            {/*                last4: p.last4,*/}
+            {/*                kind: activeTab,*/}
+            {/*                available: true,*/}
+            {/*            };*/}
+            {/*            setPayments((xs) => [newPm, ...xs]);*/}
+            {/*            setSelectedPaymentId(newPm.id);*/}
+            {/*            setAddCardOpen(false);*/}
+            {/*        } catch (e: any) {*/}
+            {/*            console.error(e?.message || e);*/}
+            {/*        }*/}
+            {/*    }}*/}
+            {/*    />*/}
 
             {accountOpen && (
                 <AuthCard open={accountOpen} onClose={() => setAccountOpen(false)}/>
